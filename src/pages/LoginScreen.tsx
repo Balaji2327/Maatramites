@@ -183,36 +183,36 @@ export default function LoginScreen() {
 
     const mockUser = isAlumni
       ? {
-          id: "alu-2021-008",
-          name: "Sundararaman M",
-          fullName: "Sundararaman M",
-          email: cleanInput.includes("@") ? cleanInput : "sundararaman.m@alumni.maatramedu.org",
-          role: "alumni",
-          rollNumber: "MF-ALUM-2019-018",
-          phone: "+91 94432 10987",
-          dob: "1998-09-22",
-          gender: "Male",
-          whatsapp: "+91 94432 10987",
-          currentCity: "Chennai, Tamil Nadu",
-          company: "Zoho Corporation",
-          designation: "Senior Software Engineer",
-          experienceYears: "5 Years",
-          industryDomain: "Product Software & Cloud Infrastructure",
-          linkedin: "linkedin.com/in/sundararaman-maatram",
-          college: "Sri Venkateswara College of Engineering",
-          degree: "B.E Computer Science & Engineering",
-          gradBatch: "Class of 2019",
-        }
+        id: "alu-2021-008",
+        name: "Sundararaman M",
+        fullName: "Sundararaman M",
+        email: cleanInput.includes("@") ? cleanInput : "sundararaman.m@alumni.maatramedu.org",
+        role: "alumni",
+        rollNumber: "MF-ALUM-2019-018",
+        phone: "+91 94432 10987",
+        dob: "1998-09-22",
+        gender: "Male",
+        whatsapp: "+91 94432 10987",
+        currentCity: "Chennai, Tamil Nadu",
+        company: "Zoho Corporation",
+        designation: "Senior Software Engineer",
+        experienceYears: "5 Years",
+        industryDomain: "Product Software & Cloud Infrastructure",
+        linkedin: "linkedin.com/in/sundararaman-maatram",
+        college: "Sri Venkateswara College of Engineering",
+        degree: "B.E Computer Science & Engineering",
+        gradBatch: "Class of 2019",
+      }
       : {
-          id: "stu-2024-042",
-          name: "Kavitha R",
-          fullName: "Kavitha R",
-          email: cleanInput.includes("@") ? cleanInput : "kavitha.r@student.svce.ac.in",
-          role: "student",
-          rollNumber: "MF-SCH-2024-042",
-          college: "Sri Venkateswara College of Engineering",
-          degree: "B.Tech Information Technology (2nd Year)",
-        };
+        id: "stu-2024-042",
+        name: "Kavitha R",
+        fullName: "Kavitha R",
+        email: cleanInput.includes("@") ? cleanInput : "kavitha.r@student.svce.ac.in",
+        role: "student",
+        rollNumber: "MF-SCH-2024-042",
+        college: "Sri Venkateswara College of Engineering",
+        degree: "B.Tech Information Technology (2nd Year)",
+      };
 
     setAuthToken(`mock-token-${Date.now()}`);
     saveUser(mockUser);
@@ -235,24 +235,24 @@ export default function LoginScreen() {
     setTimeout(() => {
       const mockUser = isAlumni
         ? {
-            id: "alu-2021-008",
-            name: "Sundararaman M",
-            email: "sundar@zoho.com",
-            role: "alumni",
-            rollNumber: "MF-ALU-2021-008",
-            college: "Sri Venkateswara College of Engineering",
-            company: "Zoho Corporation",
-            degree: "B.E Computer Science (Batch of 2021)",
-          }
+          id: "alu-2021-008",
+          name: "Sundararaman M",
+          email: "sundar@zoho.com",
+          role: "alumni",
+          rollNumber: "MF-ALU-2021-008",
+          college: "Sri Venkateswara College of Engineering",
+          company: "Zoho Corporation",
+          degree: "B.E Computer Science (Batch of 2021)",
+        }
         : {
-            id: "stu-2024-042",
-            name: "Kavitha R",
-            email: "kavitha.r@student.svce.ac.in",
-            role: "student",
-            rollNumber: "MF-SCH-2024-042",
-            college: "Sri Venkateswara College of Engineering",
-            degree: "B.Tech Information Technology (2nd Year)",
-          };
+          id: "stu-2024-042",
+          name: "Kavitha R",
+          email: "kavitha.r@student.svce.ac.in",
+          role: "student",
+          rollNumber: "MF-SCH-2024-042",
+          college: "Sri Venkateswara College of Engineering",
+          degree: "B.Tech Information Technology (2nd Year)",
+        };
 
       setAuthToken(`mock-token-${Date.now()}`);
       saveUser(mockUser);
@@ -321,7 +321,7 @@ export default function LoginScreen() {
                     onChange={(e) => setIdentifier(e.target.value)}
                     required
                     autoComplete="off"
-                    placeholder="student@maatram.com or alumni@maatram.com"
+                    placeholder="maatramites.tech"
                     className="w-full bg-slate-50/70 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-slate-900 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:border-[#F7BC0F] focus:bg-white focus:ring-2 focus:ring-[#F7BC0F]/40 transition font-primary"
                   />
                 </div>
@@ -402,11 +402,10 @@ export default function LoginScreen() {
                     value={digit}
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
                     onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                    className={`w-11 h-13 sm:w-12 sm:h-14 text-center font-heading font-extrabold text-xl sm:text-2xl rounded-xl border-2 transition-all outline-none ${
-                      digit
-                        ? "border-[#F7BC0F] bg-amber-50/40 text-slate-900 shadow-sm"
-                        : "border-slate-200 bg-slate-50/80 text-slate-900 focus:border-[#F7BC0F] focus:bg-white focus:ring-4 focus:ring-[#F7BC0F]/20"
-                    }`}
+                    className={`w-11 h-13 sm:w-12 sm:h-14 text-center font-heading font-extrabold text-xl sm:text-2xl rounded-xl border-2 transition-all outline-none ${digit
+                      ? "border-[#F7BC0F] bg-amber-50/40 text-slate-900 shadow-sm"
+                      : "border-slate-200 bg-slate-50/80 text-slate-900 focus:border-[#F7BC0F] focus:bg-white focus:ring-4 focus:ring-[#F7BC0F]/20"
+                      }`}
                   />
                 ))}
               </div>
@@ -438,51 +437,6 @@ export default function LoginScreen() {
             </div>
           )}
         </form>
-
-        {/* Quick Dummy / Demo Login Section */}
-        <div className="pt-6 border-t border-slate-100 space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-[10px] font-heading font-black uppercase text-slate-400 tracking-wider flex items-center gap-1.5">
-              <SparklesIcon className="w-3.5 h-3.5 text-amber-500" />
-              <span>1-Click Dummy Login</span>
-            </span>
-            <span className="text-[10px] text-slate-400">Routes based on credentials</span>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2.5">
-            <button
-              type="button"
-              onClick={() => handleQuickDemoLogin("student")}
-              className="p-3 rounded-2xl border border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50/50 transition cursor-pointer text-left space-y-0.5 shadow-2xs group"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-heading font-bold text-slate-900 group-hover:text-amber-950">
-                  Student Volunteer
-                </span>
-                <span className="text-[10px] px-1.5 py-0.2 bg-amber-100 text-amber-900 rounded font-bold">
-                  Demo
-                </span>
-              </div>
-              <p className="text-[10px] text-slate-500 font-mono truncate">student@maatram.com</p>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => handleQuickDemoLogin("alumni")}
-              className="p-3 rounded-2xl border border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50/50 transition cursor-pointer text-left space-y-0.5 shadow-2xs group"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-heading font-bold text-slate-900 group-hover:text-amber-950">
-                  Alumni Chapter
-                </span>
-                <span className="text-[10px] px-1.5 py-0.2 bg-slate-200 text-slate-800 rounded font-bold">
-                  Demo
-                </span>
-              </div>
-              <p className="text-[10px] text-slate-500 font-mono truncate">alumni@maatram.com</p>
-            </button>
-          </div>
-        </div>
       </div>
     </main>
   );
