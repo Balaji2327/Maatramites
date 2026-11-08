@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-heading: 'Hanken Grotesk', sans-serif;
+    --font-primary: 'Libre Franklin', sans-serif;
+  }
+}
+
+body {
+  font-family: var(--font-primary), 'Libre Franklin', sans-serif;
+  background-color: #FFFFFF;
+  color: #0F172A;
+}
+
+.font-heading {
+  font-family: var(--font-heading), 'Hanken Grotesk', sans-serif;
+}
+
+.font-primary {
+  font-family: var(--font-primary), 'Libre Franklin', sans-serif;
+}
+
+/* Smooth, seamless water wave animation without seam separation */
+@keyframes waveFlowFront {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes waveFlowBack {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.animate-wave-front {
+  animation: waveFlowFront 4.2s linear infinite;
+}
+
+.animate-wave-back {
+  animation: waveFlowBack 6.5s linear infinite;
+}
+
+/* Subtle continuous bobbing of surface */
+@keyframes liquidBob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
+
+.animate-liquid-bob {
+  animation: liquidBob 3.5s ease-in-out infinite;
+}
+
