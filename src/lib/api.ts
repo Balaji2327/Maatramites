@@ -146,6 +146,12 @@ export const studentApi = {
   toggle2FA: (payload: { email: string; enable: boolean; verificationCode?: string }) =>
     callApi(() => apiClient.post("/auth/toggle-2fa", payload)),
 
+  forgotPasswordSendOtp: (payload: { email: string }) =>
+    callApi(() => apiClient.post("/auth/forgot-password/send-otp", payload)),
+
+  forgotPasswordReset: (payload: { email: string; otp: string; newPassword: string; confirmPassword?: string }) =>
+    callApi(() => apiClient.post("/auth/forgot-password/reset", payload)),
+
   // Events (read from shared backend)
   getEvents: () => callApi(() => apiClient.get("/admin/events")),
 

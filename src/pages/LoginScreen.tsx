@@ -333,13 +333,12 @@ export default function LoginScreen() {
                   <label className="block text-xs font-heading font-bold text-slate-800 tracking-wide">
                     Password
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => alert("Please contact your Maatram Foundation coordinator to reset your credentials.")}
+                  <Link
+                    href="/forgot-password"
                     className="text-[11px] text-slate-500 hover:text-slate-900 hover:underline cursor-pointer"
                   >
                     Forgot password?
-                  </button>
+                  </Link>
                 </div>
                 <div className="relative mt-1">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
