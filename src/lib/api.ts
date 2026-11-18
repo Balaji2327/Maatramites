@@ -161,11 +161,29 @@ export const studentApi = {
   // Volunteer verification tasks for applicants
   getAssignedApplicants: () => callApi(() => apiClient.get("/admin/applications")),
 
-  updateVolunteerSuggestion: (id: string, suggestion: string, volunteerName: string) =>
+  updateVolunteerSuggestion: (
+    id: string,
+    suggestion: string,
+    volunteerName: string,
+    options?: {
+      phase?: "tele" | "physical";
+      volunteer_email?: string;
+      volunteer_phone?: string;
+      volunteer_role?: string;
+      volunteer_affiliation?: string;
+    }
+  ) =>
     callApi(() =>
       apiClient.patch(`/admin/applications/${id}/volunteer-suggestion`, {
+        suggestion,
         volunteer_suggestion: suggestion,
         volunteer_name: volunteerName,
+        volunteerName,
+        phase: options?.phase || "tele",
+        volunteer_email: options?.volunteer_email,
+        volunteer_phone: options?.volunteer_phone,
+        volunteer_role: options?.volunteer_role,
+        volunteer_affiliation: options?.volunteer_affiliation,
       })
     ),
 
