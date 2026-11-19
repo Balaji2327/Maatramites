@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   LockClosedIcon,
@@ -262,31 +261,18 @@ export default function LoginScreen() {
   };
 
   return (
-    <main className="min-h-screen w-full bg-[#F8FAFC] text-[#0F172A] flex items-center justify-center p-4 sm:p-6 lg:p-8 font-primary selection:bg-[#F7BC0F] selection:text-black relative overflow-hidden">
-      {/* Soft warm ambient blur in background identical to Admin Login */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[550px] h-[550px] bg-[#F7BC0F]/15 rounded-full blur-[140px] pointer-events-none" />
+    <main className="min-h-screen grid place-items-center bg-slate-50 text-slate-900 px-4 py-10 sm:py-16 font-primary selection:bg-[#F7BC0F]">
 
       {/* Main Card */}
-      <div className="w-full max-w-lg bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 md:p-10 shadow-xl shadow-slate-200/60 relative z-10 transition-all duration-300">
-        {/* Brand Logo */}
-        <div className="flex flex-col items-center justify-center mb-4">
-          <Link href="/" className="group transition-transform active:scale-95 cursor-pointer focus:outline-none" title="Maatram Foundation">
-            <Image
-              src="/assets/images/logo.png"
-              alt="Maatram Foundation"
-              width={160}
-              height={80}
-              priority
-              className="h-14 w-auto object-contain transition-opacity group-hover:opacity-90"
-            />
-          </Link>
-        </div>
-
-        {/* Heading & Subtitle */}
-        <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight text-center">
+      <div className="w-full max-w-[29rem] rounded-3xl border border-slate-200 bg-white p-6 shadow-xl shadow-slate-200/60 sm:p-10">
+        <header className="mb-7 flex items-center gap-3 border-b border-slate-200 pb-5">
+          <span aria-hidden="true" className="h-6 w-1.5 rounded-full bg-[#F7BC0F]" />
+          <Link href="/" className="font-heading text-sm font-bold tracking-wide text-slate-700">Maatram Foundation</Link>
+        </header>
+        <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight text-left">
           Student & Alumni Sign In
         </h1>
-        <p className="font-primary text-xs sm:text-sm text-slate-600 leading-relaxed mt-1.5 text-center">
+        <p className="font-primary text-xs sm:text-sm text-slate-600 leading-relaxed mt-2 text-left">
           Access your student volunteer tasks, academic progress, and alumni network portal.
         </p>
 
@@ -316,6 +302,7 @@ export default function LoginScreen() {
                     <AtSymbolIcon className="w-4 h-4 text-slate-400" />
                   </div>
                   <input
+                    suppressHydrationWarning
                     type="text"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
@@ -345,6 +332,7 @@ export default function LoginScreen() {
                     <LockClosedIcon className="w-4 h-4 text-slate-400" />
                   </div>
                   <input
+                    suppressHydrationWarning
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -354,6 +342,7 @@ export default function LoginScreen() {
                     className="w-full bg-slate-50/70 border border-slate-200 rounded-xl pl-10 pr-10 py-3 text-slate-900 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:border-[#F7BC0F] focus:bg-white focus:ring-2 focus:ring-[#F7BC0F]/40 transition font-primary"
                   />
                   <button
+                    suppressHydrationWarning
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
@@ -370,6 +359,7 @@ export default function LoginScreen() {
 
               {/* Submit Button */}
               <button
+                suppressHydrationWarning
                 type="submit"
                 disabled={isLoading}
                 className="w-full bg-[#F7BC0F] hover:bg-[#e5ad0c] active:scale-[0.99] text-slate-950 font-heading font-black text-sm sm:text-base py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 shadow-md shadow-[#F7BC0F]/30 hover:shadow-lg hover:shadow-[#F7BC0F]/40 transition-all duration-200 cursor-pointer mt-5 border border-[#e5ad0c] disabled:opacity-70"
@@ -390,6 +380,7 @@ export default function LoginScreen() {
               <div className="flex items-center justify-between gap-1.5 sm:gap-2">
                 {otp.map((digit, idx) => (
                   <input
+                    suppressHydrationWarning
                     key={idx}
                     ref={(el) => {
                       otpInputRefs.current[idx] = el;
@@ -411,6 +402,7 @@ export default function LoginScreen() {
 
               <div className="space-y-3 pt-2">
                 <button
+                  suppressHydrationWarning
                   type="submit"
                   disabled={isLoading}
                   className="w-full bg-[#F7BC0F] hover:bg-[#e5ad0c] active:scale-[0.99] text-slate-950 font-heading font-black text-sm sm:text-base py-3.5 px-6 rounded-xl flex items-center justify-center gap-2 shadow-md shadow-[#F7BC0F]/30 hover:shadow-lg hover:shadow-[#F7BC0F]/40 transition-all duration-200 cursor-pointer border border-[#e5ad0c] disabled:opacity-70"
@@ -420,6 +412,8 @@ export default function LoginScreen() {
                 </button>
 
                 <button
+
+                  suppressHydrationWarning
                   type="button"
                   onClick={() => {
                     setRequires2FA(false);

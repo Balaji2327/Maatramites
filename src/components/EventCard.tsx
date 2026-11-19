@@ -94,7 +94,7 @@ export default function EventCard({
   const isQuotaFull = !isAcceptedByUser && myNeededCount > 0 && myAcceptedCount >= myNeededCount;
 
   return (
-    <div className="group bg-white rounded-3xl border border-slate-200 shadow-xs hover:shadow-md hover:border-[#F7BC0F] transition-all duration-300 flex flex-col justify-between overflow-hidden">
+    <div className="group @container min-w-0 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow flex flex-col justify-between overflow-hidden">
       <div
         onClick={() => {
           if (!isRegisteredVolunteer && onRegisterVolunteer) {
@@ -105,18 +105,10 @@ export default function EventCard({
         }}
         className="cursor-pointer"
       >
-        {/* Optional Event Image */}
+        <header className="space-y-4 border-b border-slate-200 bg-slate-50 p-5">
         {event.imageUrl ? (
-          <div className="relative w-full h-44 bg-slate-100 overflow-hidden shrink-0">
-            <Image
-              src={event.imageUrl}
-              alt={event.title}
-              fill
-              unoptimized
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-            <div className="absolute top-3 left-3 flex items-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="relative flex items-center gap-1.5">
               <span
                 className={`text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-2xs backdrop-blur-xs flex items-center gap-1.5 ${
                   isRemote ? "bg-blue-600 text-white" : "bg-emerald-600 text-white"
@@ -135,7 +127,7 @@ export default function EventCard({
                 )}
               </span>
             </div>
-            <div className="absolute top-3 right-3">
+            <div className="relative">
               {isAcceptedByUser ? (
                 <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border shadow-2xs backdrop-blur-xs bg-emerald-600 text-white border-emerald-500 flex items-center gap-1">
                   <CheckCircleIcon className="w-3.5 h-3.5 stroke-[2.5]" />
@@ -155,7 +147,7 @@ export default function EventCard({
             </div>
           </div>
         ) : (
-          <div className="p-5 pb-0 flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between gap-2">
             <span
               className={`text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border flex items-center gap-1.5 ${
                 isRemote
@@ -193,40 +185,34 @@ export default function EventCard({
             ) : null}
           </div>
         )}
-
-        {/* Content Details */}
-        <div className="p-5 space-y-3">
-          <h3 className="font-heading font-bold text-base text-slate-900 group-hover:text-amber-900 transition line-clamp-1">
+          <div className="flex items-center gap-4">
+            {event.imageUrl && (
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-slate-100">
+            <Image
+              src={event.imageUrl}
+              alt={event.title}
+              fill
+              unoptimized
+              sizes="80px"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+              </div>
+            )}
+            <div className="min-w-0 flex-1 space-y-2">
+          <h3 className="font-heading font-extrabold text-xl leading-tight tracking-tight text-slate-900 break-words">
             {event.title}
           </h3>
-
-          <p className="text-xs text-slate-600 font-primary line-clamp-2 leading-relaxed">
-            {event.description}
-          </p>
-
-          {/* Volunteer Task Highlight */}
-          {event.taskToComplete && (
-            <div className="p-2.5 rounded-xl bg-amber-50/70 border border-amber-200/80 text-xs text-amber-950 flex items-start gap-2">
-              <ClipboardDocumentCheckIcon className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-              <div className="min-w-0">
-                <span className="font-bold">Task: </span>
-                <span className="line-clamp-1">{event.taskToComplete}</span>
-              </div>
-            </div>
-          )}
-
-          {/* Key Event Details Grid */}
-          <div className="space-y-1.5 pt-2 border-t border-slate-100 text-xs text-slate-600">
+              <div className="grid gap-1.5 text-xs text-slate-600">
             {/* Remote Duration vs Offline Schedule */}
             {isRemote ? (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <ClockIcon className="w-4 h-4 text-[#F7BC0F] shrink-0 stroke-[2]" />
                 <span className="font-medium text-slate-800">
                   Duration: {event.duration || "Self-paced"}
                 </span>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <CalendarDaysIcon className="w-4 h-4 text-[#F7BC0F] shrink-0 stroke-[2]" />
                 <span className="font-medium text-slate-800">{event.date}</span>
                 {event.time && (
@@ -243,14 +229,34 @@ export default function EventCard({
 
             {/* Offline Venue Location */}
             {!isRemote && event.location && (
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <MapPinIcon className="w-4 h-4 text-[#F7BC0F] shrink-0 stroke-[2]" />
-                <span className="truncate">{event.location}</span>
+                <span className="break-words">{event.location}</span>
               </div>
             )}
-
+              </div>
+            </div>
+          </div>
+        </header>
+        <div className="grid gap-4 p-5 @min-[30rem]:grid-cols-[minmax(0,1fr)_11rem]">
+          <div className="min-w-0 space-y-3">
+          <p className="text-sm text-slate-600 font-primary leading-relaxed break-words">
+            {event.description}
+          </p>
+          {/* Volunteer Task Highlight */}
+          {event.taskToComplete && (
+            <div className="px-3 py-2.5 rounded-r-lg bg-amber-50/70 border-l-[3px] border-[#F7BC0F] text-xs text-amber-950 flex items-start gap-2">
+              <ClipboardDocumentCheckIcon className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+              <div className="min-w-0">
+                <span className="font-bold">Task: </span>
+                <span className="break-words">{event.taskToComplete}</span>
+              </div>
+            </div>
+          )}
+          </div>
+          <section aria-label="Volunteer places" className="space-y-2 border-t border-slate-200 pt-3 @min-[30rem]:border-l @min-[30rem]:border-t-0 @min-[30rem]:pl-4 @min-[30rem]:pt-0">
             {/* Volunteer Quotas (Separate student and alumni counts) */}
-            <div className="pt-2 border-t border-slate-100 grid grid-cols-2 gap-2 text-[11px]">
+            <div className="grid grid-cols-2 gap-2 text-xs">
               <div
                 className={`p-2 rounded-xl border ${
                   !isAlumni
@@ -263,7 +269,7 @@ export default function EventCard({
                     Students {!isAlumni && "● Your Quota"}
                   </span>
                 </div>
-                <span className="font-extrabold text-slate-900 font-heading text-xs mt-0.5 block">
+                <span className="font-extrabold text-slate-900 font-heading text-base mt-0.5 block">
                   {sAcceptedCount} / {sNeededCount} <span className="font-normal text-slate-500">accepted</span>
                 </span>
               </div>
@@ -280,12 +286,11 @@ export default function EventCard({
                     Alumni {isAlumni && "● Your Quota"}
                   </span>
                 </div>
-                <span className="font-extrabold text-slate-900 font-heading text-xs mt-0.5 block">
+                <span className="font-extrabold text-slate-900 font-heading text-base mt-0.5 block">
                   {aAcceptedCount} / {aNeededCount} <span className="font-normal text-slate-500">accepted</span>
                 </span>
               </div>
             </div>
-
             {/* Eligible Student Years */}
             {event.eligibleYears && event.eligibleYears.length > 0 && (
               <div className="text-[11px] text-slate-500 pt-1">
@@ -293,7 +298,7 @@ export default function EventCard({
                 {event.eligibleYears.map((yr) => `Year ${yr}`).join(", ")}
               </div>
             )}
-          </div>
+          </section>
         </div>
       </div>
 
