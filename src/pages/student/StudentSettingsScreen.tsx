@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import {
+  XMarkIcon,
   Cog6ToothIcon,
   LockClosedIcon,
   DevicePhoneMobileIcon,
@@ -466,7 +467,7 @@ export default function StudentSettingsScreen() {
                 onClick={() => setShowEmailModal(false)}
                 className="text-slate-400 hover:text-slate-600 cursor-pointer font-bold text-sm"
               >
-                ✕
+                <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
             <form onSubmit={handleChangeEmail} className="space-y-4">
@@ -514,7 +515,7 @@ export default function StudentSettingsScreen() {
                 onClick={() => setShowPasswordModal(false)}
                 className="text-slate-400 hover:text-slate-600 cursor-pointer font-bold text-sm"
               >
-                ✕
+                <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
             {passwordError && (
@@ -599,7 +600,7 @@ export default function StudentSettingsScreen() {
                 onClick={() => setShowQrModal(false)}
                 className="text-slate-400 hover:text-slate-600 cursor-pointer font-bold text-sm"
               >
-                ✕
+                <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
 

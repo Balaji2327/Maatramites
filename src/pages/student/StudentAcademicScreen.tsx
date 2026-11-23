@@ -2,6 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import {
+  StarIcon,
+  CheckIcon,
+  PaperClipIcon,
   AcademicCapIcon,
   DocumentArrowUpIcon,
   CheckBadgeIcon,
@@ -715,7 +718,7 @@ export default function StudentAcademicScreen() {
                             {isCleared ? (
                               <>
                                 <span className="font-heading font-black text-xs text-white leading-none">
-                                  {s.gpa ? `${s.gpa}` : "✓"}
+                                  {s.gpa ? `${s.gpa}` : <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Verified" />}
                                 </span>
                                 <span className="text-[9px] font-bold text-white/90 mt-0.5">GPA</span>
                               </>
@@ -1131,7 +1134,7 @@ export default function StudentAcademicScreen() {
                       {uploadedFileName && (
                         <div className="flex items-center justify-between text-xs bg-white p-3 rounded-xl border border-amber-200 shadow-2xs">
                           <span className="font-mono text-[11px] text-slate-800 truncate max-w-[320px]">
-                            📎 {uploadedFileName}
+                            <PaperClipIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> {uploadedFileName}
                           </span>
                           <button
                             type="button"
@@ -1248,7 +1251,7 @@ export default function StudentAcademicScreen() {
                       <div className="grid grid-cols-3 gap-2.5">
                         <div className={selectedExamType === "CAT 1" ? "p-1.5 bg-amber-100/50 rounded-xl border border-amber-300" : ""}>
                           <label className="block text-slate-700 text-[11px] font-bold mb-1">
-                            CAT 1 (/25) {selectedExamType === "CAT 1" && "★"}
+                            CAT 1 (/25) {selectedExamType === "CAT 1" && <StarIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Selected" />}
                           </label>
                           <input
                             type="text"
@@ -1260,7 +1263,7 @@ export default function StudentAcademicScreen() {
                         </div>
                         <div className={selectedExamType === "CAT 2" ? "p-1.5 bg-amber-100/50 rounded-xl border border-amber-300" : ""}>
                           <label className="block text-slate-700 text-[11px] font-bold mb-1">
-                            CAT 2 (/25) {selectedExamType === "CAT 2" && "★"}
+                            CAT 2 (/25) {selectedExamType === "CAT 2" && <StarIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Selected" />}
                           </label>
                           <input
                             type="text"
@@ -1272,7 +1275,7 @@ export default function StudentAcademicScreen() {
                         </div>
                         <div className={selectedExamType === "CAT 3" ? "p-1.5 bg-amber-100/50 rounded-xl border border-amber-300" : ""}>
                           <label className="block text-slate-700 text-[11px] font-bold mb-1">
-                            Model / CAT 3 (/50) {selectedExamType === "CAT 3" && "★"}
+                            Model / CAT 3 (/50) {selectedExamType === "CAT 3" && <StarIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Selected" />}
                           </label>
                           <input
                             type="text"
@@ -1289,7 +1292,7 @@ export default function StudentAcademicScreen() {
                     <div className="grid grid-cols-2 gap-3">
                       <div className={selectedExamType === "Semester Exam" ? "p-1.5 bg-emerald-50 rounded-xl border border-emerald-300" : ""}>
                         <label className="block text-slate-700 font-bold mb-1">
-                          Semester Exam (Grade / Marks) {selectedExamType === "Semester Exam" && "★"}
+                          Semester Exam (Grade / Marks) {selectedExamType === "Semester Exam" && <StarIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Selected" />}
                         </label>
                         <input
                           type="text"

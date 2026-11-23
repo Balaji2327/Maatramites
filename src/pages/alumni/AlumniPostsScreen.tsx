@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import {
+  XMarkIcon,
   ChatBubbleLeftRightIcon,
   MagnifyingGlassIcon,
   PlusIcon,
@@ -324,7 +325,7 @@ export default function AlumniPostsScreen() {
                 onClick={() => setSelectedPost(null)}
                 className="text-slate-400 hover:text-slate-600 font-bold text-base p-1 rounded-lg hover:bg-slate-100 cursor-pointer"
               >
-                ✕
+                <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
 
@@ -380,7 +381,7 @@ export default function AlumniPostsScreen() {
                 onClick={() => setIsNewPostModalOpen(false)}
                 className="text-slate-400 hover:text-slate-600 font-bold cursor-pointer text-sm"
               >
-                ✕
+                <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
 

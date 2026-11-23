@@ -253,7 +253,7 @@ export default function StudentEventsScreen() {
 
       if (res.success) {
         setToastType("success");
-        setToastMessage(`🎉 Seat confirmed! You are accepted for "${event.title}" on a first-come basis.`);
+        setToastMessage(`Seat confirmed! You are accepted for "${event.title}" on a first-come basis.`);
         await fetchEvents();
       } else {
         setToastType("error");

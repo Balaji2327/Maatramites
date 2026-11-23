@@ -4,6 +4,9 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  XMarkIcon,
+  StarIcon,
+  CheckIcon,
   Squares2X2Icon,
   CalendarDaysIcon,
   AcademicCapIcon,
@@ -92,7 +95,7 @@ export default function StudentDashboardScreen() {
             <div className="space-y-2 relative z-10">
               <div className="flex items-center gap-2">
                 <span className="px-3 py-1 bg-amber-100 text-amber-950 font-heading font-black text-xs rounded-full border border-amber-300">
-                  ★ Active Scholar
+                  <StarIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> Active Scholar
                 </span>
                 <span className="text-xs font-mono font-bold text-slate-500">
                   {rollNumber}
@@ -173,7 +176,7 @@ export default function StudentDashboardScreen() {
 
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
               <span className="text-[10px] font-heading font-black uppercase text-slate-400 tracking-wider">
-                Scholarship Status
+                Admission Status
               </span>
               <div className="flex items-baseline gap-2 mt-1">
                 <span className="font-heading font-black text-lg text-slate-900">Admitted</span>
@@ -240,7 +243,7 @@ export default function StudentDashboardScreen() {
 
                       {app.volunteer_suggestion ? (
                         <span className="px-2 py-0.5 bg-slate-100 text-slate-800 border border-slate-200 rounded-md text-[10px] font-bold shrink-0">
-                          ✓ Verified
+                          <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> Verified
                         </span>
                       ) : (
                         <span className="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-md text-[10px] font-bold shrink-0">
@@ -388,7 +391,7 @@ export default function StudentDashboardScreen() {
                 onClick={() => setSelectedApplicant(null)}
                 className="text-slate-400 hover:text-slate-600 font-bold text-sm"
               >
-                ✕
+                <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
 
@@ -406,7 +409,7 @@ export default function StudentDashboardScreen() {
                 <textarea
                   value={volunteerNote}
                   onChange={(e) => setVolunteerNote(e.target.value)}
-                  placeholder="Enter details from phone call: family genuine condition, need for scholarship, parent background, recommended branch..."
+                  placeholder="Enter details from phone call: family genuine condition, need for financial support, parent background, recommended branch..."
                   rows={4}
                   className="w-full p-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7BC0F] text-slate-900 font-medium"
                 />

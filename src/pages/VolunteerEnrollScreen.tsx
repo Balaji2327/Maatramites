@@ -4,6 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  CheckIcon,
   PhoneIcon,
   EnvelopeIcon,
   AcademicCapIcon,
@@ -666,7 +667,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                 onClick={() => setToastMessage("")}
                 className="text-amber-800 hover:text-amber-950 font-bold"
               >
-                ✕
+                <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
           )}
@@ -757,7 +758,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                               </div>
                             </div>
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-900 border border-emerald-300 text-xs font-bold rounded-lg shrink-0">
-                              ✓ Televerification Cleared
+                              <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> Televerification Cleared
                             </span>
                           </div>
 
@@ -859,7 +860,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                                             </span>
                                             {photoUrl ? (
                                               <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 text-[9px] font-bold rounded">
-                                                ✓ Added
+                                                <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> Added
                                               </span>
                                             ) : (
                                               <span className="px-1.5 py-0.5 bg-amber-100 text-amber-800 text-[9px] font-bold rounded">
@@ -937,7 +938,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                                   <textarea
                                     value={physicalStudentDescription}
                                     onChange={(e) => setPhysicalStudentDescription(e.target.value)}
-                                    placeholder="Enter description about the student (e.g. Visited the student's residence. The family lives in a single room home with basic amenities. Father works as a daily wage laborer and mother is a homemaker. Student is hardworking, determined to pursue engineering, and genuinely requires 100% free scholarship support)..."
+                                    placeholder="Enter description about the student (e.g. Visited the student's residence. The family lives in a single room home with basic amenities. Father works as a daily wage laborer and mother is a homemaker. Student is hardworking, determined to pursue engineering, and genuinely requires full financial support)..."
                                     rows={4}
                                     className="w-full text-xs p-3.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 font-medium"
                                   />
@@ -1733,7 +1734,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                         </span>
                         <p className="text-slate-800 mt-1 leading-relaxed">
                           {selectedAssignedApplication.whyNeedSupport ||
-                            selectedAssignedApplication.why_scholarship ||
+
                             selectedAssignedApplication.reason_for_applying ||
                             "—"}
                         </p>
@@ -1755,7 +1756,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                           : "bg-white border-slate-200 text-slate-500"
                           }`}
                       >
-                        {selectedAssignedApplication.orphan ? "✓ Orphan Student" : "Not Orphan"}
+                        {selectedAssignedApplication.orphan ? <> <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> Orphan Student</> : "Not Orphan"}
                       </span>
                       <span
                         className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${selectedAssignedApplication.single_parent
@@ -1763,7 +1764,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                           : "bg-white border-slate-200 text-slate-500"
                           }`}
                       >
-                        {selectedAssignedApplication.single_parent ? "✓ Single Parent Child" : "Both Parents"}
+                        {selectedAssignedApplication.single_parent ? <> <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> Single Parent Child</> : "Both Parents"}
                       </span>
                       <span
                         className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${selectedAssignedApplication.first_graduate || selectedAssignedApplication.is_first_graduate
@@ -1772,12 +1773,12 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                           }`}
                       >
                         {selectedAssignedApplication.first_graduate || selectedAssignedApplication.is_first_graduate
-                          ? "✓ First-Generation Learner"
+                          ? <> <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> First-Generation Learner</>
                           : "Non-First Graduate"}
                       </span>
                       <span className="px-2.5 py-1 rounded-lg text-xs font-bold border bg-emerald-50 border-emerald-300 text-emerald-950">
                         {selectedAssignedApplication.willingToRelocateTN !== false
-                          ? "✓ Willing to Relocate in Tamil Nadu"
+                          ? <> <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> Willing to Relocate in Tamil Nadu</>
                           : "Local Only"}
                       </span>
                     </div>
@@ -1832,7 +1833,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                           Application Documents (4 Documents)
                         </span>
                         <span className="text-[11px] text-slate-500 font-medium">
-                          Documents submitted during initial scholarship application
+                          Documents submitted during initial admission application
                         </span>
                       </div>
 
@@ -2350,7 +2351,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                 onClick={() => setIsRegisterModalOpen(false)}
                 className="text-slate-400 hover:text-slate-600 font-bold text-sm w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center transition cursor-pointer"
               >
-                ✕
+                <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
 

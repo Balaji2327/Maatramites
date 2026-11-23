@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  StarIcon,
   Squares2X2Icon,
   CalendarDaysIcon,
   UserGroupIcon,
@@ -34,7 +35,7 @@ export default function AlumniDashboardScreen() {
             <div className="space-y-2 relative z-10">
               <div className="flex items-center gap-2">
                 <span className="px-3 py-1 bg-amber-50 text-amber-950 font-heading font-black text-xs rounded-full border border-amber-300">
-                  ★ Maatram Alumni Chapter
+                  <StarIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> Maatram Alumni Chapter
                 </span>
                 <span className="text-xs font-mono font-bold text-slate-500">
                   MF-ALU-2021-008

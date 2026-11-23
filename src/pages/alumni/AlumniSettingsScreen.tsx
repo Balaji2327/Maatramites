@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import {
+  XMarkIcon,
   Cog6ToothIcon,
   LockClosedIcon,
   DevicePhoneMobileIcon,
@@ -882,7 +883,7 @@ export default function AlumniSettingsScreen() {
                 College & Graduation History
               </h2>
               <p className="font-primary text-xs text-slate-500 mt-1">
-                Your Maatram scholarship college and graduation batch details.
+                Your college and graduation batch details.
               </p>
             </div>
 
@@ -891,7 +892,7 @@ export default function AlumniSettingsScreen() {
               <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-heading font-bold text-slate-900">
-                    Scholarship Alumni Graduation Record
+                    Alumni Graduation Record
                   </span>
                   {collegeSavedMsg && (
                     <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 animate-in fade-in">
@@ -948,7 +949,7 @@ export default function AlumniSettingsScreen() {
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-bold mb-1">Scholarship / Graduation Batch</label>
+                    <label className="block text-slate-700 font-bold mb-1">Graduation Batch</label>
                     <input
                       type="text"
                       disabled={!isEditingCollege}
@@ -994,7 +995,7 @@ export default function AlumniSettingsScreen() {
                 onClick={() => setShowEmailModal(false)}
                 className="text-slate-400 hover:text-slate-600 cursor-pointer font-bold text-sm"
               >
-                ✕
+                <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
             <form onSubmit={handleChangeEmail} className="space-y-4">
@@ -1042,7 +1043,7 @@ export default function AlumniSettingsScreen() {
                 onClick={() => setShowPasswordModal(false)}
                 className="text-slate-400 hover:text-slate-600 cursor-pointer font-bold text-sm"
               >
-                ✕
+                <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
             {passwordError && (
@@ -1127,7 +1128,7 @@ export default function AlumniSettingsScreen() {
                 onClick={() => setShowQrModal(false)}
                 className="text-slate-400 hover:text-slate-600 cursor-pointer font-bold text-sm"
               >
-                ✕
+                <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
 
