@@ -17,6 +17,7 @@ const libreFranklin = Libre_Franklin({
 });
 
 export const metadata: Metadata = {
+  icons: { icon: "/title.png" },
   title: "Maatram Student & Alumni Platform",
   description:
     "Empowering Scholars & Alumni. Connect, volunteer, track academic performance, and stay updated with Maatram Foundation.",
