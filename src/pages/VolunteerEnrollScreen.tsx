@@ -36,7 +36,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import StudentSidebar from "@/components/StudentSidebar";
-import { getStoredUser, studentApi } from "@/lib/api";
+import { getStoredUser, studentApi, getMediaUrl } from "@/lib/api";
 
 interface VolunteerScreenProps {
   role: "student" | "alumni";
@@ -393,22 +393,39 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
           }
         );
 
+        const returnedPhotos = res?.data?.physical_verification_photos || {
+          front_view_home: res?.data?.front_view_home || physicalPhotos.front_view_home,
+          inside_home: res?.data?.inside_home || physicalPhotos.inside_home,
+          furniture: res?.data?.furniture || physicalPhotos.furniture,
+          with_student: res?.data?.with_student || physicalPhotos.with_student,
+          backward: res?.data?.backward || physicalPhotos.backward,
+        };
+
         const updatedFields = {
           physical_volunteer_suggestion: physicalFinalSuggestion.trim(),
           physical_student_description: physicalStudentDescription.trim(),
           student_description: physicalStudentDescription.trim(),
-          physical_verification_photos: physicalPhotos,
-          front_view_home: physicalPhotos.front_view_home,
-          inside_home: physicalPhotos.inside_home,
-          furniture: physicalPhotos.furniture,
-          with_student: physicalPhotos.with_student,
-          backward: physicalPhotos.backward,
+          physical_verification_photos: returnedPhotos,
+          front_view_home: returnedPhotos.front_view_home,
+          inside_home: returnedPhotos.inside_home,
+          furniture: returnedPhotos.furniture,
+          with_student: returnedPhotos.with_student,
+          backward: returnedPhotos.backward,
           physical_volunteer_name: volName,
           physical_volunteer_email: volEmail,
           physical_volunteer_phone: volPhone,
           physical_volunteer_role: volRole,
           physical_volunteer_affiliation: volAffiliation,
         };
+
+        // Update active local physicalPhotos state with returned S3 keys / URLs
+        setPhysicalPhotos({
+          front_view_home: returnedPhotos.front_view_home || "",
+          inside_home: returnedPhotos.inside_home || "",
+          furniture: returnedPhotos.furniture || "",
+          with_student: returnedPhotos.with_student || "",
+          backward: returnedPhotos.backward || "",
+        });
 
         setToastMessage("Physical verification report successfully submitted to administration!");
         setIsEditingSuggestion(false);
@@ -465,16 +482,16 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
           prev.map((app) =>
             String(app.id) === String(appId) || String(app.application_number) === String(appId)
               ? {
-                  ...app,
-                  volunteer_suggestion: volunteerSuggestionInput.trim(),
-                  tele_volunteer_suggestion: volunteerSuggestionInput.trim(),
-                  volunteer_name: volName,
-                  tele_volunteer_name: volName,
-                  tele_volunteer_email: volEmail,
-                  tele_volunteer_phone: volPhone,
-                  tele_volunteer_role: volRole,
-                  tele_volunteer_affiliation: volAffiliation,
-                }
+                ...app,
+                volunteer_suggestion: volunteerSuggestionInput.trim(),
+                tele_volunteer_suggestion: volunteerSuggestionInput.trim(),
+                volunteer_name: volName,
+                tele_volunteer_name: volName,
+                tele_volunteer_email: volEmail,
+                tele_volunteer_phone: volPhone,
+                tele_volunteer_role: volRole,
+                tele_volunteer_affiliation: volAffiliation,
+              }
               : app
           )
         );
@@ -827,7 +844,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
 
                                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                                     {PHYSICAL_PHOTO_SLOTS.map((slot, idx) => {
-                                      const photoUrl = physicalPhotos[slot.key];
+                                      const photoUrl = getMediaUrl(physicalPhotos[slot.key]);
                                       return (
                                         <div
                                           key={slot.key}
@@ -996,10 +1013,11 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                                   </span>
                                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                                     {PHYSICAL_PHOTO_SLOTS.map((slot, idx) => {
-                                      const photoUrl =
+                                      const rawKey =
                                         selectedAssignedApplication[slot.key] ||
                                         selectedAssignedApplication.physical_verification_photos?.[slot.key] ||
                                         physicalPhotos[slot.key];
+                                      const photoUrl = getMediaUrl(rawKey);
 
                                       return (
                                         <div
@@ -1730,24 +1748,24 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                     <div className="flex flex-wrap gap-2">
                       <span
                         className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${selectedAssignedApplication.orphan
-                            ? "bg-rose-100 border-rose-300 text-rose-950"
-                            : "bg-white border-slate-200 text-slate-500"
+                          ? "bg-rose-100 border-rose-300 text-rose-950"
+                          : "bg-white border-slate-200 text-slate-500"
                           }`}
                       >
                         {selectedAssignedApplication.orphan ? "✓ Orphan Student" : "Not Orphan"}
                       </span>
                       <span
                         className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${selectedAssignedApplication.single_parent
-                            ? "bg-purple-100 border-purple-300 text-purple-950"
-                            : "bg-white border-slate-200 text-slate-500"
+                          ? "bg-purple-100 border-purple-300 text-purple-950"
+                          : "bg-white border-slate-200 text-slate-500"
                           }`}
                       >
                         {selectedAssignedApplication.single_parent ? "✓ Single Parent Child" : "Both Parents"}
                       </span>
                       <span
                         className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${selectedAssignedApplication.first_graduate || selectedAssignedApplication.is_first_graduate
-                            ? "bg-amber-100 border-amber-300 text-amber-950"
-                            : "bg-white border-slate-200 text-slate-500"
+                          ? "bg-amber-100 border-amber-300 text-amber-950"
+                          : "bg-white border-slate-200 text-slate-500"
                           }`}
                       >
                         {selectedAssignedApplication.first_graduate || selectedAssignedApplication.is_first_graduate

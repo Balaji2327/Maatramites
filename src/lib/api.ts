@@ -57,6 +57,15 @@ export function setActiveRole(role: "student" | "alumni") {
   }
 }
 
+export function getMediaUrl(s3KeyOrUrl: string): string {
+  if (!s3KeyOrUrl) return "";
+  if (s3KeyOrUrl.startsWith("http://") || s3KeyOrUrl.startsWith("https://") || s3KeyOrUrl.startsWith("data:")) {
+    return s3KeyOrUrl;
+  }
+  const cleanKey = s3KeyOrUrl.startsWith("/") ? s3KeyOrUrl.slice(1) : s3KeyOrUrl;
+  return `${API_BASE_URL}/admin/media/${cleanKey}`;
+}
+
 export interface ApiResponse<T = any> {
   success: boolean;
   data?: T;
