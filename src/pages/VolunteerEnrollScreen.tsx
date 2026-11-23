@@ -36,7 +36,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import StudentSidebar from "@/components/StudentSidebar";
-import { getStoredUser, studentApi, getMediaUrl } from "@/lib/api";
+import { getStoredUser, studentApi, getPhysicalPhotoUrl } from "@/lib/api";
 
 interface VolunteerScreenProps {
   role: "student" | "alumni";
@@ -88,6 +88,8 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
     with_student: "",
     backward: "",
   });
+  const [processingPhotos, setProcessingPhotos] = useState(0);
+  const allPhotosReady = processingPhotos === 0 && PHYSICAL_PHOTO_SLOTS.every(({ key }) => Boolean(physicalPhotos[key]));
   const [physicalStudentDescription, setPhysicalStudentDescription] = useState("");
   const [physicalFinalSuggestion, setPhysicalFinalSuggestion] = useState("");
   const [previewImage, setPreviewImage] = useState<{ url: string; title: string } | null>(null);
@@ -327,6 +329,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
   ) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setProcessingPhotos(count => count + 1);
     try {
       const compressed = await compressImage(file);
       setPhysicalPhotos((prev) => ({
@@ -335,6 +338,9 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
       }));
     } catch (err) {
       console.error("Failed to process photo upload:", err);
+      setToastMessage("Could not read this photo. Please select it again.");
+    } finally {
+      setProcessingPhotos(count => count - 1);
     }
   };
 
@@ -361,6 +367,10 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
     const volRole = isAlumni ? "Alumni Volunteer" : "Student Volunteer";
 
     if (phase === "physical") {
+      if (!allPhotosReady) {
+        setToastMessage("Add all five home visit photos before submitting.");
+        return;
+      }
       if (!physicalStudentDescription.trim()) {
         setToastMessage("Please enter the description about the student.");
         return;
@@ -385,21 +395,14 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
             student_description: physicalStudentDescription.trim(),
             physical_student_description: physicalStudentDescription.trim(),
             photos: physicalPhotos,
-            front_view_home: physicalPhotos.front_view_home,
-            inside_home: physicalPhotos.inside_home,
-            furniture: physicalPhotos.furniture,
-            with_student: physicalPhotos.with_student,
-            backward: physicalPhotos.backward,
           }
         );
 
-        const returnedPhotos = res?.data?.physical_verification_photos || {
-          front_view_home: res?.data?.front_view_home || physicalPhotos.front_view_home,
-          inside_home: res?.data?.inside_home || physicalPhotos.inside_home,
-          furniture: res?.data?.furniture || physicalPhotos.furniture,
-          with_student: res?.data?.with_student || physicalPhotos.with_student,
-          backward: res?.data?.backward || physicalPhotos.backward,
-        };
+        if (!res.success) throw new Error(res.message || "Could not save the physical verification report.");
+        const returnedPhotos = res.data?.physical_verification_photos;
+        if (!returnedPhotos || PHYSICAL_PHOTO_SLOTS.some(({ key }) => !returnedPhotos[key])) {
+          throw new Error("The server did not confirm all five photos. Please retry.");
+        }
 
         const updatedFields = {
           physical_volunteer_suggestion: physicalFinalSuggestion.trim(),
@@ -446,8 +449,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
         }
       } catch (err) {
         console.error("Failed to save physical verification report:", err);
-        setToastMessage("Saved report locally.");
-        setIsEditingSuggestion(false);
+        setToastMessage(err instanceof Error ? err.message : "Could not save the report. Please retry.");
       } finally {
         setIsSavingSuggestion(false);
         setTimeout(() => setToastMessage(""), 5000);
@@ -640,7 +642,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
     setVolunteerSuggestionInput(initialInput);
 
     if (isPhysical) {
-      setIsEditingSuggestion(!Boolean(physicalSuggestion || studentDesc));
+      setIsEditingSuggestion(!(physicalSuggestion && studentDesc && PHYSICAL_PHOTO_SLOTS.every(({ key }) => app[key] || photos[key] || ext[key])));
     } else {
       setIsEditingSuggestion(!Boolean(initialInput));
     }
@@ -732,7 +734,8 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                   if (isPhysicalVerification) {
                     const hasPhysicalSuggestion = Boolean(
                       selectedAssignedApplication.physical_volunteer_suggestion &&
-                      selectedAssignedApplication.physical_volunteer_suggestion.trim() !== ""
+                      selectedAssignedApplication.physical_volunteer_suggestion.trim() !== "" &&
+                      PHYSICAL_PHOTO_SLOTS.every(({ key }) => selectedAssignedApplication[key] || selectedAssignedApplication.physical_verification_photos?.[key])
                     );
 
                     return (
@@ -844,7 +847,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
 
                                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                                     {PHYSICAL_PHOTO_SLOTS.map((slot, idx) => {
-                                      const photoUrl = getMediaUrl(physicalPhotos[slot.key]);
+                                      const photoUrl = getPhysicalPhotoUrl(physicalPhotos[slot.key]);
                                       return (
                                         <div
                                           key={slot.key}
@@ -872,7 +875,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                                                 alt={slot.title}
                                                 className="w-full h-full object-cover"
                                               />
-                                              <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+                                              <div className="absolute inset-0 bg-slate-950/60 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-within:opacity-100 transition flex items-center justify-center gap-2">
                                                 <button
                                                   type="button"
                                                   onClick={() => setPreviewImage({ url: photoUrl, title: slot.title })}
@@ -962,7 +965,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                                   {hasPhysicalSuggestion && (
                                     <button
                                       type="button"
-                                      onClick={() => setIsEditingSuggestion(false)}
+                                      onClick={() => handleOpenApplicantPage(selectedAssignedApplication)}
                                       className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition cursor-pointer"
                                     >
                                       Cancel
@@ -970,7 +973,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                                   )}
                                   <button
                                     type="button"
-                                    disabled={isSavingSuggestion}
+                                    disabled={isSavingSuggestion || !allPhotosReady || !physicalStudentDescription.trim() || !physicalFinalSuggestion.trim()}
                                     onClick={() =>
                                       handleSaveSuggestion(
                                         selectedAssignedApplication.id || selectedAssignedApplication.application_number,
@@ -997,6 +1000,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                                   <button
                                     type="button"
                                     onClick={() => {
+                                      handleOpenApplicantPage(selectedAssignedApplication);
                                       setIsEditingSuggestion(true);
                                     }}
                                     className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-950 border border-indigo-200 rounded-xl text-xs font-bold shrink-0 cursor-pointer transition shadow-2xs"
@@ -1015,9 +1019,8 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                                     {PHYSICAL_PHOTO_SLOTS.map((slot, idx) => {
                                       const rawKey =
                                         selectedAssignedApplication[slot.key] ||
-                                        selectedAssignedApplication.physical_verification_photos?.[slot.key] ||
-                                        physicalPhotos[slot.key];
-                                      const photoUrl = getMediaUrl(rawKey);
+                                        selectedAssignedApplication.physical_verification_photos?.[slot.key];
+                                      const photoUrl = getPhysicalPhotoUrl(rawKey);
 
                                       return (
                                         <div

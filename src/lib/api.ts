@@ -3,6 +3,11 @@ import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from "ax
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const API_BASE_URL = rawApiUrl.replace(/\/+$/, "").replace(/\/api$/, "");
 
+export function getPhysicalPhotoUrl(value: string = ""): string {
+  const key = value.match(/(?:^|\/admin\/media\/|\.amazonaws\.com\/)(physical_verification\/[\w.-]+)$/)?.[1];
+  return key ? `${API_BASE_URL}/admin/media/${key}` : value;
+}
+
 export function getAuthToken(): string | null {
   if (typeof window === "undefined") return null;
   return localStorage.getItem("maatram_student_token");
@@ -209,13 +214,11 @@ export const studentApi = {
         volunteer_affiliation: options?.volunteer_affiliation,
         student_description: options?.student_description || options?.physical_student_description,
         physical_student_description: options?.student_description || options?.physical_student_description,
-        photos: options?.photos,
-        front_view_home: options?.front_view_home || options?.photos?.front_view_home,
-        inside_home: options?.inside_home || options?.photos?.inside_home,
-        furniture: options?.furniture || options?.photos?.furniture,
-        with_student: options?.with_student || options?.photos?.with_student,
-        backward: options?.backward || options?.photos?.backward,
-      })
+        photos: options?.photos ?? {
+          front_view_home: options?.front_view_home, inside_home: options?.inside_home,
+          furniture: options?.furniture, with_student: options?.with_student, backward: options?.backward,
+        },
+      }, options?.phase === "physical" ? { timeout: 120000 } : undefined)
     ),
 
   // Alumni Directory
