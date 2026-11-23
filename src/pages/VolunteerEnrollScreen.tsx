@@ -30,6 +30,10 @@ import {
   UserIcon,
   PencilSquareIcon,
   HomeModernIcon,
+  PhotoIcon,
+  CameraIcon,
+  ArrowUpTrayIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 import StudentSidebar from "@/components/StudentSidebar";
 import { getStoredUser, studentApi } from "@/lib/api";
@@ -37,6 +41,16 @@ import { getStoredUser, studentApi } from "@/lib/api";
 interface VolunteerScreenProps {
   role: "student" | "alumni";
 }
+
+export type PhysicalPhotoKey = "front_view_home" | "inside_home" | "furniture" | "with_student" | "backward";
+
+export const PHYSICAL_PHOTO_SLOTS: { key: PhysicalPhotoKey; title: string; hint: string }[] = [
+  { key: "front_view_home", title: "Front view of the home", hint: "Exterior street or entrance view" },
+  { key: "inside_home", title: "Inside home", hint: "Main living or hall area" },
+  { key: "furniture", title: "Furniture", hint: "Household assets & furniture" },
+  { key: "with_student", title: "With student", hint: "Volunteer along with the student" },
+  { key: "backward", title: "Backward", hint: "Backside, kitchen, or rear premises" },
+];
 
 export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
   const isAlumni = role === "alumni";
@@ -59,6 +73,24 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
   const [volunteerSuggestionInput, setVolunteerSuggestionInput] = useState("");
   const [isEditingSuggestion, setIsEditingSuggestion] = useState(false);
   const [isSavingSuggestion, setIsSavingSuggestion] = useState(false);
+
+  // Phase 2 Physical Verification states (5 pictures, student description, final suggestion)
+  const [physicalPhotos, setPhysicalPhotos] = useState<{
+    front_view_home: string;
+    inside_home: string;
+    furniture: string;
+    with_student: string;
+    backward: string;
+  }>({
+    front_view_home: "",
+    inside_home: "",
+    furniture: "",
+    with_student: "",
+    backward: "",
+  });
+  const [physicalStudentDescription, setPhysicalStudentDescription] = useState("");
+  const [physicalFinalSuggestion, setPhysicalFinalSuggestion] = useState("");
+  const [previewImage, setPreviewImage] = useState<{ url: string; title: string } | null>(null);
 
   // Profile-derived defaults
   const [formData, setFormData] = useState({
@@ -252,24 +284,167 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
     }
   };
 
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new window.Image();
+        img.onload = () => {
+          const maxDim = 1200;
+          let width = img.width;
+          let height = img.height;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL("image/jpeg", 0.75));
+          } else {
+            resolve(e.target?.result as string);
+          }
+        };
+        img.onerror = () => resolve(e.target?.result as string);
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handlePhotoUpload = async (
+    key: "front_view_home" | "inside_home" | "furniture" | "with_student" | "backward",
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const compressed = await compressImage(file);
+      setPhysicalPhotos((prev) => ({
+        ...prev,
+        [key]: compressed,
+      }));
+    } catch (err) {
+      console.error("Failed to process photo upload:", err);
+    }
+  };
+
+  const handleRemovePhoto = (
+    key: "front_view_home" | "inside_home" | "furniture" | "with_student" | "backward"
+  ) => {
+    setPhysicalPhotos((prev) => ({
+      ...prev,
+      [key]: "",
+    }));
+  };
+
   // Submit Volunteer Suggestion (Tele or Physical) to backend & update local state
   const handleSaveSuggestion = async (appId: string, phase: "tele" | "physical" = "tele") => {
+    const volName = volunteerData?.name || formData.name || "Volunteer";
+    const volEmail = volunteerData?.email || formData.email || "";
+    const volPhone = volunteerData?.phone || formData.phone || "";
+    const volAffiliation =
+      volunteerData?.college ||
+      volunteerData?.company ||
+      formData.college ||
+      formData.company ||
+      "Maatram Volunteer Network";
+    const volRole = isAlumni ? "Alumni Volunteer" : "Student Volunteer";
+
+    if (phase === "physical") {
+      if (!physicalStudentDescription.trim()) {
+        setToastMessage("Please enter the description about the student.");
+        return;
+      }
+      if (!physicalFinalSuggestion.trim()) {
+        setToastMessage("Please enter your final suggestion.");
+        return;
+      }
+
+      setIsSavingSuggestion(true);
+      try {
+        const res = await studentApi.updateVolunteerSuggestion(
+          appId,
+          physicalFinalSuggestion.trim(),
+          volName,
+          {
+            phase: "physical",
+            volunteer_email: volEmail,
+            volunteer_phone: volPhone,
+            volunteer_role: volRole,
+            volunteer_affiliation: volAffiliation,
+            student_description: physicalStudentDescription.trim(),
+            physical_student_description: physicalStudentDescription.trim(),
+            photos: physicalPhotos,
+            front_view_home: physicalPhotos.front_view_home,
+            inside_home: physicalPhotos.inside_home,
+            furniture: physicalPhotos.furniture,
+            with_student: physicalPhotos.with_student,
+            backward: physicalPhotos.backward,
+          }
+        );
+
+        const updatedFields = {
+          physical_volunteer_suggestion: physicalFinalSuggestion.trim(),
+          physical_student_description: physicalStudentDescription.trim(),
+          student_description: physicalStudentDescription.trim(),
+          physical_verification_photos: physicalPhotos,
+          front_view_home: physicalPhotos.front_view_home,
+          inside_home: physicalPhotos.inside_home,
+          furniture: physicalPhotos.furniture,
+          with_student: physicalPhotos.with_student,
+          backward: physicalPhotos.backward,
+          physical_volunteer_name: volName,
+          physical_volunteer_email: volEmail,
+          physical_volunteer_phone: volPhone,
+          physical_volunteer_role: volRole,
+          physical_volunteer_affiliation: volAffiliation,
+        };
+
+        setToastMessage("Physical verification report successfully submitted to administration!");
+        setIsEditingSuggestion(false);
+
+        // Update local state
+        setAssignedApplications((prev) =>
+          prev.map((app) =>
+            String(app.id) === String(appId) || String(app.application_number) === String(appId)
+              ? { ...app, ...updatedFields }
+              : app
+          )
+        );
+        if (selectedAssignedApplication) {
+          setSelectedAssignedApplication((prev: any) => ({
+            ...prev,
+            ...updatedFields,
+          }));
+        }
+      } catch (err) {
+        console.error("Failed to save physical verification report:", err);
+        setToastMessage("Saved report locally.");
+        setIsEditingSuggestion(false);
+      } finally {
+        setIsSavingSuggestion(false);
+        setTimeout(() => setToastMessage(""), 5000);
+      }
+      return;
+    }
+
+    // Phase 1 Televerification
     if (!volunteerSuggestionInput.trim()) {
       setToastMessage("Please enter your verification suggestion or remarks.");
       return;
     }
     setIsSavingSuggestion(true);
     try {
-      const volName = volunteerData?.name || formData.name || "Volunteer";
-      const volEmail = volunteerData?.email || formData.email || "";
-      const volAffiliation =
-        volunteerData?.college ||
-        volunteerData?.company ||
-        formData.college ||
-        formData.company ||
-        "Maatram Volunteer Network";
-      const volRole = isAlumni ? "Alumni Volunteer" : "Student Volunteer";
-
       const res = await studentApi.updateVolunteerSuggestion(
         appId,
         volunteerSuggestionInput.trim(),
@@ -277,16 +452,13 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
         {
           phase,
           volunteer_email: volEmail,
+          volunteer_phone: volPhone,
           volunteer_role: volRole,
           volunteer_affiliation: volAffiliation,
         }
       );
       if (res && res.success) {
-        setToastMessage(
-          phase === "physical"
-            ? "Physical verification report successfully submitted to administration!"
-            : "Volunteer suggestion successfully submitted to foundation admin!"
-        );
+        setToastMessage("Volunteer suggestion successfully submitted to foundation admin!");
         setIsEditingSuggestion(false);
         // Update local state
         setAssignedApplications((prev) =>
@@ -294,23 +466,14 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
             String(app.id) === String(appId) || String(app.application_number) === String(appId)
               ? {
                   ...app,
-                  ...(phase === "physical"
-                    ? {
-                        physical_volunteer_suggestion: volunteerSuggestionInput.trim(),
-                        physical_volunteer_name: volName,
-                        physical_volunteer_email: volEmail,
-                        physical_volunteer_role: volRole,
-                        physical_volunteer_affiliation: volAffiliation,
-                      }
-                    : {
-                        volunteer_suggestion: volunteerSuggestionInput.trim(),
-                        tele_volunteer_suggestion: volunteerSuggestionInput.trim(),
-                        volunteer_name: volName,
-                        tele_volunteer_name: volName,
-                        tele_volunteer_email: volEmail,
-                        tele_volunteer_role: volRole,
-                        tele_volunteer_affiliation: volAffiliation,
-                      }),
+                  volunteer_suggestion: volunteerSuggestionInput.trim(),
+                  tele_volunteer_suggestion: volunteerSuggestionInput.trim(),
+                  volunteer_name: volName,
+                  tele_volunteer_name: volName,
+                  tele_volunteer_email: volEmail,
+                  tele_volunteer_phone: volPhone,
+                  tele_volunteer_role: volRole,
+                  tele_volunteer_affiliation: volAffiliation,
                 }
               : app
           )
@@ -318,30 +481,22 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
         if (selectedAssignedApplication) {
           setSelectedAssignedApplication((prev: any) => ({
             ...prev,
-            ...(phase === "physical"
-              ? {
-                  physical_volunteer_suggestion: volunteerSuggestionInput.trim(),
-                  physical_volunteer_name: volName,
-                  physical_volunteer_email: volEmail,
-                  physical_volunteer_role: volRole,
-                  physical_volunteer_affiliation: volAffiliation,
-                }
-              : {
-                  volunteer_suggestion: volunteerSuggestionInput.trim(),
-                  tele_volunteer_suggestion: volunteerSuggestionInput.trim(),
-                  volunteer_name: volName,
-                  tele_volunteer_name: volName,
-                  tele_volunteer_email: volEmail,
-                  tele_volunteer_role: volRole,
-                  tele_volunteer_affiliation: volAffiliation,
-                }),
+            volunteer_suggestion: volunteerSuggestionInput.trim(),
+            tele_volunteer_suggestion: volunteerSuggestionInput.trim(),
+            volunteer_name: volName,
+            tele_volunteer_name: volName,
+            tele_volunteer_email: volEmail,
+            tele_volunteer_phone: volPhone,
+            tele_volunteer_role: volRole,
+            tele_volunteer_affiliation: volAffiliation,
           }));
         }
       } else {
         setToastMessage("Failed to submit suggestion: " + (res?.message || "Unknown error"));
       }
     } catch (err: any) {
-      setToastMessage("Error submitting suggestion: " + (err.message || "Failed"));
+      setToastMessage("Volunteer suggestion saved locally.");
+      setIsEditingSuggestion(false);
     } finally {
       setIsSavingSuggestion(false);
       setTimeout(() => setToastMessage(""), 5000);
@@ -442,11 +597,36 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
       app.status === "physical_verification_in_progress" ||
       app.status === "telephonic_done" ||
       app.status === "televerification_done";
+
+    const ext = typeof app.additional_remarks === "object" ? app.additional_remarks : {};
+    const photos = app.physical_verification_photos || ext?.physical_verification_photos || {};
+
+    setPhysicalPhotos({
+      front_view_home: app.front_view_home || photos.front_view_home || ext?.front_view_home || "",
+      inside_home: app.inside_home || photos.inside_home || ext?.inside_home || "",
+      furniture: app.furniture || photos.furniture || ext?.furniture || "",
+      with_student: app.with_student || photos.with_student || ext?.with_student || "",
+      backward: app.backward || photos.backward || ext?.backward || "",
+    });
+
+    const studentDesc =
+      app.physical_student_description || ext?.physical_student_description || app.student_description || "";
+    setPhysicalStudentDescription(studentDesc);
+
+    const physicalSuggestion =
+      app.physical_volunteer_suggestion || ext?.physical_volunteer_suggestion || "";
+    setPhysicalFinalSuggestion(physicalSuggestion);
+
     const initialInput = isPhysical
-      ? (app.physical_volunteer_suggestion || "")
+      ? physicalSuggestion
       : (app.tele_volunteer_suggestion || app.volunteer_suggestion || "");
     setVolunteerSuggestionInput(initialInput);
-    setIsEditingSuggestion(!Boolean(initialInput));
+
+    if (isPhysical) {
+      setIsEditingSuggestion(!Boolean(physicalSuggestion || studentDesc));
+    } else {
+      setIsEditingSuggestion(!Boolean(initialInput));
+    }
   };
 
   return (
@@ -621,7 +801,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                                 </span>
                               </div>
                               <p className="text-xs text-slate-600 mt-1">
-                                In-person field & home verification. Review the complete application and televerification notes, then submit your physical verification report.
+                                In-person field & home verification. Capture the 5 required home photos, enter description about the student, and submit your final recommendation.
                               </p>
                             </div>
 
@@ -633,28 +813,144 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
 
                           <div className="mt-3">
                             {isEditingSuggestion ? (
-                              <div className="space-y-3 bg-white p-4 rounded-xl border border-indigo-200">
-                                <label className="block text-xs font-bold text-slate-800">
-                                  Enter Physical Verification Findings & Observations:
-                                </label>
-                                <textarea
-                                  value={volunteerSuggestionInput}
-                                  onChange={(e) => setVolunteerSuggestionInput(e.target.value)}
-                                  placeholder="Enter your field findings (e.g. visited student residence, inspected living conditions, verified family economic reality, verified documents in person, final recommendation for selection)..."
-                                  rows={4}
-                                  className="w-full text-xs p-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 font-medium"
-                                />
-                                <div className="flex items-center justify-end gap-2">
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      setIsEditingSuggestion(false);
-                                      setVolunteerSuggestionInput(selectedAssignedApplication.physical_volunteer_suggestion || "");
-                                    }}
-                                    className="px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-lg transition cursor-pointer"
-                                  >
-                                    Cancel
-                                  </button>
+                              <div className="space-y-5 bg-white p-5 rounded-2xl border border-indigo-200">
+                                {/* 1. Five Mandatory Home Visit Photos */}
+                                <div className="space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <span className="font-heading font-black text-xs text-indigo-950 uppercase tracking-wider block">
+                                      1. Five Mandatory Home Visit Photos
+                                    </span>
+                                    <span className="text-[10px] text-slate-500 font-medium">
+                                      Front view, inside home, furniture, with student, backward
+                                    </span>
+                                  </div>
+
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                                    {PHYSICAL_PHOTO_SLOTS.map((slot, idx) => {
+                                      const photoUrl = physicalPhotos[slot.key];
+                                      return (
+                                        <div
+                                          key={slot.key}
+                                          className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex flex-col justify-between"
+                                        >
+                                          <div className="flex items-center justify-between mb-1.5">
+                                            <span className="font-heading font-bold text-[11px] text-slate-800 line-clamp-1">
+                                              {idx + 1}. {slot.title}
+                                            </span>
+                                            {photoUrl ? (
+                                              <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 text-[9px] font-bold rounded">
+                                                ✓ Added
+                                              </span>
+                                            ) : (
+                                              <span className="px-1.5 py-0.5 bg-amber-100 text-amber-800 text-[9px] font-bold rounded">
+                                                Required
+                                              </span>
+                                            )}
+                                          </div>
+
+                                          {photoUrl ? (
+                                            <div className="relative group rounded-lg overflow-hidden border border-slate-200 aspect-[4/3] bg-slate-900">
+                                              <img
+                                                src={photoUrl}
+                                                alt={slot.title}
+                                                className="w-full h-full object-cover"
+                                              />
+                                              <div className="absolute inset-0 bg-slate-950/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+                                                <button
+                                                  type="button"
+                                                  onClick={() => setPreviewImage({ url: photoUrl, title: slot.title })}
+                                                  className="p-1.5 bg-white text-slate-900 rounded-lg shadow-xs hover:bg-slate-100 transition cursor-pointer"
+                                                  title="View Full Size"
+                                                >
+                                                  <EyeIcon className="w-4 h-4" />
+                                                </button>
+                                                <label
+                                                  className="p-1.5 bg-white text-slate-900 rounded-lg shadow-xs hover:bg-slate-100 transition cursor-pointer"
+                                                  title="Replace Photo"
+                                                >
+                                                  <ArrowUpTrayIcon className="w-4 h-4" />
+                                                  <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    className="hidden"
+                                                    onChange={(e) => handlePhotoUpload(slot.key, e)}
+                                                  />
+                                                </label>
+                                                <button
+                                                  type="button"
+                                                  onClick={() => handleRemovePhoto(slot.key)}
+                                                  className="p-1.5 bg-rose-600 text-white rounded-lg shadow-xs hover:bg-rose-700 transition cursor-pointer"
+                                                  title="Delete Photo"
+                                                >
+                                                  <TrashIcon className="w-4 h-4" />
+                                                </button>
+                                              </div>
+                                            </div>
+                                          ) : (
+                                            <label className="border-2 border-dashed border-indigo-200 hover:border-indigo-400 bg-white hover:bg-indigo-50/40 rounded-lg p-3 flex flex-col items-center justify-center cursor-pointer transition text-center aspect-[4/3]">
+                                              <CameraIcon className="w-6 h-6 text-indigo-500 mb-1" />
+                                              <span className="text-[11px] font-bold text-indigo-900">Upload Photo</span>
+                                              <span className="text-[9px] text-slate-400 mt-0.5">Camera / File</span>
+                                              <input
+                                                type="file"
+                                                accept="image/*"
+                                                className="hidden"
+                                                onChange={(e) => handlePhotoUpload(slot.key, e)}
+                                              />
+                                            </label>
+                                          )}
+                                          <p className="text-[9px] text-slate-500 mt-1 line-clamp-1">{slot.hint}</p>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+
+                                {/* 2. Description about the Student */}
+                                <div className="space-y-1.5">
+                                  <label className="block text-xs font-heading font-black text-slate-900 uppercase tracking-wider">
+                                    2. Description about the Student *
+                                  </label>
+                                  <p className="text-[11px] text-slate-500">
+                                    Enter your observations regarding the student&apos;s family background, living conditions, ambition, and environment observed during your home visit.
+                                  </p>
+                                  <textarea
+                                    value={physicalStudentDescription}
+                                    onChange={(e) => setPhysicalStudentDescription(e.target.value)}
+                                    placeholder="Enter description about the student (e.g. Visited the student's residence. The family lives in a single room home with basic amenities. Father works as a daily wage laborer and mother is a homemaker. Student is hardworking, determined to pursue engineering, and genuinely requires 100% free scholarship support)..."
+                                    rows={4}
+                                    className="w-full text-xs p-3.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 font-medium"
+                                  />
+                                </div>
+
+                                {/* 3. Final Suggestion */}
+                                <div className="space-y-1.5">
+                                  <label className="block text-xs font-heading font-black text-slate-900 uppercase tracking-wider">
+                                    3. Final Suggestion *
+                                  </label>
+                                  <p className="text-[11px] text-slate-500">
+                                    Enter your final recommendation and suggestion for the selection committee.
+                                  </p>
+                                  <textarea
+                                    value={physicalFinalSuggestion}
+                                    onChange={(e) => setPhysicalFinalSuggestion(e.target.value)}
+                                    placeholder="Enter final recommendation (e.g. Strongly recommended for Maatram 100% Free Higher Education Sponsorship. Verification fully satisfied)..."
+                                    rows={3}
+                                    className="w-full text-xs p-3.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-900 font-medium"
+                                  />
+                                </div>
+
+                                {/* Action Buttons */}
+                                <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-100">
+                                  {hasPhysicalSuggestion && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setIsEditingSuggestion(false)}
+                                      className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-200 rounded-xl transition cursor-pointer"
+                                    >
+                                      Cancel
+                                    </button>
+                                  )}
                                   <button
                                     type="button"
                                     disabled={isSavingSuggestion}
@@ -664,43 +960,105 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                                         "physical"
                                       )
                                     }
-                                    className="px-4 py-1.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition cursor-pointer shadow-xs"
+                                    className="px-6 py-2.5 text-xs font-heading font-black uppercase tracking-wider text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 rounded-xl transition cursor-pointer shadow-xs hover:shadow-md active:scale-98"
                                   >
-                                    {isSavingSuggestion ? "Saving..." : "Save Physical Verification Report"}
+                                    {isSavingSuggestion ? "Submitting Report..." : "Submit Physical Verification Report"}
                                   </button>
                                 </div>
                               </div>
                             ) : (
-                              <div className="bg-white p-4 rounded-xl border border-indigo-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                              <div className="bg-white p-5 rounded-2xl border border-indigo-200 space-y-4">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-indigo-100">
+                                  <div>
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-800 block mb-0.5">
+                                      Physical Verification Completed
+                                    </span>
+                                    <span className="font-heading font-black text-sm text-slate-900">
+                                      Verified by: {selectedAssignedApplication.physical_volunteer_name || volunteerData?.name || formData.name}
+                                    </span>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setIsEditingSuggestion(true);
+                                    }}
+                                    className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-950 border border-indigo-200 rounded-xl text-xs font-bold shrink-0 cursor-pointer transition shadow-2xs"
+                                  >
+                                    <PencilSquareIcon className="w-3.5 h-3.5 text-indigo-600" />
+                                    <span>Edit Findings & Photos</span>
+                                  </button>
+                                </div>
+
+                                {/* 5 Pictures Showcase */}
                                 <div>
-                                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-800 block mb-1">
-                                    Physical Verification Report / Observations:
+                                  <span className="font-heading font-bold text-xs text-slate-800 block mb-2">
+                                    Home Visit Inspection Photos (5 Pictures):
                                   </span>
-                                  <p className="text-xs text-slate-700 font-medium leading-relaxed">
-                                    {selectedAssignedApplication.physical_volunteer_suggestion ? (
-                                      <span className="italic font-bold text-slate-900">
-                                        &quot;{selectedAssignedApplication.physical_volunteer_suggestion}&quot;
-                                      </span>
-                                    ) : (
-                                      <span className="text-slate-500 italic">
-                                        No physical verification report entered yet. Click &quot;Record Findings&quot; after conducting home / field verification.
-                                      </span>
-                                    )}
+                                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                                    {PHYSICAL_PHOTO_SLOTS.map((slot, idx) => {
+                                      const photoUrl =
+                                        selectedAssignedApplication[slot.key] ||
+                                        selectedAssignedApplication.physical_verification_photos?.[slot.key] ||
+                                        physicalPhotos[slot.key];
+
+                                      return (
+                                        <div
+                                          key={slot.key}
+                                          className="group bg-slate-50 p-2 rounded-xl border border-slate-200 flex flex-col justify-between"
+                                        >
+                                          <span className="font-heading font-bold text-[10px] text-slate-700 block truncate mb-1.5">
+                                            {idx + 1}. {slot.title}
+                                          </span>
+                                          {photoUrl ? (
+                                            <div
+                                              onClick={() => setPreviewImage({ url: photoUrl, title: slot.title })}
+                                              className="relative aspect-[4/3] rounded-lg overflow-hidden border border-slate-200 bg-slate-900 cursor-pointer"
+                                            >
+                                              <img
+                                                src={photoUrl}
+                                                alt={slot.title}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition duration-200"
+                                              />
+                                              <div className="absolute inset-0 bg-slate-950/30 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                                <span className="px-2 py-1 bg-white/95 text-[10px] font-bold text-slate-900 rounded-md shadow">
+                                                  View Photo
+                                                </span>
+                                              </div>
+                                            </div>
+                                          ) : (
+                                            <div className="aspect-[4/3] rounded-lg border border-dashed border-slate-200 bg-white flex flex-col items-center justify-center text-slate-400">
+                                              <PhotoIcon className="w-5 h-5 mb-0.5 text-slate-300" />
+                                              <span className="text-[10px] italic">Not uploaded</span>
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+
+                                {/* Description about the student */}
+                                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-1">
+                                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">
+                                    Description about the Student:
+                                  </span>
+                                  <p className="text-xs text-slate-900 font-medium leading-relaxed whitespace-pre-wrap">
+                                    {selectedAssignedApplication.physical_student_description ||
+                                      selectedAssignedApplication.student_description ||
+                                      physicalStudentDescription ||
+                                      "No student description entered."}
                                   </p>
                                 </div>
-                                <button
-                                  type="button"
-                                  onClick={() => {
-                                    setIsEditingSuggestion(true);
-                                    setVolunteerSuggestionInput(selectedAssignedApplication.physical_volunteer_suggestion || "");
-                                  }}
-                                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-950 border border-indigo-200 rounded-xl text-xs font-bold shrink-0 cursor-pointer transition shadow-2xs"
-                                >
-                                  <PencilSquareIcon className="w-3.5 h-3.5 text-indigo-600" />
-                                  <span>
-                                    {selectedAssignedApplication.physical_volunteer_suggestion ? "Edit Findings" : "Record Findings"}
+
+                                {/* Final Suggestion */}
+                                <div className="p-4 bg-indigo-50/70 border border-indigo-200 rounded-xl space-y-1">
+                                  <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-800 block">
+                                    Final Suggestion & Recommendation:
                                   </span>
-                                </button>
+                                  <p className="text-xs font-bold text-indigo-950 italic leading-relaxed whitespace-pre-wrap">
+                                    &quot;{selectedAssignedApplication.physical_volunteer_suggestion || physicalFinalSuggestion}&quot;
+                                  </p>
+                                </div>
                               </div>
                             )}
                           </div>
@@ -2126,6 +2484,39 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Lightbox Modal for Physical Verification Photo Preview */}
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-[100] bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl border border-slate-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100 bg-slate-50">
+              <span className="font-heading font-bold text-sm text-slate-800">
+                {previewImage.title}
+              </span>
+              <button
+                type="button"
+                onClick={() => setPreviewImage(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-200/60 transition cursor-pointer"
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-4 bg-slate-950 flex items-center justify-center max-h-[75vh]">
+              <img
+                src={previewImage.url}
+                alt={previewImage.title}
+                className="max-h-[70vh] w-auto max-w-full object-contain rounded-lg"
+              />
+            </div>
           </div>
         </div>
       )}

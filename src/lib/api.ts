@@ -171,6 +171,20 @@ export const studentApi = {
       volunteer_phone?: string;
       volunteer_role?: string;
       volunteer_affiliation?: string;
+      student_description?: string;
+      physical_student_description?: string;
+      photos?: {
+        front_view_home?: string;
+        inside_home?: string;
+        furniture?: string;
+        with_student?: string;
+        backward?: string;
+      };
+      front_view_home?: string;
+      inside_home?: string;
+      furniture?: string;
+      with_student?: string;
+      backward?: string;
     }
   ) =>
     callApi(() =>
@@ -184,6 +198,14 @@ export const studentApi = {
         volunteer_phone: options?.volunteer_phone,
         volunteer_role: options?.volunteer_role,
         volunteer_affiliation: options?.volunteer_affiliation,
+        student_description: options?.student_description || options?.physical_student_description,
+        physical_student_description: options?.student_description || options?.physical_student_description,
+        photos: options?.photos,
+        front_view_home: options?.front_view_home || options?.photos?.front_view_home,
+        inside_home: options?.inside_home || options?.photos?.inside_home,
+        furniture: options?.furniture || options?.photos?.furniture,
+        with_student: options?.with_student || options?.photos?.with_student,
+        backward: options?.backward || options?.photos?.backward,
       })
     ),
 
