@@ -178,8 +178,7 @@ export default function LoginScreen() {
           Student & Alumni Sign In
         </h1>
         <p className="font-primary text-xs sm:text-sm text-slate-600 leading-relaxed mt-2 text-left">
-          Sign in after final admission approval. To apply or check an application, visit the{" "}
-          <a className="underline" href={process.env.NEXT_PUBLIC_APPLICATION_URL || (process.env.NODE_ENV === "development" ? "http://localhost:3002" : "https://application.matramites.tech")}>applicant portal</a>.
+          Maatram students and alumni can sign in with their existing credentials.
         </p>
 
         {/* Info & Error Messages */}
