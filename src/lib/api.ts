@@ -3,6 +3,11 @@ import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from "ax
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 const API_BASE_URL = rawApiUrl.replace(/\/+$/, "").replace(/\/api$/, "");
 
+export function postMediaUrl(value = ""): string {
+  const key = value.match(/(?:^|\/admin\/media\/)(posts\/.+)$/)?.[1];
+  return key ? `${API_BASE_URL}/admin/media/${key}` : value;
+}
+
 export function getPhysicalPhotoUrl(value: string = ""): string {
   const key = value.match(/(?:^|\/admin\/media\/|\.amazonaws\.com\/)(physical_verification\/[\w.-]+)$/)?.[1];
   return key ? `${API_BASE_URL}/admin/media/${key}` : value;

@@ -13,7 +13,7 @@ import {
 } from "@heroicons/react/24/outline";
 import StudentSidebar from "../../components/StudentSidebar";
 import PostCard, { PostCardData } from "../../components/PostCard";
-import { studentApi } from "../../lib/api";
+import { postMediaUrl, studentApi } from "../../lib/api";
 
 export default function AlumniPostsScreen() {
   const [activeTab, setActiveTab] = useState<"all" | "my">("all");
@@ -49,8 +49,9 @@ export default function AlumniPostsScreen() {
             scheduleDate: item.schedule_date,
             scheduleTime: item.schedule_time,
             location: item.location,
-            imageUrl: item.image_url,
-            images: item.images,
+            imageUrl: postMediaUrl(item.image_url || ""),
+            videoUrl: postMediaUrl(item.video_url || ""),
+            images: (item.images || []).map((url: string) => postMediaUrl(url)),
             likesCount: 15,
           }));
           setPostsList(formatted);
@@ -305,7 +306,7 @@ export default function AlumniPostsScreen() {
       {/* DETAIL VIEW MODAL */}
       {selectedPost && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 space-y-4 my-8 animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-heading font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
@@ -327,14 +328,11 @@ export default function AlumniPostsScreen() {
               </button>
             </div>
 
-            {selectedPost.imageUrl && (
-              <div className="relative w-full h-52 rounded-2xl overflow-hidden bg-slate-100 border border-slate-200">
-                <img
-                  src={selectedPost.imageUrl}
-                  alt={selectedPost.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+            {(selectedPost.images?.length ? selectedPost.images : selectedPost.imageUrl ? [selectedPost.imageUrl] : []).map((url, i) => (
+              <img key={url + i} src={url} alt={`${selectedPost.title}, image ${i + 1}`} className="w-full max-h-96 object-contain rounded-2xl" />
+            ))}
+            {selectedPost.videoUrl && (
+              <video controls playsInline preload="metadata" src={selectedPost.videoUrl} className="w-full rounded-2xl" />
             )}
 
             <h2 className="font-heading font-bold text-xl text-slate-900 leading-snug">
