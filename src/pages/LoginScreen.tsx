@@ -116,18 +116,19 @@ export default function LoginScreen() {
         return;
       }
 
-      if (res.success && res.user) {
+      if (res.success && res.user && res.memberRole && res.session?.access_token) {
         const u = res.user;
         const meta = u.user_metadata || {};
-        const isAlumni =
-          meta.role === "alumni" ||
-          cleanInput.includes("alumni") ||
-          cleanInput.startsWith("alu") ||
-          cleanInput.startsWith("mf-alu");
+        const isAlumni = res.memberRole === "alumni";
 
         const detectedRole: "student" | "alumni" = isAlumni ? "alumni" : "student";
 
-        const userProfile = {
+        const userProfile = !isAlumni ? {
+          id: u.id, email: u.email, role: detectedRole, name: meta.scholar_fullName || meta.full_name || "",
+          fullName: meta.scholar_fullName || meta.full_name || "", rollNumber: meta.scholar_rollNumber || meta.roll_number || "",
+          college: meta.scholar_collegeName || meta.college_name || "", degree: meta.scholar_degreeBranch || meta.degree_branch || "",
+          phone: meta.scholar_mobileNumber || meta.phone || u.phone || "",
+        } : {
           id: u.id,
           name: meta.full_name || meta.name || (isAlumni ? "Maatram Alumni" : "Scholar"),
           fullName: meta.full_name || meta.name || (isAlumni ? "Maatram Alumni" : "Scholar"),
@@ -149,115 +150,19 @@ export default function LoginScreen() {
           gradBatch: meta.grad_batch || "Class of 2019",
         };
 
-        if (res.session?.access_token) {
-          setAuthToken(res.session.access_token);
-        } else {
-          setAuthToken(`maatram-token-${u.id}`);
-        }
-
+        setAuthToken(res.session.access_token);
         saveUser(userProfile);
         setActiveRole(detectedRole);
         setIsLoading(false);
         router.push(detectedRole === "alumni" ? "/alumni/dashboard" : "/student/dashboard");
         return;
       }
-    } catch (apiErr: any) {
-      console.warn("Backend auth failed or network error, checking credentials locally:", apiErr);
-      if (apiErr?.message) {
-        setErrorMessage(apiErr.message);
-        setIsLoading(false);
-        return;
-      }
+      setErrorMessage("Could not verify your membership.");
+    } catch {
+      setErrorMessage("Could not reach the sign-in service. Please retry.");
+    } finally {
+      setIsLoading(false);
     }
-
-    // 2. Direct local fallback for seamless dev experience
-    const isAlumni =
-      cleanInput.includes("alumni") ||
-      cleanInput.startsWith("alu") ||
-      cleanInput.startsWith("mf-alu") ||
-      cleanInput === "sundar@zoho.com" ||
-      cleanInput.includes("zoho");
-
-    const detectedRole: "student" | "alumni" = isAlumni ? "alumni" : "student";
-
-    const mockUser = isAlumni
-      ? {
-        id: "alu-2021-008",
-        name: "Sundararaman M",
-        fullName: "Sundararaman M",
-        email: cleanInput.includes("@") ? cleanInput : "sundararaman.m@alumni.maatramedu.org",
-        role: "alumni",
-        rollNumber: "MF-ALUM-2019-018",
-        phone: "+91 94432 10987",
-        dob: "1998-09-22",
-        gender: "Male",
-        whatsapp: "+91 94432 10987",
-        currentCity: "Chennai, Tamil Nadu",
-        company: "Zoho Corporation",
-        designation: "Senior Software Engineer",
-        experienceYears: "5 Years",
-        industryDomain: "Product Software & Cloud Infrastructure",
-        linkedin: "linkedin.com/in/sundararaman-maatram",
-        college: "Sri Venkateswara College of Engineering",
-        degree: "B.E Computer Science & Engineering",
-        gradBatch: "Class of 2019",
-      }
-      : {
-        id: "stu-2024-042",
-        name: "Kavitha R",
-        fullName: "Kavitha R",
-        email: cleanInput.includes("@") ? cleanInput : "kavitha.r@student.svce.ac.in",
-        role: "student",
-        rollNumber: "MF-SCH-2024-042",
-        college: "Sri Venkateswara College of Engineering",
-        degree: "B.Tech Information Technology (2nd Year)",
-      };
-
-    setAuthToken(`mock-token-${Date.now()}`);
-    saveUser(mockUser);
-    setActiveRole(detectedRole);
-    setIsLoading(false);
-    router.push(detectedRole === "alumni" ? "/alumni/dashboard" : "/student/dashboard");
-  };
-
-  // Quick 1-click demo login helper
-  const handleQuickDemoLogin = (type: "student" | "alumni") => {
-    setErrorMessage("");
-    const isAlumni = type === "alumni";
-    const demoEmail = isAlumni ? "alumni@maatram.com" : "student@maatram.com";
-    const demoPass = "password123";
-
-    setIdentifier(demoEmail);
-    setPassword(demoPass);
-    setIsLoading(true);
-
-    setTimeout(() => {
-      const mockUser = isAlumni
-        ? {
-          id: "alu-2021-008",
-          name: "Sundararaman M",
-          email: "sundar@zoho.com",
-          role: "alumni",
-          rollNumber: "MF-ALU-2021-008",
-          college: "Sri Venkateswara College of Engineering",
-          company: "Zoho Corporation",
-          degree: "B.E Computer Science (Batch of 2021)",
-        }
-        : {
-          id: "stu-2024-042",
-          name: "Kavitha R",
-          email: "kavitha.r@student.svce.ac.in",
-          role: "student",
-          rollNumber: "MF-SCH-2024-042",
-          college: "Sri Venkateswara College of Engineering",
-          degree: "B.Tech Information Technology (2nd Year)",
-        };
-
-      setAuthToken(`mock-token-${Date.now()}`);
-      saveUser(mockUser);
-      setActiveRole(type);
-      router.push(isAlumni ? "/alumni/dashboard" : "/student/dashboard");
-    }, 400);
   };
 
   return (
@@ -273,7 +178,8 @@ export default function LoginScreen() {
           Student & Alumni Sign In
         </h1>
         <p className="font-primary text-xs sm:text-sm text-slate-600 leading-relaxed mt-2 text-left">
-          Access your student volunteer tasks, academic progress, and alumni network portal.
+          Sign in after final admission approval. To apply or check an application, visit the{" "}
+          <a className="underline" href={process.env.NEXT_PUBLIC_APPLICATION_URL || (process.env.NODE_ENV === "development" ? "http://localhost:3002" : "https://application.matramites.tech")}>applicant portal</a>.
         </p>
 
         {/* Info & Error Messages */}
@@ -295,7 +201,7 @@ export default function LoginScreen() {
               {/* User Identifier (Email / Roll No / Mobile) */}
               <div>
                 <label className="block text-xs font-heading font-bold text-slate-800 tracking-wide">
-                  Registered Email Address or Roll Number
+                  Registered email or application ID
                 </label>
                 <div className="relative mt-1.5">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
@@ -308,7 +214,7 @@ export default function LoginScreen() {
                     onChange={(e) => setIdentifier(e.target.value)}
                     required
                     autoComplete="off"
-                    placeholder="maatramites.tech"
+                    placeholder="Email or application ID"
                     className="w-full bg-slate-50/70 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-slate-900 placeholder-slate-400 text-xs sm:text-sm focus:outline-none focus:border-[#F7BC0F] focus:bg-white focus:ring-2 focus:ring-[#F7BC0F]/40 transition font-primary"
                   />
                 </div>

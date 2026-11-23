@@ -44,15 +44,21 @@ interface SemesterRecord {
   subjects: SubjectMark[];
 }
 
+function calculateCgpa(records: SemesterRecord[]) {
+  const graded = records.flatMap(r => r.subjects).filter(s => s.status === "Cleared" && s.gradePoint != null);
+  const credits = graded.reduce((total, s) => total + s.credits, 0);
+  return credits ? (graded.reduce((total,s) => total + Number(s.gradePoint) * s.credits, 0) / credits).toFixed(2) : "";
+}
+
 const createEmptyRoadmap = (): SemesterRecord[] => [
-  { sem: 1, gpa: null, creditsEarned: 0, totalCredits: 20, status: "In Progress", standingArrears: 0, subjects: [] },
-  { sem: 2, gpa: null, creditsEarned: 0, totalCredits: 20, status: "Upcoming", standingArrears: 0, subjects: [] },
-  { sem: 3, gpa: null, creditsEarned: 0, totalCredits: 20, status: "Upcoming", standingArrears: 0, subjects: [] },
-  { sem: 4, gpa: null, creditsEarned: 0, totalCredits: 20, status: "Upcoming", standingArrears: 0, subjects: [] },
-  { sem: 5, gpa: null, creditsEarned: 0, totalCredits: 20, status: "Upcoming", standingArrears: 0, subjects: [] },
-  { sem: 6, gpa: null, creditsEarned: 0, totalCredits: 20, status: "Upcoming", standingArrears: 0, subjects: [] },
-  { sem: 7, gpa: null, creditsEarned: 0, totalCredits: 20, status: "Upcoming", standingArrears: 0, subjects: [] },
-  { sem: 8, gpa: null, creditsEarned: 0, totalCredits: 20, status: "Upcoming", standingArrears: 0, subjects: [] },
+  { sem: 1, gpa: null, creditsEarned: 0, totalCredits: 0, status: "In Progress", standingArrears: 0, subjects: [] },
+  { sem: 2, gpa: null, creditsEarned: 0, totalCredits: 0, status: "Upcoming", standingArrears: 0, subjects: [] },
+  { sem: 3, gpa: null, creditsEarned: 0, totalCredits: 0, status: "Upcoming", standingArrears: 0, subjects: [] },
+  { sem: 4, gpa: null, creditsEarned: 0, totalCredits: 0, status: "Upcoming", standingArrears: 0, subjects: [] },
+  { sem: 5, gpa: null, creditsEarned: 0, totalCredits: 0, status: "Upcoming", standingArrears: 0, subjects: [] },
+  { sem: 6, gpa: null, creditsEarned: 0, totalCredits: 0, status: "Upcoming", standingArrears: 0, subjects: [] },
+  { sem: 7, gpa: null, creditsEarned: 0, totalCredits: 0, status: "Upcoming", standingArrears: 0, subjects: [] },
+  { sem: 8, gpa: null, creditsEarned: 0, totalCredits: 0, status: "Upcoming", standingArrears: 0, subjects: [] },
 ];
 
 export default function StudentAcademicScreen() {
@@ -60,8 +66,8 @@ export default function StudentAcademicScreen() {
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
-  const [collegeName, setCollegeName] = useState("Engineering College");
-  const [degreeName, setDegreeName] = useState("Undergraduate Degree");
+  const [collegeName, setCollegeName] = useState("");
+  const [degreeName, setDegreeName] = useState("");
   const [studentEmail, setStudentEmail] = useState("");
 
   // Semester records state initialized completely clean without dummy subjects
@@ -77,12 +83,7 @@ export default function StudentAcademicScreen() {
           email = stored.email;
           setStudentEmail(stored.email);
         }
-        if (stored.college || stored.college_name) {
-          setCollegeName(stored.college || stored.college_name);
-        }
-        if (stored.degree || stored.department || stored.degree_branch) {
-          setDegreeName(stored.degree || stored.department || stored.degree_branch);
-        }
+        studentApi.getScholarProfile().then(res => { if (res.success) { setCollegeName(res.data.values.collegeName); setDegreeName(res.data.values.degreeBranch); } });
       }
     } catch {
       // fallback
@@ -133,17 +134,19 @@ export default function StudentAcademicScreen() {
   const [modalStep, setModalStep] = useState<"select_exam" | "entry_method">("select_exam");
   const [selectedExamType, setSelectedExamType] = useState<"CAT 1" | "CAT 2" | "CAT 3" | "Semester Exam">("CAT 1");
   const [entryModeTab, setEntryModeTab] = useState<"manual" | "upload">("manual");
-  const [uploadedFileName, setUploadedFileName] = useState<string>("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const uploadedFileName = selectedFile?.name || "";
 
   // Form fields for modal
   const [modalTargetSemester, setModalTargetSemester] = useState(1);
   const [subCode, setSubCode] = useState("");
   const [subName, setSubName] = useState("");
-  const [subCredits, setSubCredits] = useState("4");
+  const [subCredits, setSubCredits] = useState("");
   const [internal1, setInternal1] = useState("");
   const [internal2, setInternal2] = useState("");
   const [modelExam, setModelExam] = useState("");
-  const [attendance, setAttendance] = useState("95%");
+  const [gradePoint, setGradePoint] = useState("");
+  const [attendance, setAttendance] = useState("");
   const [semesterExam, setSemesterExam] = useState("");
   const [subStatus, setSubStatus] = useState<"Cleared" | "Arrear" | "In Progress">("In Progress");
 
@@ -151,10 +154,8 @@ export default function StudentAcademicScreen() {
   const currentRecord = semesterRecords.find((r) => r.sem === selectedSemester) || semesterRecords[0];
 
   // Calculate Cumulative CGPA from all cleared semesters
-  const completedSemesters = semesterRecords.filter((r) => r.gpa !== null && r.gpa > 0);
-  const totalEarnedCredits = completedSemesters.reduce((acc, curr) => acc + curr.creditsEarned, 0);
-  const weightedGpaSum = completedSemesters.reduce((acc, curr) => acc + (curr.gpa || 0) * curr.creditsEarned, 0);
-  const overallCgpa = totalEarnedCredits > 0 ? (weightedGpaSum / totalEarnedCredits).toFixed(2) : "0.00";
+  const totalEarnedCredits = semesterRecords.reduce((total, r) => total + r.creditsEarned, 0);
+  const overallCgpa = calculateCgpa(semesterRecords);
 
   // Arrears Calculation
   // Standing Arrears: currently uncleared arrear subjects across all semesters
@@ -178,14 +179,15 @@ export default function StudentAcademicScreen() {
     setModalStep("select_exam");
     setSelectedExamType("CAT 1");
     setEntryModeTab("manual");
-    setUploadedFileName("");
+    setSelectedFile(null);
     setSubCode("");
     setSubName("");
-    setSubCredits("4");
+    setSubCredits("");
     setInternal1("");
     setInternal2("");
     setModelExam("");
-    setAttendance("95%");
+    setGradePoint("");
+    setAttendance("");
     setSemesterExam("");
     setSubStatus("In Progress");
     setShowMarkModal(true);
@@ -198,13 +200,14 @@ export default function StudentAcademicScreen() {
     setModalStep("entry_method");
     setSelectedExamType("CAT 1");
     setEntryModeTab("manual");
-    setUploadedFileName("");
+    setSelectedFile(null);
     setSubCode(sub.code);
     setSubName(sub.name);
     setSubCredits(String(sub.credits));
     setInternal1(sub.internal1);
     setInternal2(sub.internal2);
     setModelExam(sub.modelExam);
+    setGradePoint(sub.gradePoint?.toString() || "");
     setAttendance(sub.attendance);
     setSemesterExam(sub.semesterExam);
     setSubStatus(sub.status);
@@ -222,14 +225,14 @@ export default function StudentAcademicScreen() {
       const res = saver
         ? await saver(studentEmail, {
           records: updatedRecords,
-          cgpa: computedCgpa || overallCgpa,
+          cgpa: computedCgpa ?? calculateCgpa(updatedRecords),
         })
         : null;
-      if (res && !res.success) {
-        console.error("Failed to save academic records:", res.message);
-      }
+      if (!res?.success) throw new Error(res?.message || "Could not save academic records.");
+      return true;
     } catch (err) {
-      console.error("Failed to save records to database:", err);
+      setToastMessage(err instanceof Error ? err.message : "Could not save academic records.");
+      return false;
     } finally {
       setIsSaving(false);
     }
@@ -268,7 +271,7 @@ export default function StudentAcademicScreen() {
           modelExam: modelExam.trim() || "—",
           attendance: attendance.trim() || "—",
           semesterExam: semesterExam.trim() || (subStatus === "In Progress" ? "Awaiting Exam" : "—"),
-          gradePoint: subStatus === "Cleared" ? 8.5 : null,
+          gradePoint: gradePoint === "" ? null : Number(gradePoint),
           status: subStatus,
         };
         updatedSubjects.push(newSub);
@@ -276,6 +279,7 @@ export default function StudentAcademicScreen() {
         const existingIdx = updatedSubjects.findIndex((s) => s.id === editingSubject.id);
         const updatedSub: SubjectMark = {
           ...editingSubject,
+          gradePoint: gradePoint === "" ? null : Number(gradePoint),
           code: subCode.trim().toUpperCase(),
           name: subName.trim(),
           credits: Number(subCredits) || editingSubject.credits,
@@ -298,13 +302,13 @@ export default function StudentAcademicScreen() {
       const earnedCredits = updatedSubjects
         .filter((s) => s.status === "Cleared")
         .reduce((sum, s) => sum + s.credits, 0);
-      const totalCredits = updatedSubjects.reduce((sum, s) => sum + s.credits, 0) || 20;
+      const totalCredits = updatedSubjects.reduce((sum, s) => sum + s.credits, 0);
 
       // Compute semester GPA if cleared subjects exist
       const clearedSubs = updatedSubjects.filter((s) => s.status === "Cleared" && s.gradePoint !== null);
       let semGpa: number | null = null;
       if (clearedSubs.length > 0 && earnedCredits > 0) {
-        const totalPoints = clearedSubs.reduce((sum, s) => sum + (s.gradePoint || 8.0) * s.credits, 0);
+        const totalPoints = clearedSubs.reduce((sum, s) => sum + Number(s.gradePoint) * s.credits, 0);
         semGpa = Number((totalPoints / earnedCredits).toFixed(2));
       }
 
@@ -320,12 +324,12 @@ export default function StudentAcademicScreen() {
       };
     });
 
+    if (!await syncRecordsToDatabase(updated)) return;
     setSemesterRecords(updated);
     setSelectedSemester(targetSem);
     setShowMarkModal(false);
 
     // Save directly to the database
-    await syncRecordsToDatabase(updated);
 
     setToastMessage(
       modalMode === "add"
@@ -350,22 +354,29 @@ export default function StudentAcademicScreen() {
       };
     });
 
+    if (!await syncRecordsToDatabase(updated)) return;
     setSemesterRecords(updated);
-    await syncRecordsToDatabase(updated);
 
     setToastMessage(`Course ${code} removed from database.`);
     setTimeout(() => setToastMessage(""), 4000);
   };
 
-  const handleSimulateUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setIsUploading(true);
-      setTimeout(() => {
-        setIsUploading(false);
-        setToastMessage("Official Marksheet document uploaded & logged for coordinator verification!");
-        setTimeout(() => setToastMessage(""), 4000);
-      }, 1000);
-    }
+  const uploadMarksheet = async () => {
+    if (!selectedFile || selectedFile.size > 5 * 1024 * 1024) { setToastMessage("Select a marksheet up to 5 MB."); return; }
+    setIsUploading(true);
+    try {
+      const file = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = reject;
+        reader.readAsDataURL(selectedFile);
+      });
+      const result = await studentApi.uploadMarksheet(modalTargetSemester, selectedExamType, file);
+      if (!result.success) throw new Error(result.message || "Upload failed.");
+      setToastMessage("Marksheet saved. View it in your profile.");
+      setShowMarkModal(false);
+    } catch (error) { setToastMessage(error instanceof Error ? error.message : "Upload failed."); }
+    finally { setIsUploading(false); }
   };
 
   return (
@@ -457,7 +468,7 @@ export default function StudentAcademicScreen() {
                   {/* Inner Center Text */}
                   <div className="relative z-20 flex flex-col items-center justify-center text-slate-950 pointer-events-none drop-shadow-xs">
                     <span className="font-heading font-black text-lg sm:text-xl tracking-tight text-slate-950 leading-none">
-                      {overallCgpa}
+                      {overallCgpa || "-"}
                     </span>
                     <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 mt-0.5">
                       {totalEarnedCredits > 0 ? `${totalEarnedCredits} hrs` : "0 hrs"}
@@ -1109,7 +1120,7 @@ export default function StudentAcademicScreen() {
                           onChange={(e) => {
                             if (e.target.files && e.target.files[0]) {
                               const name = e.target.files[0].name;
-                              setUploadedFileName(name);
+                              setSelectedFile(e.target.files[0]);
                               setToastMessage(`Marksheet "${name}" selected for ${selectedExamType}!`);
                               setTimeout(() => setToastMessage(""), 3500);
                             }
@@ -1124,7 +1135,7 @@ export default function StudentAcademicScreen() {
                           </span>
                           <button
                             type="button"
-                            onClick={() => setUploadedFileName("")}
+                            onClick={() => setSelectedFile(null)}
                             className="text-red-500 hover:text-red-700 font-bold text-[11px] cursor-pointer"
                           >
                             Remove
@@ -1152,15 +1163,7 @@ export default function StudentAcademicScreen() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => {
-                            if (!uploadedFileName) {
-                              alert("Please select a marksheet file to upload.");
-                              return;
-                            }
-                            setToastMessage(`Official ${selectedExamType} marksheet (${uploadedFileName}) uploaded and submitted for Semester ${modalTargetSemester}!`);
-                            setShowMarkModal(false);
-                            setTimeout(() => setToastMessage(""), 4500);
-                          }}
+                          disabled={isUploading || !selectedFile} onClick={uploadMarksheet}
                           className="px-5 py-2.5 text-xs font-heading font-bold text-slate-950 bg-[#F7BC0F] hover:bg-[#e5ad0c] rounded-xl transition cursor-pointer shadow-xs border border-[#e5ad0c]"
                         >
                           Upload {selectedExamType} Marksheet
@@ -1201,15 +1204,18 @@ export default function StudentAcademicScreen() {
                       </div>
                     </div>
 
+                    <label className="block">Grade point (if awarded)<input type="number" min="0" max="10" step="0.01" value={gradePoint} onChange={e => setGradePoint(e.target.value)} className="ml-2 rounded border p-2" /></label>
                     {/* Credits & Attendance */}
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-slate-700 font-bold mb-1">Credits</label>
                         <select
+                          required
                           value={subCredits}
                           onChange={(e) => setSubCredits(e.target.value)}
                           className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#F7BC0F]"
                         >
+                          <option value="">Choose credits</option>
                           <option value="1">1 Credit</option>
                           <option value="2">2 Credits (Lab / Practical)</option>
                           <option value="3">3 Credits (Theory)</option>

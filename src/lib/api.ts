@@ -138,13 +138,17 @@ async function callApi<T = any>(
 export const studentApi = {
   // Auth
   login: (credentials: { email?: string; phone?: string; password?: string; rollNumber?: string; otp?: string }) =>
-    callApi(() => apiClient.post("/auth/login", credentials)),
+    callApi(() => apiClient.post("/auth/member-login", credentials)),
 
   sendOtp: (payload: { phone?: string; email?: string; channel?: string; type?: string }) =>
     callApi(() => apiClient.post("/auth/send-otp", payload)),
 
   verifyOtp: (payload: { phone?: string; email?: string; token: string; type?: string }) =>
     callApi(() => apiClient.post("/auth/verify-otp", payload)),
+
+  uploadMarksheet: (semester: number, exam: string, file: string) => callApi(() => apiClient.post("/auth/scholar-marksheet", { semester, exam, file })),
+  getScholarProfile: () => callApi(() => apiClient.get("/auth/scholar-profile")),
+  memberSession: () => callApi(() => apiClient.get("/auth/member-session")),
 
   getMe: () => callApi(() => apiClient.get("/auth/me")),
 
@@ -254,17 +258,17 @@ export const studentApi = {
 
   // Student Academic Records Management
   getAcademicRecords: (email: string) =>
-    callApi(() => apiClient.get(`/admin/students/${encodeURIComponent(email)}/academics`)),
+    callApi(() => apiClient.get("/auth/scholar-academics")),
 
   saveAcademicRecords: (email: string, payload: { records: any[]; cgpa?: string }) =>
-    callApi(() => apiClient.post(`/admin/students/${encodeURIComponent(email)}/academics`, payload)),
+    callApi(() => apiClient.post("/auth/scholar-academics", payload)),
 };
 
 export const getAcademicRecords = (email: string) =>
-  callApi(() => apiClient.get(`/admin/students/${encodeURIComponent(email)}/academics`));
+  callApi(() => apiClient.get("/auth/scholar-academics"));
 
 export const saveAcademicRecords = (email: string, payload: { records: any[]; cgpa?: string }) =>
-  callApi(() => apiClient.post(`/admin/students/${encodeURIComponent(email)}/academics`, payload));
+  callApi(() => apiClient.post("/auth/scholar-academics", payload));
 
 export default studentApi;
 

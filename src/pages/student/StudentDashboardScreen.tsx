@@ -27,21 +27,21 @@ export default function StudentDashboardScreen() {
   const [isSavingNote, setIsSavingNote] = useState(false);
   const [saveSuccessMessage, setSaveSuccessMessage] = useState("");
 
-  const studentName = user?.name || user?.full_name || "Kavitha R";
-  const rollNumber = user?.rollNumber || "MF-SCH-2024-042";
-  const collegeName = user?.college || "Sri Venkateswara College of Engineering";
-  const degree = user?.degree || "B.Tech Information Technology (2nd Year)";
+  const studentName = user?.fullName || "Scholar";
+  const rollNumber = user?.rollNumber || user?.applicationNumber || "";
+  const collegeName = user?.collegeName || "";
+  const degree = user?.degreeBranch || "";
 
   useEffect(() => {
     const stored = getStoredUser();
-    if (stored) setUser(stored);
+    studentApi.getScholarProfile().then(res => { if (res.success) setUser(res.data.values); });
 
     // Fetch applications for volunteer verification
     const fetchVerificationQueue = async () => {
       try {
         const res = await studentApi.getAssignedApplicants();
         if (res.success && Array.isArray(res.data)) {
-          setAssignedApplicants(res.data);
+          setAssignedApplicants(res.data.filter((a: any) => stored?.email && [a.tele_volunteer_email, a.physical_volunteer_email].some(email => email?.toLowerCase() === stored.email.toLowerCase())));
         }
       } catch (err) {
         console.error("Failed to load volunteer applications:", err);
@@ -92,7 +92,7 @@ export default function StudentDashboardScreen() {
             <div className="space-y-2 relative z-10">
               <div className="flex items-center gap-2">
                 <span className="px-3 py-1 bg-amber-100 text-amber-950 font-heading font-black text-xs rounded-full border border-amber-300">
-                  ★ Active Scholar & Volunteer
+                  ★ Active Scholar
                 </span>
                 <span className="text-xs font-mono font-bold text-slate-500">
                   {rollNumber}
@@ -102,11 +102,12 @@ export default function StudentDashboardScreen() {
                 Welcome back, {studentName}!
               </h1>
               <p className="text-xs sm:text-sm text-slate-600 font-medium">
-                {degree} • {collegeName}
+                {[degree, collegeName].filter(Boolean).join(" / ")}
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5 shrink-0 relative z-10">
+              <Link href="/student/settings" className="rounded-xl bg-white border px-4 py-2 font-bold text-sm">Student Profile</Link>
               <Link
                 href="/student/posts"
                 className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-heading font-bold text-slate-800 transition cursor-pointer flex items-center gap-1.5"
@@ -142,10 +143,9 @@ export default function StudentDashboardScreen() {
                 Current Semester CGPA
               </span>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="font-heading font-black text-2xl text-slate-900">8.85</span>
+                <span className="font-heading font-black text-2xl text-slate-900">{user?.cgpa || "-"}</span>
                 <span className="text-xs font-bold text-slate-500">/ 10.0</span>
               </div>
-              <p className="text-[11px] text-slate-500 mt-1">First Class with Distinction</p>
             </div>
 
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
@@ -153,8 +153,7 @@ export default function StudentDashboardScreen() {
                 Overall Attendance
               </span>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="font-heading font-black text-2xl text-slate-900">96.4%</span>
-                <span className="text-xs font-bold text-slate-500">Above criteria</span>
+                <span className="font-heading font-black text-2xl text-slate-900">{user?.attendance || "-"}</span>
               </div>
               <p className="text-[11px] text-slate-500 mt-1">Mandatory minimum: 75%</p>
             </div>
@@ -177,9 +176,8 @@ export default function StudentDashboardScreen() {
                 Scholarship Status
               </span>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="font-heading font-black text-lg text-slate-900">100% Sponsored</span>
+                <span className="font-heading font-black text-lg text-slate-900">Admitted</span>
               </div>
-              <p className="text-[11px] text-slate-500 mt-1">Year 2 Fees Paid in Full</p>
             </div>
           </div>
 
