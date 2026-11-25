@@ -9,6 +9,11 @@ export function postMediaUrl(value = ""): string {
   return key ? `${API_BASE_URL}/admin/media/${key}` : value;
 }
 
+export function applicationDocumentUrl(value: string): string {
+  const key = value.match(/(?:^\/?|\/admin\/media\/|\.amazonaws\.com\/)(applications\/[^?#]+)(?:[?#].*)?$/i)?.[1];
+  return key ? API_BASE_URL + "/admin/media/" + key : value;
+}
+
 export function getPhysicalPhotoUrl(value: string = ""): string {
   const key = value.match(/(?:^|\/admin\/media\/|\.amazonaws\.com\/)(physical_verification\/[\w.-]+)$/)?.[1];
   return key ? `${API_BASE_URL}/admin/media/${key}` : value;

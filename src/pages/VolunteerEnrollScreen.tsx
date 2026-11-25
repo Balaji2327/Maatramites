@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { preload } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -27,6 +28,7 @@ import {
   BriefcaseIcon,
   CurrencyRupeeIcon,
   ArrowLeftIcon,
+  ArrowTopRightOnSquareIcon,
   PrinterIcon,
   UserIcon,
   PencilSquareIcon,
@@ -37,7 +39,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import StudentSidebar from "@/components/StudentSidebar";
-import { getStoredUser, studentApi, getPhysicalPhotoUrl } from "@/lib/api";
+import { getStoredUser, studentApi, applicationDocumentUrl, getPhysicalPhotoUrl } from "@/lib/api";
 
 interface VolunteerScreenProps {
   role: "student" | "alumni";
@@ -52,6 +54,132 @@ export const PHYSICAL_PHOTO_SLOTS: { key: PhysicalPhotoKey; title: string; hint:
   { key: "with_student", title: "With student", hint: "Volunteer along with the student" },
   { key: "backward", title: "Backward", hint: "Backside, kitchen, or rear premises" },
 ];
+
+function isPreviewImage(url: string) {
+  return /^data:image\//i.test(url) || /\.(png|jpe?g|gif|webp|avif)(?:$|[?#])/i.test(url);
+}
+
+function warmPreview(value: string) {
+  const url = applicationDocumentUrl(value);
+  if (isPreviewImage(url) && !url.startsWith("data:")) preload(url, { as: "image" });
+}
+
+function UploadPreview({ url, title, onClose }: { url: string; title: string; onClose: () => void }) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const isImage = isPreviewImage(url);
+  const directPdf = /^https?:\/\//i.test(url) && /\/admin\/media\/applications\/[^?#]+\.pdf(?:$|[?#])/i.test(url);
+  const [ready, setReady] = useState(false);
+  const [source, setSource] = useState(isImage || directPdf ? url : "");
+  const [pdf, setPdf] = useState(directPdf);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    const element = dialog.current;
+    element?.showModal();
+    return () => element?.close();
+  }, []);
+
+  useEffect(() => {
+    if (isImage || directPdf) return;
+    const controller = new AbortController();
+    let objectUrl = "";
+    async function load() {
+      const response = await fetch(url, { signal: controller.signal });
+      if (!response.ok) throw new Error("Document unavailable");
+      const file = await response.blob();
+      const isPdf = (await file.slice(0, 5).text()) === "%PDF-";
+      if (!isPdf && !file.type.startsWith("image/")) throw new Error("Unsupported format");
+      if (controller.signal.aborted) return;
+      objectUrl = URL.createObjectURL(isPdf ? file.slice(0, file.size, "application/pdf") : file);
+      setPdf(isPdf);
+      setSource(objectUrl);
+    }
+    load().catch(() => { if (!controller.signal.aborted) setFailed(true); });
+    return () => {
+      controller.abort();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [url, isImage, directPdf]);
+
+  return (
+    <dialog ref={dialog} aria-labelledby="upload-preview-title" onCancel={onClose}
+      onClick={event => { if (event.target === event.currentTarget) onClose(); }}
+      className="fixed inset-0 m-auto w-[calc(100%_-_2rem)] max-w-2xl max-h-[90vh] rounded-xl border border-black/15 bg-white p-0 shadow-sm backdrop:bg-black/70">
+      <div className="flex max-h-[90vh] flex-col overflow-hidden">
+        <header className="p-4 sm:p-5 border-b border-black/15 flex items-center justify-between bg-black/5">
+          <div className="flex items-center gap-2">
+            <DocumentTextIcon className="w-5 h-5 text-brand" />
+            <h2 id="upload-preview-title" className="font-heading font-bold text-sm text-black">{title}</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            {source && /^(?:https?:|blob:|data:image\/|\/(?!\/))/i.test(source) && (
+              <a href={source} target="_blank" rel="noopener noreferrer" title="Open in new window" aria-label="Open in new window"
+                className="cursor-pointer p-1.5 text-black/65 hover:text-black hover:bg-black/10 rounded-md">
+                <ArrowTopRightOnSquareIcon className="w-4 h-4" />
+              </a>
+            )}
+            <button type="button" autoFocus onClick={onClose} aria-label="Close preview"
+              className="cursor-pointer p-1.5 text-black/65 hover:text-black hover:bg-black/10 rounded-md">
+              <XMarkIcon className="w-5 h-5" />
+            </button>
+          </div>
+        </header>
+        <div className="relative p-4 flex-1 overflow-auto flex items-center justify-center bg-black/5 min-h-[min(300px,45vh)]">
+          {!ready && !failed && <span role="status" className="absolute text-xs text-black/65">Loading document…</span>}
+          {failed ? <p role="alert" className="text-xs text-black/65">This document could not be displayed.</p>
+            : source && (pdf ? <iframe title={title} src={source} onLoad={() => setReady(true)}
+                className={`w-full h-[65vh] rounded-md border border-black/15 bg-white ${ready ? "" : "invisible"}`} />
+              : <img src={source} alt={title} fetchPriority="high" onLoad={() => setReady(true)} onError={() => setFailed(true)}
+                  className={`max-h-[70vh] w-auto object-contain rounded-md border border-black/15 ${ready ? "" : "invisible"}`} />)}
+        </div>
+        <footer className="p-3 border-t border-black/15 flex justify-end bg-white">
+          <button type="button" onClick={onClose} className="px-5 py-2 bg-black text-white font-heading font-bold text-xs rounded-md cursor-pointer">
+            Close Preview
+          </button>
+        </footer>
+      </div>
+    </dialog>
+  );
+}
+
+type ReviewValue = string | number | boolean | null;
+type ReviewSection = {
+  title: string;
+  fields: [string, ReviewValue][];
+  table?: { headings: string[]; rows: ReviewValue[][] };
+};
+
+function displayAnswer(value: ReviewValue) {
+  if (typeof value === "boolean") return value ? "Yes" : "No";
+  return value == null || value === "" ? "Not recorded" : String(value);
+}
+
+function AdmissionDetails({ sections }: { sections?: ReviewSection[] }) {
+  if (!sections) return <p className="text-sm">Application details are unavailable. Refresh to load the saved application.</p>;
+  return <>{sections.map(section => (
+    <section key={section.title} className="space-y-4 border-t border-black/15 pt-5">
+      <h4 className="font-heading text-sm font-bold">{section.title}</h4>
+      <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+        {section.fields.map(([label, value]) => (
+          <div key={label} className="min-w-0">
+            <dt className="text-xs text-black/65">{label}</dt>
+            <dd className="mt-1 whitespace-pre-wrap break-words text-sm">{displayAnswer(value)}</dd>
+          </div>
+        ))}
+      </dl>
+      {section.table && (section.table.rows.length ? (
+        <div className="overflow-x-auto">
+          <table aria-label={section.title} className="w-full text-left text-xs">
+            <thead className="bg-black/5"><tr>{section.table.headings.map(label => <th key={label} className="px-3 py-2">{label}</th>)}</tr></thead>
+            <tbody className="divide-y divide-black/15">{section.table.rows.map((row, i) => (
+              <tr key={i}>{row.map((value, j) => <td key={j} className="px-3 py-2">{displayAnswer(value)}</td>)}</tr>
+            ))}</tbody>
+          </table>
+        </div>
+      ) : <p className="text-xs text-black/65">No subject marks recorded.</p>)}
+    </section>
+  ))}</>;
+}
 
 export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
   const isAlumni = role === "alumni";
@@ -1218,545 +1346,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
 
                 {/* Single Scroll Sections Container matching Screenshot */}
                 <div className="space-y-8 text-xs text-black">
-                  {/* SECTION 1: PERSONAL DETAILS */}
-                  <section id="sec-personal" className="scroll-mt-6 space-y-3">
-                    <div className="flex items-center gap-2 pb-2 border-b border-black/15">
-                      <h4 className="font-heading font-bold text-sm text-black uppercase tracking-wider">
-                        Personal Information
-                      </h4>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Student Full Name</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.full_name || selectedAssignedApplication.name || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Date of Birth</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.dob || selectedAssignedApplication.date_of_birth || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Gender</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.gender || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Blood Group</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.blood_group || selectedAssignedApplication.bloodGroup || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Mobile Number</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.mobile_number || selectedAssignedApplication.phone || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">WhatsApp Number</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.whatsappNumber ||
-                            selectedAssignedApplication.alt_mobile_number ||
-                            selectedAssignedApplication.whatsapp_number ||
-                            selectedAssignedApplication.whatsapp ||
-                            "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Email Address</span>
-                        <p className="font-bold text-sm text-black mt-0.5 truncate">
-                          {selectedAssignedApplication.email || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Aadhaar Number</span>
-                        <p className="font-mono font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.aadhaar_number || selectedAssignedApplication.aadhaarNumber || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Community / Category</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.community || selectedAssignedApplication.caste || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Nationality</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.nationality || "Indian"}
-                        </p>
-                      </div>
-                    </div>
-                  </section>
-
-                  {/* SECTION 2: FAMILY DETAILS */}
-                  <section id="sec-family" className="scroll-mt-6 space-y-4 pt-6 border-t border-black/15">
-                    <div className="flex items-center gap-2 pb-2 border-b border-black/15">
-                      <h4 className="font-heading font-bold text-sm text-black uppercase tracking-wider">
-                        Family Information
-                      </h4>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Father&apos;s Name</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.father_name || selectedAssignedApplication.fatherName || "—"}
-                        </p>
-                        <p className="text-black/65 text-[11px] mt-1">
-                          Occupation: {selectedAssignedApplication.father_occupation || selectedAssignedApplication.fatherOccupation || "—"}
-                        </p>
-                        <p className="text-black/65 text-[11px]">
-                          Annual Income: {selectedAssignedApplication.father_income || selectedAssignedApplication.fatherAnnualIncome || "—"}
-                        </p>
-                        <p className="text-black/65 text-[11px]">
-                          Status: {selectedAssignedApplication.fatherEmploymentStatus || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Mother&apos;s Name</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.mother_name || selectedAssignedApplication.motherName || "—"}
-                        </p>
-                        <p className="text-black/65 text-[11px] mt-1">
-                          Occupation: {selectedAssignedApplication.mother_occupation || selectedAssignedApplication.motherOccupation || "—"}
-                        </p>
-                        <p className="text-black/65 text-[11px]">
-                          Annual Income: {selectedAssignedApplication.mother_income || selectedAssignedApplication.motherAnnualIncome || "—"}
-                        </p>
-                        <p className="text-black/65 text-[11px]">
-                          Status: {selectedAssignedApplication.motherEmploymentStatus || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Total Family Income & Members</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.family_annual_income ||
-                            selectedAssignedApplication.annual_income ||
-                            selectedAssignedApplication.annualFamilyIncome ||
-                            "—"}
-                        </p>
-                        <p className="text-black/65 text-[11px] mt-1">
-                          Family Members: {selectedAssignedApplication.familyMembersCount || selectedAssignedApplication.family_members_count || "—"}
-                        </p>
-                        <p className="text-black/65 text-[11px]">
-                          Family Type: {selectedAssignedApplication.familyType || "Nuclear"}
-                        </p>
-                        <p className="text-black/65 text-[11px]">
-                          Situation:{" "}
-                          {selectedAssignedApplication.familySituation ||
-                            (selectedAssignedApplication.orphan
-                              ? "Orphan"
-                              : selectedAssignedApplication.single_parent
-                                ? "Single Parent"
-                                : "Both Parents")}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Guardian Details (If Applicable)</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.guardian_name || selectedAssignedApplication.guardianName || "—"}
-                        </p>
-                        <p className="text-black/65 text-[11px] mt-1">
-                          Relation: {selectedAssignedApplication.guardianRelation || "—"}
-                        </p>
-                        <p className="text-black/65 text-[11px]">
-                          Occupation: {selectedAssignedApplication.guardian_occupation || selectedAssignedApplication.guardianOccupation || "—"}
-                        </p>
-                        <p className="text-black/65 text-[11px]">
-                          Annual Income: {selectedAssignedApplication.guardian_income || selectedAssignedApplication.guardianAnnualIncome || "—"}
-                        </p>
-                      </div>
-                    </div>
-                  </section>
-
-                  {/* SECTION 3: SIBLINGS DETAILS */}
-                  <section id="sec-siblings" className="scroll-mt-6 space-y-4 pt-6 border-t border-black/15">
-                    <div className="flex items-center gap-2 pb-2 border-b border-black/15">
-                      <h4 className="font-heading font-bold text-sm text-black uppercase tracking-wider">
-                        Siblings Information
-                      </h4>
-                    </div>
-                    <div className="flex flex-wrap gap-4 text-xs mb-3">
-                      <div className="bg-black/5 px-3.5 py-2 rounded-md border border-black/15">
-                        <span className="text-black/65">Number of Siblings: </span>
-                        <strong className="text-black">
-                          {selectedAssignedApplication.siblingCount ??
-                            selectedAssignedApplication.siblings_count ??
-                            (Array.isArray(selectedAssignedApplication.siblings)
-                              ? selectedAssignedApplication.siblings.length
-                              : 0)}
-                        </strong>
-                      </div>
-                      <div className="bg-black/5 px-3.5 py-2 rounded-md border border-black/15">
-                        <span className="text-black/65">Siblings Currently Studying: </span>
-                        <strong className="text-black">
-                          {selectedAssignedApplication.siblingsStudyingCount || "—"}
-                        </strong>
-                      </div>
-                    </div>
-
-                    {Array.isArray(selectedAssignedApplication.siblings) && selectedAssignedApplication.siblings.length > 0 ? (
-                      <table className="w-full text-left text-xs border border-black/15 rounded-md overflow-hidden">
-                        <thead className="bg-black/5 text-black font-bold uppercase text-[10px]">
-                          <tr>
-                            <th className="py-2.5 px-3">Name</th>
-                            <th className="py-2.5 px-3">Relationship</th>
-                            <th className="py-2.5 px-3">Age</th>
-                            <th className="py-2.5 px-3">Education / Occupation</th>
-                            <th className="py-2.5 px-3">School / Institution</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-black/15 bg-white">
-                          {selectedAssignedApplication.siblings.map((s: any, i: number) => (
-                            <tr key={i} className="hover:bg-black/5">
-                              <td className="py-2 px-3 font-bold text-black">{s.name || "—"}</td>
-                              <td className="py-2 px-3 text-black">{s.relationship || "—"}</td>
-                              <td className="py-2 px-3 text-black">{s.age || "—"}</td>
-                              <td className="py-2 px-3 text-black">{s.education || s.occupation || "—"}</td>
-                              <td className="py-2 px-3 text-black">{s.institution || "—"}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    ) : typeof selectedAssignedApplication.siblings === "string" && selectedAssignedApplication.siblings.trim() ? (
-                      <div className="p-4 bg-black/5 border border-black/15 rounded-md text-xs text-black whitespace-pre-wrap">
-                        {selectedAssignedApplication.siblings}
-                      </div>
-                    ) : (
-                      <p className="text-black/65 italic bg-black/5 p-4 rounded-md border border-black/15">
-                        No siblings recorded
-                      </p>
-                    )}
-                  </section>
-
-                  {/* SECTION 4: ADDRESS INFORMATION */}
-                  <section id="sec-address" className="scroll-mt-6 space-y-4 pt-6 border-t border-black/15">
-                    <div className="flex items-center gap-2 pb-2 border-b border-black/15">
-                      <h4 className="font-heading font-bold text-sm text-black uppercase tracking-wider">
-                        Address & Residence Details
-                      </h4>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15 sm:col-span-2">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Permanent Address</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.permanentAddress || selectedAssignedApplication.address || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15 sm:col-span-2">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Current Residential Address</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.currentAddress ||
-                            selectedAssignedApplication.current_address ||
-                            selectedAssignedApplication.address ||
-                            "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Village / Town</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.villageTown || selectedAssignedApplication.village_town || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">District & State</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.district || "—"},{" "}
-                          {selectedAssignedApplication.state || "Tamil Nadu"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">PIN Code</span>
-                        <p className="font-mono font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.pincode || selectedAssignedApplication.pin_code || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Residence Type</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.residenceType || selectedAssignedApplication.housing_status || "Own"}
-                        </p>
-                      </div>
-                      {(selectedAssignedApplication.residenceType || selectedAssignedApplication.housing_status) === "Rented" && (
-                        <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                          <span className="text-[10px] text-black/65 uppercase font-bold">Monthly Rent</span>
-                          <p className="font-bold text-sm text-black mt-0.5">
-                            {selectedAssignedApplication.rentAmount || selectedAssignedApplication.rent_amount || "—"}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </section>
-
-                  {/* SECTION 5: EDUCATIONAL INFORMATION */}
-                  <section id="sec-academic" className="scroll-mt-6 space-y-4 pt-6 border-t border-black/15">
-                    <div className="flex items-center gap-2 pb-2 border-b border-black/15">
-                      <h4 className="font-heading font-bold text-sm text-black uppercase tracking-wider">
-                        Educational Information (10th, 12th & Preferences)
-                      </h4>
-                    </div>
-
-                    {/* 12th Standard Section (Most critical) */}
-                    <div className="p-5 bg-brand/15 border border-brand/60 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-heading font-bold text-sm text-black">
-                          12th Higher Secondary Marks (HSC)
-                        </span>
-                        {(selectedAssignedApplication.twelfth_cutoff || selectedAssignedApplication.twelfthCutoff) && (
-                          <span className="px-3 py-1 bg-brand font-mono font-bold text-sm text-black rounded-md">
-                            Cutoff: {selectedAssignedApplication.twelfth_cutoff || selectedAssignedApplication.twelfthCutoff} / 200
-                          </span>
-                        )}
-                      </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs mt-3">
-                        <div>
-                          <span className="text-black/65 block">School Name:</span>
-                          <p className="font-bold text-black">
-                            {selectedAssignedApplication.twelfth_school_name || selectedAssignedApplication.twelfthSchool || "—"}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-black/65 block">Board & Passing Year:</span>
-                          <p className="font-bold text-black">
-                            {selectedAssignedApplication.twelfth_board || selectedAssignedApplication.twelfthBoard || "State Board"} (
-                            {selectedAssignedApplication.twelfth_pass_year || selectedAssignedApplication.twelfthYear || "—"})
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-black/65 block">Group / Stream:</span>
-                          <p className="font-bold text-black">
-                            {selectedAssignedApplication.twelfth_group ||
-                              selectedAssignedApplication.twelfthStream ||
-                              selectedAssignedApplication.twelfth_stream ||
-                              "—"}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-black/65 block">Total Marks & %:</span>
-                          <p className="font-bold text-black">
-                            {selectedAssignedApplication.twelfth_total_marks || selectedAssignedApplication.twelfthTotalMarks || "—"} /{" "}
-                            {selectedAssignedApplication.twelfth_max_marks || "600"} (
-                            {selectedAssignedApplication.twelfth_percentage || selectedAssignedApplication.twelfthPercentage || "—"}%)
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* 10th Standard Section */}
-                    <div className="p-5 bg-black/5 border border-black/15 rounded-lg">
-                      <span className="font-heading font-bold text-sm text-black">
-                        10th Secondary School Marks (SSLC)
-                      </span>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs mt-3">
-                        <div>
-                          <span className="text-black/65 block">School Name:</span>
-                          <p className="font-bold text-black">
-                            {selectedAssignedApplication.tenth_school_name || selectedAssignedApplication.tenthSchool || "—"}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-black/65 block">Board & Passing Year:</span>
-                          <p className="font-bold text-black">
-                            {selectedAssignedApplication.tenth_board || selectedAssignedApplication.tenthBoard || "State Board"} (
-                            {selectedAssignedApplication.tenth_pass_year || selectedAssignedApplication.tenthYear || "—"})
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-black/65 block">Total Marks:</span>
-                          <p className="font-bold text-black">
-                            {selectedAssignedApplication.tenth_marks_obtained || selectedAssignedApplication.tenthTotalMarks || "—"} /{" "}
-                            {selectedAssignedApplication.tenth_max_marks || "500"}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-black/65 block">Percentage:</span>
-                          <p className="font-bold text-black">
-                            {selectedAssignedApplication.tenth_percentage || selectedAssignedApplication.tenthPercentage || "—"}%
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Course & Degree Preferences */}
-                    <div className="p-5 bg-white border border-black/15 rounded-lg">
-                      <span className="font-heading font-bold text-sm text-black">Course & Degree Preferences</span>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs mt-3">
-                        <div>
-                          <span className="text-black/65 block">Preferred Degree:</span>
-                          <p className="font-bold text-black">
-                            {selectedAssignedApplication.preferred_degree || selectedAssignedApplication.preferredDegree || "—"}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-black/65 block">Preferred Course (1st):</span>
-                          <p className="font-bold text-black">
-                            {selectedAssignedApplication.preferred_branch ||
-                              (Array.isArray(selectedAssignedApplication.preferred_courses)
-                                ? selectedAssignedApplication.preferred_courses[0]
-                                : selectedAssignedApplication.preferred_courses) ||
-                              "—"}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-black/65 block">Preferred Course (2nd):</span>
-                          <p className="font-bold text-black">
-                            {selectedAssignedApplication.secondBranch ||
-                              (Array.isArray(selectedAssignedApplication.preferred_courses)
-                                ? selectedAssignedApplication.preferred_courses[1]
-                                : "") ||
-                              "—"}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-black/65 block">Preferred College / Location:</span>
-                          <p className="font-bold text-black">
-                            {selectedAssignedApplication.preferredCollegeLocation ||
-                              (Array.isArray(selectedAssignedApplication.preferred_districts)
-                                ? selectedAssignedApplication.preferred_districts.join(", ")
-                                : "") ||
-                              "—"}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </section>
-
-                  {/* SECTION 6: FINANCIAL INFORMATION */}
-                  <section id="sec-financial" className="scroll-mt-6 space-y-4 pt-6 border-t border-black/15">
-                    <div className="flex items-center gap-2 pb-2 border-b border-black/15">
-                      <h4 className="font-heading font-bold text-sm text-black uppercase tracking-wider">
-                        Financial Information & Needs
-                      </h4>
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Annual Family Income</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.annualIncome ||
-                            selectedAssignedApplication.family_annual_income ||
-                            selectedAssignedApplication.annualFamilyIncome ||
-                            "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Income Sources</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.incomeSources || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Family Debts</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.familyDebts || selectedAssignedApplication.family_debt || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Existing Education Loans</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.educationLoans || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Can Afford Without Support?</span>
-                        <p className="font-bold text-sm text-black mt-0.5">
-                          {selectedAssignedApplication.affordabilityWithoutSupport || "No"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15 sm:col-span-3">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">
-                          Financial Difficulties Faced by Family
-                        </span>
-                        <p className="text-black mt-1 leading-relaxed">
-                          {selectedAssignedApplication.financialDifficulties || "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15 sm:col-span-3">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">
-                          Why the Student Needs Financial Support
-                        </span>
-                        <p className="text-black mt-1 leading-relaxed">
-                          {selectedAssignedApplication.whyNeedSupport ||
-
-                            selectedAssignedApplication.reason_for_applying ||
-                            "—"}
-                        </p>
-                      </div>
-                    </div>
-                  </section>
-
-                  {/* SECTION 7: PERSONAL BACKGROUND & GOALS */}
-                  <section id="sec-background" className="scroll-mt-6 space-y-4 pt-6 border-t border-black/15">
-                    <div className="flex items-center gap-2 pb-2 border-b border-black/15">
-                      <h4 className="font-heading font-bold text-sm text-black uppercase tracking-wider">
-                        Background, Career Ambition & Goals
-                      </h4>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      <span
-                        className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${selectedAssignedApplication.orphan
-                          ? "bg-brand/15 border-brand/60 text-black"
-                          : "bg-white border-black/15 text-black/65"
-                          }`}
-                      >
-                        {selectedAssignedApplication.orphan ? <> <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> Orphan Student</> : "Not Orphan"}
-                      </span>
-                      <span
-                        className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${selectedAssignedApplication.single_parent
-                          ? "bg-brand/15 border-brand/60 text-black"
-                          : "bg-white border-black/15 text-black/65"
-                          }`}
-                      >
-                        {selectedAssignedApplication.single_parent ? <> <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> Single Parent Child</> : "Both Parents"}
-                      </span>
-                      <span
-                        className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${selectedAssignedApplication.first_graduate || selectedAssignedApplication.is_first_graduate
-                          ? "bg-brand/15 border-brand/60 text-black"
-                          : "bg-white border-black/15 text-black/65"
-                          }`}
-                      >
-                        {selectedAssignedApplication.first_graduate || selectedAssignedApplication.is_first_graduate
-                          ? <> <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> First-Generation Learner</>
-                          : "Non-First Graduate"}
-                      </span>
-                      <span className="px-2.5 py-1 rounded-lg text-xs font-bold border bg-brand/15 border-brand/60 text-black">
-                        {selectedAssignedApplication.willingToRelocateTN !== false
-                          ? <> <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> Willing to Relocate in Tamil Nadu</>
-                          : "Local Only"}
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15 sm:col-span-2">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Career Ambition</span>
-                        <p className="font-medium text-black mt-1">
-                          {selectedAssignedApplication.careerAmbition ||
-                            selectedAssignedApplication.career_aspiration ||
-                            selectedAssignedApplication.career_goals ||
-                            "—"}
-                        </p>
-                      </div>
-                      <div className="bg-black/5 p-4 rounded-md border border-black/15">
-                        <span className="text-[10px] text-black/65 uppercase font-bold">Future Goals</span>
-                        <p className="font-medium text-black mt-1">
-                          {selectedAssignedApplication.futureGoals || "—"}
-                        </p>
-                      </div>
-                      {selectedAssignedApplication.specialCircumstances && (
-                        <div className="bg-black/5 p-4 rounded-md border border-black/15 sm:col-span-2">
-                          <span className="text-[10px] text-black/65 uppercase font-bold">
-                            Special Family Circumstances
-                          </span>
-                          <p className="font-medium text-black mt-1">
-                            {selectedAssignedApplication.specialCircumstances}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </section>
+                  <AdmissionDetails sections={selectedAssignedApplication.reviewSections} />
 
                   {/* SECTION 8: DOCUMENTS CHECKLIST (THE EXACT 4 APPLICATION DOCUMENTS) */}
                   <section id="sec-documents" className="scroll-mt-6 space-y-4 pt-6 border-t border-black/15">
@@ -1814,14 +1404,17 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                                 <span className="font-bold text-black text-xs flex items-center gap-1">
                                   <CheckBadgeIcon className="w-4 h-4 text-black/65" /> Uploaded
                                 </span>
-                                <a
-                                  href={doc.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="px-3 py-1.5 rounded-md bg-brand hover:brightness-95 text-black font-heading font-bold text-xs transition inline-flex items-center gap-1 cursor-pointer"
+                                <button
+                                  type="button"
+                                  aria-label={`View ${doc.label}`}
+                                  onPointerEnter={() => warmPreview(doc.url)}
+                                  onFocus={() => warmPreview(doc.url)}
+                                  onPointerDown={() => warmPreview(doc.url)}
+                                  onClick={() => setPreviewImage({ url: applicationDocumentUrl(doc.url), title: doc.label })}
+                                  className="inline-flex cursor-pointer items-center gap-1 text-xs font-bold hover:underline"
                                 >
-                                  <span>View &rarr;</span>
-                                </a>
+                                  <EyeIcon className="w-4 h-4" /> View
+                                </button>
                               </div>
                             ) : (
                               <div className="pt-2 border-t border-black/15">
@@ -2448,38 +2041,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
         </div>
       )}
 
-      {/* Lightbox Modal for Physical Verification Photo Preview */}
-      {previewImage && (
-        <div
-          className="fixed inset-0 z-[100] bg-black/80 flex items-center justify-center p-4"
-          onClick={() => setPreviewImage(null)}
-        >
-          <div
-            className="bg-white rounded-lg max-w-3xl w-full overflow-hidden shadow-sm border border-black/15"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between px-5 py-3 border-b border-black/15 bg-black/5">
-              <span className="font-heading font-bold text-sm text-black">
-                {previewImage.title}
-              </span>
-              <button
-                type="button"
-                onClick={() => setPreviewImage(null)}
-                className="p-1 rounded-lg text-black/65 hover:text-black hover:bg-black/10 transition cursor-pointer"
-              >
-                <XMarkIcon className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="p-4 bg-black flex items-center justify-center max-h-[75vh]">
-              <img
-                src={previewImage.url}
-                alt={previewImage.title}
-                className="max-h-[70vh] w-auto max-w-full object-contain rounded-lg"
-              />
-            </div>
-          </div>
-        </div>
-      )}
+      {previewImage && <UploadPreview key={previewImage.url} {...previewImage} onClose={() => setPreviewImage(null)} />}
     </div>
   );
 }
