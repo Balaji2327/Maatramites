@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
+import PageLoader from "./PageLoader";
 import { getAuthToken, studentApi, clearAuthToken, setActiveRole } from "../lib/api";
 
 export default function MemberSession({ children, requiredRole }: { children: ReactNode; requiredRole?: "student" | "alumni" }) {
@@ -25,5 +26,5 @@ export default function MemberSession({ children, requiredRole }: { children: Re
     void verify();
     return () => { active = false; };
   }, [requiredRole]);
-  return role && (!requiredRole || role === requiredRole) ? <>{children}</> : <p className="p-6">Checking membership...</p>;
+  return role && (!requiredRole || role === requiredRole) ? <>{children}</> : <PageLoader />;
 }

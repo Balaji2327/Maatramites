@@ -39,6 +39,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import StudentSidebar from "@/components/StudentSidebar";
+import SuggestionRecorder from "@/components/SuggestionRecorder";
 import { getStoredUser, studentApi, applicationDocumentUrl, getPhysicalPhotoUrl } from "@/lib/api";
 
 interface VolunteerScreenProps {
@@ -270,6 +271,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
   const [volunteerSuggestionInput, setVolunteerSuggestionInput] = useState("");
   const [isEditingSuggestion, setIsEditingSuggestion] = useState(false);
   const [isSavingSuggestion, setIsSavingSuggestion] = useState(false);
+  const [isDictating, setIsDictating] = useState(false);
 
   // Phase 2 Physical Verification states (5 pictures, student description, final suggestion)
   const [physicalPhotos, setPhysicalPhotos] = useState<{
@@ -1166,6 +1168,9 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                                     rows={3}
                                     className="w-full text-xs p-3.5 bg-white border border-black/15 rounded-md focus:outline-none focus:ring-2 focus:ring-brand text-black font-medium"
                                   />
+                                  <SuggestionRecorder key={selectedAssignedApplication.id || selectedAssignedApplication.application_number}
+                                    applicationId={selectedAssignedApplication.id || selectedAssignedApplication.application_number} phase="physical"
+                                    onBusy={setIsDictating} onText={text => setPhysicalFinalSuggestion(previous => [previous, text].filter(Boolean).join("\n"))} />
                                 </div>
 
                                 {/* Action Buttons */}
@@ -1181,7 +1186,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                                   )}
                                   <button
                                     type="button"
-                                    disabled={isSavingSuggestion || !allPhotosReady || !physicalStudentDescription.trim() || !physicalFinalSuggestion.trim()}
+                                    disabled={isDictating || isSavingSuggestion || !allPhotosReady || !physicalStudentDescription.trim() || !physicalFinalSuggestion.trim()}
                                     onClick={() =>
                                       handleSaveSuggestion(
                                         selectedAssignedApplication.id || selectedAssignedApplication.application_number,
@@ -1339,6 +1344,9 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                               rows={3}
                               className="w-full text-xs p-3 bg-white border border-black/15 rounded-md focus:outline-none focus:ring-2 focus:ring-brand text-black font-medium"
                             />
+                            <SuggestionRecorder key={selectedAssignedApplication.id || selectedAssignedApplication.application_number}
+                              applicationId={selectedAssignedApplication.id || selectedAssignedApplication.application_number} phase="tele"
+                              onBusy={setIsDictating} onText={text => setVolunteerSuggestionInput(previous => [previous, text].filter(Boolean).join("\n"))} />
                             <div className="flex items-center justify-end gap-2">
                               <button
                                 type="button"
@@ -1352,7 +1360,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                               </button>
                               <button
                                 type="button"
-                                disabled={isSavingSuggestion}
+                                disabled={isSavingSuggestion || isDictating}
                                 onClick={() =>
                                   handleSaveSuggestion(
                                     selectedAssignedApplication.id || selectedAssignedApplication.application_number,
