@@ -151,34 +151,102 @@ type ReviewSection = {
 
 function displayAnswer(value: ReviewValue) {
   if (typeof value === "boolean") return value ? "Yes" : "No";
-  return value == null || value === "" ? "Not recorded" : String(value);
+  return value == null || value === "" ? "\u2014" : String(value);
+}
+
+const profileHeadings = {
+  "Personal details": ["Personal Information", UserIcon],
+  "Family details": ["Family Information", HomeModernIcon],
+  "Siblings": ["Siblings Information", UserGroupIcon],
+  "Address and residence": ["Address Information", MapPinIcon],
+  "Financial information": ["Financial Information", CurrencyRupeeIcon],
+  "Background and goals": ["Personal & Background Information", UserCircleIcon],
+  "Education": ["Educational Information", AcademicCapIcon],
+} as const;
+
+const profileLabels: Record<string, string> = {
+  "Full name": "Student full name", Mobile: "Primary mobile number", WhatsApp: "WhatsApp number",
+  Email: "Email address", "Aadhaar number": "Aadhaar card number", Community: "Community / category",
+  "Family members": "Family members count", "Family type": "Family structure",
+};
+
+function ProfileFields({ fields }: { fields: ReviewSection["fields"] }) {
+  return <dl className="grid grid-cols-2 gap-4 text-xs sm:grid-cols-3 lg:grid-cols-4">
+    {fields.map(([label, value]) => (
+      <div key={label} className="min-w-0">
+        <dt className="block text-[11px] font-medium uppercase text-black/65">{profileLabels[label] || label}</dt>
+        <dd className="whitespace-pre-wrap break-words font-bold text-black">
+          {label === "Annual family income" && value != null && value !== "" && !isNaN(Number(value)) ? "\u20b9" : ""}{displayAnswer(value)}
+        </dd>
+      </div>
+    ))}
+  </dl>;
+}
+
+function FamilyDetails({ fields }: { fields: ReviewSection["fields"] }) {
+  const values = Object.fromEntries(fields);
+  return <>
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {["Father", "Mother", "Guardian"].map(person => {
+        const prefix = person + "'s ";
+        const income = values[prefix + "annual income"];
+        return <div key={person} className="space-y-2 rounded-md border border-black/15 bg-white p-4">
+          <div className="flex items-center justify-between gap-2 border-b border-black/15 pb-1.5 text-xs uppercase tracking-wider">
+            <strong>{person}'s Particulars</strong>
+            <span className="text-right text-[11px] text-black/65">{displayAnswer(values[prefix + (person === "Guardian" ? "relationship" : "employment status")])}</span>
+          </div>
+          <dl className="space-y-1.5 text-xs">
+            <div><dt className="text-[11px] text-black/65">Full Name</dt><dd className="break-words font-bold">{displayAnswer(values[prefix + "name"])}</dd></div>
+            <div><dt className="text-[11px] text-black/65">Occupation / Work</dt><dd className="break-words font-bold">{displayAnswer(values[prefix + "occupation"])}</dd></div>
+            <div><dt className="text-[11px] text-black/65">Annual Income</dt><dd className="font-mono font-bold">{income != null && income !== "" && !isNaN(Number(income)) ? "\u20b9" : ""}{displayAnswer(income)}</dd></div>
+          </dl>
+        </div>;
+      })}
+    </div>
+    <div className="border-t border-black/15 pt-4"><ProfileFields fields={[
+      ["Annual family income", values["Annual family income"]], ["Family members", values["Family members"]],
+      ["Family type", values["Family type"]], ["Family situation", values["Family situation"]],
+    ]} /></div>
+  </>;
+}
+
+function ReviewTable({ section }: { section: ReviewSection }) {
+  const table = section.table;
+  if (!table) return null;
+  if (!table.rows.length) return <p className="text-xs text-black/65">No subject marks recorded.</p>;
+  return <div className="overflow-x-auto rounded-md border border-black/15 bg-white">
+    <table aria-label={section.title} className="w-full text-left text-xs">
+      <thead className="bg-black/5 text-[11px] uppercase"><tr>{table.headings.map(label => <th key={label} className="px-3 py-2">{label}</th>)}</tr></thead>
+      <tbody className="divide-y divide-black/15">{table.rows.map((row, i) => (
+        <tr key={i}>{row.map((value, j) => <td key={j} className="px-3 py-2">{displayAnswer(value)}</td>)}</tr>
+      ))}</tbody>
+    </table>
+  </div>;
 }
 
 function AdmissionDetails({ sections }: { sections?: ReviewSection[] }) {
   if (!sections) return <p className="text-sm">Application details are unavailable. Refresh to load the saved application.</p>;
-  return <>{sections.map(section => (
-    <section key={section.title} className="space-y-4 border-t border-black/15 pt-5">
-      <h4 className="font-heading text-sm font-bold">{section.title}</h4>
-      <dl className="grid gap-x-6 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
-        {section.fields.map(([label, value]) => (
-          <div key={label} className="min-w-0">
-            <dt className="text-xs text-black/65">{label}</dt>
-            <dd className="mt-1 whitespace-pre-wrap break-words text-sm">{displayAnswer(value)}</dd>
-          </div>
-        ))}
-      </dl>
-      {section.table && (section.table.rows.length ? (
-        <div className="overflow-x-auto">
-          <table aria-label={section.title} className="w-full text-left text-xs">
-            <thead className="bg-black/5"><tr>{section.table.headings.map(label => <th key={label} className="px-3 py-2">{label}</th>)}</tr></thead>
-            <tbody className="divide-y divide-black/15">{section.table.rows.map((row, i) => (
-              <tr key={i}>{row.map((value, j) => <td key={j} className="px-3 py-2">{displayAnswer(value)}</td>)}</tr>
-            ))}</tbody>
-          </table>
-        </div>
-      ) : <p className="text-xs text-black/65">No subject marks recorded.</p>)}
-    </section>
-  ))}</>;
+  const isEducation = (s: ReviewSection) => s.title.startsWith("Class ") || s.title === "Higher education preferences";
+  const education = sections.filter(isEducation);
+  return <>{sections.map(section => {
+    const academic = isEducation(section);
+    if (academic && section !== education[0]) return null;
+    const key = academic ? "Education" : section.title;
+    const [heading, Icon] = profileHeadings[key as keyof typeof profileHeadings] || [section.title, DocumentTextIcon];
+    const fields = section.title === "Personal details"
+      ? [...section.fields.filter(([name]) => name !== "Application number"), ...section.fields.filter(([name]) => name === "Application number")]
+      : section.fields;
+    return <section key={key} className="space-y-4 rounded-lg border border-black/15 bg-black/5 p-5 sm:p-6">
+      <h3 className="flex items-center gap-2 border-b border-black/15 pb-3 font-heading text-sm font-bold uppercase tracking-wider">
+        <Icon className="h-4 w-4 text-brand" />{heading}
+      </h3>
+      {academic ? education.map(s => <div key={s.title} className="space-y-3 rounded-md border border-black/15 bg-white p-4 sm:p-5">
+        <h4 className="border-b border-black/15 pb-2 text-xs font-bold uppercase tracking-wider">{s.title}</h4>
+        <ProfileFields fields={s.fields} /><ReviewTable section={s} />
+      </div>) : section.title === "Family details" ? <FamilyDetails fields={fields} />
+        : <><ProfileFields fields={fields} /><ReviewTable section={section} /></>}
+    </section>;
+  })}</>;
 }
 
 export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
@@ -1345,11 +1413,11 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
 
 
                 {/* Single Scroll Sections Container matching Screenshot */}
-                <div className="space-y-8 text-xs text-black">
+                <div className="space-y-6 text-xs text-black">
                   <AdmissionDetails sections={selectedAssignedApplication.reviewSections} />
 
                   {/* SECTION 8: DOCUMENTS CHECKLIST (THE EXACT 4 APPLICATION DOCUMENTS) */}
-                  <section id="sec-documents" className="scroll-mt-6 space-y-4 pt-6 border-t border-black/15">
+                  <section id="sec-documents" className="scroll-mt-6 space-y-4 rounded-lg border border-black/15 bg-black/5 p-5 sm:p-6">
                     <div className="flex items-center gap-2 pb-2 border-b border-black/15">
                       <h4 className="font-heading font-bold text-sm text-black uppercase tracking-wider">
                         Document Uploads & Checklist
