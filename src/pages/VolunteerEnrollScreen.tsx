@@ -160,8 +160,6 @@ const profileHeadings = {
   "Family details": ["Family Information", HomeModernIcon],
   "Siblings": ["Siblings Information", UserGroupIcon],
   "Address and residence": ["Address Information", MapPinIcon],
-  "Financial information": ["Financial Information", CurrencyRupeeIcon],
-  "Background and goals": ["Personal & Background Information", UserCircleIcon],
   "Education": ["Educational Information", AcademicCapIcon],
 } as const;
 
