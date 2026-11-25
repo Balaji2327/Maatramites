@@ -3,5 +3,6 @@ import MemberSession from "../components/MemberSession";
 
 export default function App({ Component, pageProps, router }: AppProps) {
   if (["/LoginScreen", "/ForgotPasswordScreen", "/_error"].includes(router.pathname)) return <Component {...pageProps} />;
-  return <MemberSession><Component {...pageProps} /></MemberSession>;
+  const requiredRole = router.pathname.startsWith("/student/") ? "student" : router.pathname.startsWith("/alumni/") ? "alumni" : undefined;
+  return <MemberSession requiredRole={requiredRole}><Component {...pageProps} /></MemberSession>;
 }
