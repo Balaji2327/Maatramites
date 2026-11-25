@@ -94,7 +94,7 @@ export default function EventCard({
   const isQuotaFull = !isAcceptedByUser && myNeededCount > 0 && myAcceptedCount >= myNeededCount;
 
   return (
-    <div className="group @container min-w-0 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg transition-shadow flex flex-col justify-between overflow-hidden">
+    <div className="group @container min-w-0 bg-white rounded-lg border border-black/15 hover:shadow-sm transition-shadow flex flex-col justify-between overflow-hidden">
       <div
         onClick={() => {
           if (!isRegisteredVolunteer && onRegisterVolunteer) {
@@ -105,13 +105,13 @@ export default function EventCard({
         }}
         className="cursor-pointer"
       >
-        <header className="space-y-4 border-b border-slate-200 bg-slate-50 p-5">
+        <header className="space-y-4 border-b border-black/15 bg-black/5 p-5">
         {event.imageUrl ? (
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="relative flex items-center gap-1.5">
               <span
-                className={`text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-2xs backdrop-blur-xs flex items-center gap-1.5 ${
-                  isRemote ? "bg-blue-600 text-white" : "bg-emerald-600 text-white"
+                className={`text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-1 rounded-md flex items-center gap-1.5 ${
+                  isRemote ? "bg-black text-white" : "bg-black text-white"
                 }`}
               >
                 {isRemote ? (
@@ -129,16 +129,16 @@ export default function EventCard({
             </div>
             <div className="relative">
               {isAcceptedByUser ? (
-                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border shadow-2xs backdrop-blur-xs bg-emerald-600 text-white border-emerald-500 flex items-center gap-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border bg-black text-white border-brand flex items-center gap-1">
                   <CheckCircleIcon className="w-3.5 h-3.5 stroke-[2.5]" />
                   <span>Accepted</span>
                 </span>
               ) : event.status === "completed" || event.status === "cancelled" ? (
                 <span
-                  className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border shadow-2xs backdrop-blur-xs ${
+                  className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border ${
                     event.status === "completed"
-                      ? "bg-slate-900/90 text-white border-slate-800"
-                      : "bg-red-500/90 text-white border-red-600"
+                      ? "bg-black/90 text-white border-black"
+                      : "bg-black/90 text-white border-brand"
                   }`}
                 >
                   {event.status}
@@ -149,35 +149,35 @@ export default function EventCard({
         ) : (
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span
-              className={`text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border flex items-center gap-1.5 ${
+              className={`text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-1 rounded-md border flex items-center gap-1.5 ${
                 isRemote
-                  ? "bg-blue-50 text-blue-800 border-blue-200"
-                  : "bg-emerald-50 text-emerald-800 border-emerald-200"
+                  ? "bg-brand/15 text-black border-brand/60"
+                  : "bg-brand/15 text-black border-brand/60"
               }`}
             >
               {isRemote ? (
                 <>
-                  <GlobeAltIcon className="w-3.5 h-3.5 text-blue-600 stroke-[2.2] shrink-0" />
+                  <GlobeAltIcon className="w-3.5 h-3.5 text-black stroke-[2.2] shrink-0" />
                   <span>Remote</span>
                 </>
               ) : (
                 <>
-                  <MapPinIcon className="w-3.5 h-3.5 text-emerald-600 stroke-[2.2] shrink-0" />
+                  <MapPinIcon className="w-3.5 h-3.5 text-black stroke-[2.2] shrink-0" />
                   <span>Offline</span>
                 </>
               )}
             </span>
             {isAcceptedByUser ? (
-              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border bg-emerald-50 text-emerald-800 border-emerald-300 flex items-center gap-1">
-                <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
+              <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border bg-brand/15 text-black border-brand/60 flex items-center gap-1">
+                <CheckCircleIcon className="w-3.5 h-3.5 text-black stroke-[2.5]" />
                 <span>Accepted</span>
               </span>
             ) : event.status === "completed" || event.status === "cancelled" ? (
               <span
-                className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
+                className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md border ${
                   event.status === "completed"
-                    ? "bg-slate-100 text-slate-600 border-slate-200"
-                    : "bg-red-50 text-red-700 border-red-200"
+                    ? "bg-black/5 text-black border-black/15"
+                    : "bg-brand/15 text-black border-brand/60"
                 }`}
               >
                 {event.status}
@@ -187,7 +187,7 @@ export default function EventCard({
         )}
           <div className="flex items-center gap-4">
             {event.imageUrl && (
-              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-slate-100">
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md bg-black/5">
             <Image
               src={event.imageUrl}
               alt={event.title}
@@ -199,27 +199,27 @@ export default function EventCard({
               </div>
             )}
             <div className="min-w-0 flex-1 space-y-2">
-          <h3 className="font-heading font-extrabold text-xl leading-tight tracking-tight text-slate-900 break-words">
+          <h3 className="font-heading font-bold text-xl leading-tight tracking-tight text-black break-words">
             {event.title}
           </h3>
-              <div className="grid gap-1.5 text-xs text-slate-600">
+              <div className="grid gap-1.5 text-xs text-black">
             {/* Remote Duration vs Offline Schedule */}
             {isRemote ? (
               <div className="flex flex-wrap items-center gap-2">
-                <ClockIcon className="w-4 h-4 text-[#F7BC0F] shrink-0 stroke-[2]" />
-                <span className="font-medium text-slate-800">
+                <ClockIcon className="w-4 h-4 text-brand shrink-0 stroke-[2]" />
+                <span className="font-medium text-black">
                   Duration: {event.duration || "Self-paced"}
                 </span>
               </div>
             ) : (
               <div className="flex flex-wrap items-center gap-2">
-                <CalendarDaysIcon className="w-4 h-4 text-[#F7BC0F] shrink-0 stroke-[2]" />
-                <span className="font-medium text-slate-800">{event.date}</span>
+                <CalendarDaysIcon className="w-4 h-4 text-brand shrink-0 stroke-[2]" />
+                <span className="font-medium text-black">{event.date}</span>
                 {event.time && (
                   <>
-                    <span className="text-slate-300">•</span>
-                    <div className="flex items-center gap-1 text-slate-600">
-                      <ClockIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                    <span className="text-black/65">•</span>
+                    <div className="flex items-center gap-1 text-black">
+                      <ClockIcon className="w-3.5 h-3.5 text-black/65 shrink-0" />
                       <span>{event.time}</span>
                     </div>
                   </>
@@ -230,7 +230,7 @@ export default function EventCard({
             {/* Offline Venue Location */}
             {!isRemote && event.location && (
               <div className="flex flex-wrap items-center gap-2">
-                <MapPinIcon className="w-4 h-4 text-[#F7BC0F] shrink-0 stroke-[2]" />
+                <MapPinIcon className="w-4 h-4 text-brand shrink-0 stroke-[2]" />
                 <span className="break-words">{event.location}</span>
               </div>
             )}
@@ -240,13 +240,13 @@ export default function EventCard({
         </header>
         <div className="grid gap-4 p-5 @min-[30rem]:grid-cols-[minmax(0,1fr)_11rem]">
           <div className="min-w-0 space-y-3">
-          <p className="text-sm text-slate-600 font-primary leading-relaxed break-words">
+          <p className="text-sm text-black font-primary leading-relaxed break-words">
             {event.description}
           </p>
           {/* Volunteer Task Highlight */}
           {event.taskToComplete && (
-            <div className="px-3 py-2.5 rounded-r-lg bg-amber-50/70 border-l-[3px] border-[#F7BC0F] text-xs text-amber-950 flex items-start gap-2">
-              <ClipboardDocumentCheckIcon className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+            <div className="px-3 py-2.5 rounded-r-lg bg-brand/15 border-l-[3px] border-brand text-xs text-black flex items-start gap-2">
+              <ClipboardDocumentCheckIcon className="w-4 h-4 text-black shrink-0 mt-0.5" />
               <div className="min-w-0">
                 <span className="font-bold">Task: </span>
                 <span className="break-words">{event.taskToComplete}</span>
@@ -254,47 +254,47 @@ export default function EventCard({
             </div>
           )}
           </div>
-          <section aria-label="Volunteer places" className="space-y-2 border-t border-slate-200 pt-3 @min-[30rem]:border-l @min-[30rem]:border-t-0 @min-[30rem]:pl-4 @min-[30rem]:pt-0">
+          <section aria-label="Volunteer places" className="space-y-2 border-t border-black/15 pt-3 @min-[30rem]:border-l @min-[30rem]:border-t-0 @min-[30rem]:pl-4 @min-[30rem]:pt-0">
             {/* Volunteer Quotas (Separate student and alumni counts) */}
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div
-                className={`p-2 rounded-xl border ${
+                className={`p-2 rounded-md border ${
                   !isAlumni
-                    ? "bg-amber-50/60 border-amber-300 ring-1 ring-amber-300/40"
-                    : "bg-slate-50 border-slate-200"
+                    ? "bg-brand/15 border-brand/60 ring-1 ring-brand/40"
+                    : "bg-black/5 border-black/15"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-slate-500 font-bold uppercase">
+                  <span className="text-[10px] text-black/65 font-bold uppercase">
                     Students {!isAlumni && "● Your Quota"}
                   </span>
                 </div>
-                <span className="font-extrabold text-slate-900 font-heading text-base mt-0.5 block">
-                  {sAcceptedCount} / {sNeededCount} <span className="font-normal text-slate-500">accepted</span>
+                <span className="font-bold text-black font-heading text-base mt-0.5 block">
+                  {sAcceptedCount} / {sNeededCount} <span className="font-normal text-black/65">accepted</span>
                 </span>
               </div>
 
               <div
-                className={`p-2 rounded-xl border ${
+                className={`p-2 rounded-md border ${
                   isAlumni
-                    ? "bg-amber-50/60 border-amber-300 ring-1 ring-amber-300/40"
-                    : "bg-slate-50 border-slate-200"
+                    ? "bg-brand/15 border-brand/60 ring-1 ring-brand/40"
+                    : "bg-black/5 border-black/15"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-slate-500 font-bold uppercase">
+                  <span className="text-[10px] text-black/65 font-bold uppercase">
                     Alumni {isAlumni && "● Your Quota"}
                   </span>
                 </div>
-                <span className="font-extrabold text-slate-900 font-heading text-base mt-0.5 block">
-                  {aAcceptedCount} / {aNeededCount} <span className="font-normal text-slate-500">accepted</span>
+                <span className="font-bold text-black font-heading text-base mt-0.5 block">
+                  {aAcceptedCount} / {aNeededCount} <span className="font-normal text-black/65">accepted</span>
                 </span>
               </div>
             </div>
             {/* Eligible Student Years */}
             {event.eligibleYears && event.eligibleYears.length > 0 && (
-              <div className="text-[11px] text-slate-500 pt-1">
-                <span className="font-bold text-slate-700">Eligible: </span>
+              <div className="text-[11px] text-black/65 pt-1">
+                <span className="font-bold text-black">Eligible: </span>
                 {event.eligibleYears.map((yr) => `Year ${yr}`).join(", ")}
               </div>
             )}
@@ -306,12 +306,12 @@ export default function EventCard({
       {/* FOOTER: ACCEPT & REJECT WORKFLOW (ONLY FOR REGISTERED VOLUNTEERS) */}
       {/* ======================================================== */}
       {isRegisteredVolunteer ? (
-        <div className="px-5 py-3.5 bg-slate-50/80 border-t border-slate-100">
+        <div className="px-5 py-3.5 bg-black/5 border-t border-black/15">
           {isAcceptedByUser ? (
             /* User has ACCEPTED */
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 text-xs font-heading font-bold border border-emerald-300">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-brand/15 text-black text-xs font-heading font-bold border border-brand/60">
                   <CheckCircleIcon className="w-4 h-4 stroke-[2.2]" />
                   <span>Accepted (Participating)</span>
                 </span>
@@ -319,7 +319,7 @@ export default function EventCard({
                 <button
                   type="button"
                   onClick={() => onReject?.(event)}
-                  className="text-xs text-slate-500 hover:text-red-600 transition underline cursor-pointer"
+                  className="text-xs text-black/65 hover:text-black transition underline cursor-pointer"
                 >
                   Withdraw
                 </button>
@@ -327,9 +327,9 @@ export default function EventCard({
 
               {/* Assignment Approval Status & View Applicants Button */}
               {isAssignmentApproved ? (
-                <div className="pt-1.5 flex items-center justify-between bg-amber-50/70 p-2.5 rounded-xl border border-amber-200">
-                  <div className="flex items-center gap-1.5 text-xs text-amber-950 font-semibold">
-                    <ClipboardDocumentCheckIcon className="w-4 h-4 text-amber-600 stroke-[2.2]" />
+                <div className="pt-1.5 flex items-center justify-between bg-brand/15 p-2.5 rounded-md border border-brand/60">
+                  <div className="flex items-center gap-1.5 text-xs text-black font-semibold">
+                    <ClipboardDocumentCheckIcon className="w-4 h-4 text-black stroke-[2.2]" />
                     <span>Admin Approved: {myAcceptedEntry?.assigned_count ?? 10} Applicants Assigned</span>
                   </div>
                   <button
@@ -338,14 +338,14 @@ export default function EventCard({
                       e.stopPropagation();
                       onViewAssignedApplicants?.(event);
                     }}
-                    className="px-3 py-1 rounded-lg bg-[#F7BC0F] hover:bg-[#e5ad0c] text-slate-950 text-xs font-heading font-bold transition cursor-pointer shadow-2xs border border-amber-500"
+                    className="px-3 py-1 rounded-lg bg-brand hover:brightness-95 text-black text-xs font-heading font-bold transition cursor-pointer border border-brand"
                   >
                     View Applicants
                   </button>
                 </div>
               ) : (
-                <div className="pt-1 text-[11px] text-slate-500 flex items-center gap-1.5 bg-slate-100/70 px-2.5 py-1.5 rounded-xl">
-                  <ClockIcon className="w-3.5 h-3.5 text-slate-400 stroke-[2]" />
+                <div className="pt-1 text-[11px] text-black/65 flex items-center gap-1.5 bg-black/5 px-2.5 py-1.5 rounded-md">
+                  <ClockIcon className="w-3.5 h-3.5 text-black/65 stroke-[2]" />
                   <span>Pending Admin Assignment Approval (AI will assign 10 applicants upon approval)</span>
                 </div>
               )}
@@ -353,8 +353,8 @@ export default function EventCard({
           ) : isRejectedByUser ? (
             /* User has REJECTED */
             <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs font-heading font-semibold">
-                <XCircleIcon className="w-4 h-4 text-slate-400" />
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-black/5 text-black text-xs font-heading font-semibold">
+                <XCircleIcon className="w-4 h-4 text-black/65" />
                 <span>Declined</span>
               </span>
 
@@ -362,7 +362,7 @@ export default function EventCard({
                 <button
                   type="button"
                   onClick={() => onAccept?.(event)}
-                  className="text-xs text-amber-700 font-bold hover:underline transition cursor-pointer"
+                  className="text-xs text-black font-bold hover:underline transition cursor-pointer"
                 >
                   Accept Now
                 </button>
@@ -370,7 +370,7 @@ export default function EventCard({
             </div>
           ) : isQuotaFull ? (
             /* Quota is FULL */
-            <div className="w-full py-2 px-3 rounded-xl bg-slate-100 text-slate-500 border border-slate-200 text-xs font-heading font-bold text-center">
+            <div className="w-full py-2 px-3 rounded-md bg-black/5 text-black/65 border border-black/15 text-xs font-heading font-bold text-center">
               <span>Quota Full ({myNeededCount}/{myNeededCount} First-Come Seats Filled)</span>
             </div>
           ) : (
@@ -379,7 +379,7 @@ export default function EventCard({
               <button
                 type="button"
                 onClick={() => onAccept?.(event)}
-                className="flex-1 py-2 px-3 rounded-xl bg-[#F7BC0F] hover:bg-[#e5ad0c] text-slate-950 border border-[#e5ad0c] text-xs font-heading font-bold transition cursor-pointer shadow-xs flex items-center justify-center gap-1"
+                className="flex-1 py-2 px-3 rounded-md bg-brand hover:brightness-95 text-black border border-brand text-xs font-heading font-bold transition cursor-pointer flex items-center justify-center gap-1"
               >
                 <CheckCircleIcon className="w-4 h-4 stroke-[2.2]" />
                 <span>Accept Event</span>
@@ -388,7 +388,7 @@ export default function EventCard({
               <button
                 type="button"
                 onClick={() => onReject?.(event)}
-                className="py-2 px-3 rounded-xl bg-white hover:bg-red-50 text-slate-600 hover:text-red-700 border border-slate-200 hover:border-red-200 text-xs font-heading font-semibold transition cursor-pointer"
+                className="py-2 px-3 rounded-md bg-white hover:bg-brand/15 text-black hover:text-black border border-black/15 hover:border-brand/60 text-xs font-heading font-semibold transition cursor-pointer"
               >
                 <span>Reject</span>
               </button>
@@ -406,13 +406,13 @@ export default function EventCard({
               onView?.(event);
             }
           }}
-          className="px-5 py-3 bg-amber-50/50 hover:bg-amber-100/70 border-t border-amber-200/60 flex items-center justify-between text-xs text-amber-950 font-semibold cursor-pointer transition group/hint"
+          className="px-5 py-3 bg-brand/15 hover:bg-brand/15 border-t border-brand/60 flex items-center justify-between text-xs text-black font-semibold cursor-pointer transition group/hint"
         >
           <span className="flex items-center gap-1.5">
-            <IdentificationIcon className="w-4 h-4 text-amber-700 shrink-0" />
+            <IdentificationIcon className="w-4 h-4 text-black shrink-0" />
             <span>Click to register as volunteer</span>
           </span>
-          <span className="text-amber-800 font-bold text-[11px] group-hover/hint:translate-x-0.5 transition-transform">&rarr;</span>
+          <span className="text-black font-bold text-[11px] group-hover/hint:translate-x-0.5 transition-transform">&rarr;</span>
         </div>
       )}
     </div>

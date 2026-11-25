@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
-import { Hanken_Grotesk, Libre_Franklin } from "next/font/google";
+import { Bricolage_Grotesque, DM_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const hankenGrotesk = Hanken_Grotesk({
-  variable: "--font-heading",
+const bricolageGrotesque = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  adjustFontFallback: false,
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
   display: "swap",
 });
 
-const libreFranklin = Libre_Franklin({
-  variable: "--font-primary",
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  adjustFontFallback: false,
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains",
+  adjustFontFallback: false,
+  subsets: ["latin"],
   display: "swap",
 });
 
@@ -31,9 +38,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${hankenGrotesk.variable} ${libreFranklin.variable} h-full antialiased`}
+      className={`${bricolageGrotesque.variable} ${dmSans.variable} ${jetBrainsMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-primary bg-[#F8FAFC] text-[#0F172A]">
+      <body className="min-h-full flex flex-col font-primary bg-white text-black">
         {children}
       </body>
     </html>

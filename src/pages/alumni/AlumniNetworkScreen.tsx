@@ -108,50 +108,50 @@ export default function AlumniNetworkScreen({ sectionRole = "student" }: AlumniN
   }, [alumniList, searchTerm]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-primary flex">
+    <div className="min-h-screen bg-white text-black font-primary flex">
       {/* 1. Sidebar configured for student or alumni role */}
       <StudentSidebar activeTab="network" sectionRole={sectionRole} />
 
       {/* 2. Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
-        <main className="w-full px-6 lg:px-10 py-8 space-y-6 flex-1">
+      <div className="flex-1 flex flex-col min-w-0 bg-white">
+        <main className="w-full px-4 sm:px-6 lg:px-10 py-8 space-y-6 flex-1">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+              <h1 className="font-heading font-bold text-2xl sm:text-3xl text-black tracking-tight">
                 Maatram Alumni Directory
               </h1>
-              <p className="font-primary text-xs sm:text-sm text-slate-600 mt-1">
+              <p className="font-primary text-xs sm:text-sm text-black mt-1">
                 Verified Maatram Foundation alumni database and professional network.
               </p>
             </div>
-            <div className="text-xs text-slate-500 font-medium">
-              Registered Alumni: <span className="font-bold text-slate-900">{alumniList.length}</span>
+            <div className="text-xs text-black/65 font-medium">
+              Registered Alumni: <span className="font-bold text-black">{alumniList.length}</span>
             </div>
           </div>
 
           {/* Search Bar Section */}
-          <section className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+          <section className="bg-white border border-black/15 rounded-lg p-4">
             <div className="relative w-full">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <MagnifyingGlassIcon className="w-4 h-4 text-slate-400" />
+                <MagnifyingGlassIcon className="w-4 h-4 text-black/65" />
               </div>
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search alumni by name, company, role, or college..."
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#F7BC0F] focus:bg-white focus:ring-2 focus:ring-[#F7BC0F]/20 transition"
+                className="w-full bg-black/5 border border-black/15 rounded-md pl-10 pr-4 py-2.5 text-xs text-black placeholder-black/65 focus:outline-none focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition"
               />
             </div>
           </section>
 
           {/* Alumni Table (Normal List View instead of Cards Grid) */}
-          <div className="bg-white border border-slate-200 rounded-3xl shadow-xs overflow-hidden">
+          <div className="bg-white border border-black/15 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
-                  <tr className="border-b border-slate-200 text-slate-500 font-heading text-[11px] uppercase tracking-wider bg-slate-50/70">
+                  <tr className="border-b border-black/15 text-black/65 font-heading text-[11px] uppercase tracking-wider bg-black/5">
                     <th className="py-3.5 px-5">Alumni Scholar</th>
                     <th className="py-3.5 px-4">Role & Organization</th>
                     <th className="py-3.5 px-4">College & Graduation</th>
@@ -159,30 +159,30 @@ export default function AlumniNetworkScreen({ sectionRole = "student" }: AlumniN
                     <th className="py-3.5 px-4 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
+                <tbody className="divide-y divide-black/15 font-medium">
                   {filteredAlumni.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="py-16 text-center text-slate-400">
-                        <AcademicCapIcon className="w-10 h-10 mx-auto mb-2 text-slate-300 stroke-1" />
-                        <p className="text-sm font-semibold text-slate-600">No Alumni Records Found</p>
-                        <p className="text-xs text-slate-400 mt-1">
+                      <td colSpan={5} className="py-16 text-center text-black/65">
+                        <AcademicCapIcon className="w-10 h-10 mx-auto mb-2 text-black/65 stroke-1" />
+                        <p className="text-sm font-semibold text-black">No Alumni Records Found</p>
+                        <p className="text-xs text-black/65 mt-1">
                           No registered alumni found matching your criteria.
                         </p>
                       </td>
                     </tr>
                   ) : (
                     filteredAlumni.map((a) => (
-                      <tr key={a.id} className="hover:bg-slate-50/70 transition">
+                      <tr key={a.id} className="hover:bg-black/5 transition">
                         {/* Alumni Scholar */}
                         <td className="py-3.5 px-5">
                           <div className="flex items-center gap-3">
-                            <div className="w-9 h-9 rounded-full bg-amber-100 text-amber-900 font-heading font-black flex items-center justify-center text-xs shrink-0">
+                            <div className="w-9 h-9 rounded-full bg-brand/15 text-black font-heading font-bold flex items-center justify-center text-xs shrink-0">
                               {a.name?.charAt(0) || "A"}
                             </div>
                             <div>
-                              <p className="font-heading font-bold text-slate-900 text-xs sm:text-sm">{a.name}</p>
+                              <p className="font-heading font-bold text-black text-xs sm:text-sm">{a.name}</p>
                               {a.rollNumber && (
-                                <span className="font-mono text-[10px] text-slate-400">{a.rollNumber}</span>
+                                <span className="font-mono text-[10px] text-black/65">{a.rollNumber}</span>
                               )}
                             </div>
                           </div>
@@ -190,20 +190,20 @@ export default function AlumniNetworkScreen({ sectionRole = "student" }: AlumniN
 
                         {/* Role & Organization */}
                         <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-1.5 font-bold text-slate-900">
-                            <BuildingOffice2Icon className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                          <div className="flex items-center gap-1.5 font-bold text-black">
+                            <BuildingOffice2Icon className="w-3.5 h-3.5 text-black shrink-0" />
                             <span>{a.company}</span>
                           </div>
-                          <p className="text-[11px] text-slate-500 mt-0.5">
+                          <p className="text-[11px] text-black/65 mt-0.5">
                             {a.role} {a.experience ? `• ${a.experience}` : ""}
                           </p>
                         </td>
 
                         {/* College & Degree */}
                         <td className="py-3.5 px-4">
-                          <p className="font-semibold text-slate-800">{a.college}</p>
-                          <p className="text-[11px] text-slate-500 mt-0.5">
-                            <span className="inline-block text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-1.5 py-0.2 rounded mr-1.5">
+                          <p className="font-semibold text-black">{a.college}</p>
+                          <p className="text-[11px] text-black/65 mt-0.5">
+                            <span className="inline-block text-[10px] font-bold text-black bg-brand/15 border border-brand/60 px-1.5 py-0.2 rounded mr-1.5">
                               Batch {a.batch}
                             </span>
                             {a.degree}
@@ -212,16 +212,16 @@ export default function AlumniNetworkScreen({ sectionRole = "student" }: AlumniN
 
                         {/* Location & Contact */}
                         <td className="py-3.5 px-4">
-                          <span className="inline-flex items-center gap-1 text-slate-700 font-medium">
-                            <MapPinIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                          <span className="inline-flex items-center gap-1 text-black font-medium">
+                            <MapPinIcon className="w-3.5 h-3.5 text-black/65 shrink-0" />
                             {a.location}
                           </span>
                           {a.email && (
                             <a
                               href={`mailto:${a.email}`}
-                              className="text-slate-500 hover:text-amber-600 flex items-center gap-1 font-mono text-[11px] mt-0.5 truncate max-w-[200px]"
+                              className="text-black/65 hover:text-black flex items-center gap-1 font-mono text-[11px] mt-0.5 truncate max-w-[200px]"
                             >
-                              <EnvelopeIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <EnvelopeIcon className="w-3.5 h-3.5 text-black/65 shrink-0" />
                               <span className="truncate">{a.email}</span>
                             </a>
                           )}
@@ -232,7 +232,7 @@ export default function AlumniNetworkScreen({ sectionRole = "student" }: AlumniN
                           <button
                             type="button"
                             onClick={() => setSelectedAlumni(a)}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-heading font-bold text-slate-700 bg-slate-100 hover:bg-[#F7BC0F] hover:text-slate-950 transition cursor-pointer"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md text-xs font-heading font-bold text-black bg-black/5 hover:bg-brand hover:text-black transition cursor-pointer"
                           >
                             <EyeIcon className="w-3.5 h-3.5" />
                             <span>Details</span>
@@ -250,85 +250,85 @@ export default function AlumniNetworkScreen({ sectionRole = "student" }: AlumniN
 
       {/* Alumni Details Modal */}
       {selectedAlumni && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-5 border border-slate-200">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl max-w-lg w-full p-6 shadow-sm space-y-5 border border-black/15">
+            <div className="flex items-center justify-between pb-3 border-b border-black/15">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 font-heading font-black flex items-center justify-center text-sm">
+                <div className="w-11 h-11 rounded-lg bg-brand/15 border border-brand/60 text-black font-heading font-bold flex items-center justify-center text-sm">
                   {selectedAlumni.name?.charAt(0)}
                 </div>
                 <div>
-                  <h3 className="font-heading font-bold text-base text-slate-900">{selectedAlumni.name}</h3>
+                  <h3 className="font-heading font-bold text-base text-black">{selectedAlumni.name}</h3>
                   {selectedAlumni.rollNumber && (
-                    <p className="text-xs text-slate-400 font-mono">{selectedAlumni.rollNumber}</p>
+                    <p className="text-xs text-black/65 font-mono">{selectedAlumni.rollNumber}</p>
                   )}
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedAlumni(null)}
-                className="p-1.5 rounded-xl text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition cursor-pointer"
+                className="p-1.5 rounded-md text-black/65 hover:text-black hover:bg-black/5 transition cursor-pointer"
               >
                 <XMarkIcon className="w-5 h-5" />
               </button>
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Current Organization & Role</p>
-                <p className="font-heading font-bold text-slate-900 text-sm flex items-center gap-1.5">
-                  <BuildingOffice2Icon className="w-4 h-4 text-emerald-600" />
+              <div className="p-3.5 rounded-lg bg-black/5 border border-black/15 space-y-1">
+                <p className="text-[10px] uppercase font-bold text-black/65 tracking-wider">Current Organization & Role</p>
+                <p className="font-heading font-bold text-black text-sm flex items-center gap-1.5">
+                  <BuildingOffice2Icon className="w-4 h-4 text-black" />
                   {selectedAlumni.company}
                 </p>
-                <p className="text-slate-700 font-semibold">{selectedAlumni.role} {selectedAlumni.experience ? `• ${selectedAlumni.experience}` : ""}</p>
-                {selectedAlumni.industry && <p className="text-slate-500">{selectedAlumni.industry}</p>}
+                <p className="text-black font-semibold">{selectedAlumni.role} {selectedAlumni.experience ? `• ${selectedAlumni.experience}` : ""}</p>
+                {selectedAlumni.industry && <p className="text-black/65">{selectedAlumni.industry}</p>}
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1">
-                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Graduation & College</p>
-                <p className="font-semibold text-slate-800">{selectedAlumni.college}</p>
-                <p className="text-slate-600">{selectedAlumni.degree} (Batch {selectedAlumni.batch})</p>
+              <div className="p-3.5 rounded-lg bg-black/5 border border-black/15 space-y-1">
+                <p className="text-[10px] uppercase font-bold text-black/65 tracking-wider">Graduation & College</p>
+                <p className="font-semibold text-black">{selectedAlumni.college}</p>
+                <p className="text-black">{selectedAlumni.degree} (Batch {selectedAlumni.batch})</p>
               </div>
 
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
-                <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Contact & Location</p>
+              <div className="p-3.5 rounded-lg bg-black/5 border border-black/15 space-y-1.5">
+                <p className="text-[10px] uppercase font-bold text-black/65 tracking-wider">Contact & Location</p>
                 {selectedAlumni.email && (
-                  <p className="text-slate-800 flex items-center gap-2 font-mono">
-                    <EnvelopeIcon className="w-3.5 h-3.5 text-slate-400" />
+                  <p className="text-black flex items-center gap-2 font-mono">
+                    <EnvelopeIcon className="w-3.5 h-3.5 text-black/65" />
                     {selectedAlumni.email}
                   </p>
                 )}
                 {selectedAlumni.phone && (
-                  <p className="text-slate-800 flex items-center gap-2">
-                    <PhoneIcon className="w-3.5 h-3.5 text-slate-400" />
+                  <p className="text-black flex items-center gap-2">
+                    <PhoneIcon className="w-3.5 h-3.5 text-black/65" />
                     {selectedAlumni.phone}
                   </p>
                 )}
-                <p className="text-slate-600 flex items-center gap-2">
-                  <MapPinIcon className="w-3.5 h-3.5 text-slate-400" />
+                <p className="text-black flex items-center gap-2">
+                  <MapPinIcon className="w-3.5 h-3.5 text-black/65" />
                   {selectedAlumni.location}
                 </p>
                 {selectedAlumni.linkedin && (
-                  <p className="text-blue-600 font-mono text-[11px] pt-1 flex items-center gap-1.5">
-                    <LinkIcon className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                  <p className="text-black font-mono text-[11px] pt-1 flex items-center gap-1.5">
+                    <LinkIcon className="w-3.5 h-3.5 text-black/65 shrink-0" />
                     <span>{selectedAlumni.linkedin}</span>
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+            <div className="flex items-center justify-between pt-2 border-t border-black/15">
               <button
                 type="button"
                 onClick={() => alert(`Message request sent to ${selectedAlumni.name}!`)}
-                className="px-4 py-2 text-xs font-heading font-bold text-slate-950 bg-[#F7BC0F] hover:bg-[#e5ad0c] rounded-xl transition cursor-pointer shadow-2xs"
+                className="px-4 py-2 text-xs font-heading font-bold text-black bg-brand hover:brightness-95 rounded-md transition cursor-pointer"
               >
                 Connect / Message
               </button>
               <button
                 type="button"
                 onClick={() => setSelectedAlumni(null)}
-                className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer"
+                className="px-4 py-2 text-xs font-bold text-black hover:bg-black/5 rounded-md transition cursor-pointer"
               >
                 Close
               </button>

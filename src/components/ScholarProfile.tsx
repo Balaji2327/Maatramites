@@ -62,8 +62,8 @@ export default function ScholarProfile({ endpoint }: { endpoint: string }) {
   if (!profile) return <p role="status">{message || "Loading student profile..."}</p>;
   return <div className="space-y-4">
     {Object.entries(profile.sections).map(([section, keys], index) => (
-      <details key={section} open={index === 0} className="rounded-2xl border border-slate-200 bg-white p-5">
-        <summary className="cursor-pointer font-bold text-slate-900">{section}</summary>
+      <details key={section} open={index === 0} className="rounded-lg border border-black/15 bg-white p-5">
+        <summary className="cursor-pointer font-bold text-black">{section}</summary>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           {keys.split(" ").map(key => {
             const value = draft[key] ?? profile.values[key];
@@ -82,7 +82,7 @@ export default function ScholarProfile({ endpoint }: { endpoint: string }) {
                 <button type="button" className="text-sm underline" onClick={() => change([...siblings, { name: "" }])}>Add sibling</button>
               </fieldset>;
             }
-            return <div key={key} className="min-w-0 text-sm text-slate-800">
+            return <div key={key} className="min-w-0 text-sm text-black">
               <label htmlFor={"scholar-" + key} className="mb-1 block font-semibold">{label(key)}</label>
               {section === "Semester marksheets" ? <button type="button" onClick={() => download(key)} className="underline">Download marksheet</button> : section === "Application documents" ? (
                 typeof value === "string" && /^https?:\/\//i.test(value) ? <a href={value} target="_blank" rel="noreferrer" className="underline">Open document</a> : <span>Unavailable</span>
@@ -90,7 +90,7 @@ export default function ScholarProfile({ endpoint }: { endpoint: string }) {
                 <select id={"scholar-" + key} value={String(value)} disabled={saving} onChange={e => change(e.target.value === "true")} className="w-full rounded-lg border p-2">
                   <option value="true">Yes</option><option value="false">No</option>
                 </select>
-              ) : <input id={"scholar-" + key} value={String(value ?? "")} disabled={saving} onChange={e => change(e.target.value)} className="w-full rounded-lg border border-slate-300 p-2" />}
+              ) : <input id={"scholar-" + key} value={String(value ?? "")} disabled={saving} onChange={e => change(e.target.value)} className="w-full rounded-lg border border-black/15 p-2" />}
             </div>;
           })}
         </div>
@@ -98,7 +98,7 @@ export default function ScholarProfile({ endpoint }: { endpoint: string }) {
     ))}
     <div className="flex items-center justify-end gap-4">
       <span role="status" className="text-sm">{message}</span>
-      <button type="button" disabled={saving || !Object.keys(draft).length} onClick={save} className="rounded-xl bg-slate-900 px-4 py-2 font-semibold text-white disabled:opacity-50">{saving ? "Saving..." : "Save profile"}</button>
+      <button type="button" disabled={saving || !Object.keys(draft).length} onClick={save} className="rounded-md bg-black px-4 py-2 font-semibold text-white disabled:opacity-50">{saving ? "Saving..." : "Save profile"}</button>
     </div>
   </div>;
 }

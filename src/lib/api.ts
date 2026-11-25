@@ -1,3 +1,4 @@
+import { createSessionReader } from "./sessionExpiry";
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from "axios";
 
 const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -13,14 +14,12 @@ export function getPhysicalPhotoUrl(value: string = ""): string {
   return key ? `${API_BASE_URL}/admin/media/${key}` : value;
 }
 
-export function getAuthToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return localStorage.getItem("maatram_student_token");
-}
+export const getAuthToken = createSessionReader("maatram_student_token", "/login", clearAuthToken);
 
 export function setAuthToken(token: string) {
   if (typeof window !== "undefined") {
     localStorage.setItem("maatram_student_token", token);
+    getAuthToken();
   }
 }
 

@@ -71,49 +71,49 @@ export default function StudentPostsScreen() {
   }, [postsList, searchTerm, selectedCategory]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-primary flex">
+    <div className="min-h-screen bg-white text-black font-primary flex">
       {/* 1. Dedicated Student Sidebar */}
       <StudentSidebar activeTab="posts" sectionRole="student" />
 
       {/* 2. Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
-        <main className="w-full px-6 lg:px-10 py-8 space-y-6 flex-1">
+      <div className="flex-1 flex flex-col min-w-0 bg-white">
+        <main className="w-full px-4 sm:px-6 lg:px-10 py-8 space-y-6 flex-1">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+              <h1 className="font-heading font-bold text-2xl sm:text-3xl text-black tracking-tight">
                 Community Posts & Announcements
               </h1>
-              <p className="font-primary text-xs sm:text-sm text-slate-600 mt-1">
+              <p className="font-primary text-xs sm:text-sm text-black mt-1">
                 Read official updates, announcements, volunteer experiences, and foundation news.
               </p>
             </div>
           </div>
 
           {/* Search & Categories Filter */}
-          <section className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-3 sm:space-y-0 sm:flex sm:items-center sm:gap-4">
+          <section className="bg-white border border-black/15 rounded-lg p-4 space-y-3 sm:space-y-0 sm:flex sm:items-center sm:gap-4">
             <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <MagnifyingGlassIcon className="w-4 h-4 text-slate-400" />
+                <MagnifyingGlassIcon className="w-4 h-4 text-black/65" />
               </div>
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search official announcements, experiences, or achievements..."
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#F7BC0F] focus:bg-white focus:ring-2 focus:ring-[#F7BC0F]/20 transition"
+                className="w-full bg-black/5 border border-black/15 rounded-md pl-10 pr-4 py-2.5 text-xs text-black placeholder-black/65 focus:outline-none focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition"
               />
             </div>
           </section>
 
           {/* Posts Feed / Empty States */}
           {filteredPosts.length === 0 ? (
-            <div className="py-20 text-center bg-white border border-slate-200 rounded-3xl p-8 space-y-3 max-w-3xl mx-auto">
-              <ChatBubbleLeftRightIcon className="w-12 h-12 text-slate-300 mx-auto" />
-              <h3 className="font-heading font-bold text-base text-slate-800">
+            <div className="py-20 text-center bg-white border border-black/15 rounded-xl p-8 space-y-3 max-w-3xl mx-auto">
+              <ChatBubbleLeftRightIcon className="w-12 h-12 text-black/65 mx-auto" />
+              <h3 className="font-heading font-bold text-base text-black">
                 No Posts Found
               </h3>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">
+              <p className="text-xs text-black/65 max-w-md mx-auto">
                 No posts match your search or selected filter. Try clearing your search keyword.
               </p>
             </div>
@@ -133,16 +133,16 @@ export default function StudentPostsScreen() {
 
       {/* DETAIL VIEW MODAL */}
       {selectedPost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl border border-black/15 shadow-sm max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-3 border-b border-black/15">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-heading font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                <span className="text-xs font-heading font-bold text-black bg-brand/15 px-2.5 py-1 rounded-md border border-brand/60">
                   {selectedPost.category || "Post"}
                 </span>
                 {selectedPost.location && (
-                  <span className="text-xs font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200 flex items-center gap-1">
-                    <MapPinIcon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                  <span className="text-xs font-semibold text-black bg-black/5 px-2.5 py-1 rounded-md border border-black/15 flex items-center gap-1">
+                    <MapPinIcon className="w-3.5 h-3.5 text-black/65 shrink-0" />
                     <span>{selectedPost.location}</span>
                   </span>
                 )}
@@ -150,38 +150,38 @@ export default function StudentPostsScreen() {
               <button
                 type="button"
                 onClick={() => setSelectedPost(null)}
-                className="text-slate-400 hover:text-slate-600 font-bold text-base p-1 rounded-lg hover:bg-slate-100 cursor-pointer"
+                className="text-black/65 hover:text-black font-bold text-base p-1 rounded-lg hover:bg-black/5 cursor-pointer"
               >
                 <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
 
             {(selectedPost.images?.length ? selectedPost.images : selectedPost.imageUrl ? [selectedPost.imageUrl] : []).map((url, i) => (
-              <img key={url + i} src={url} alt={`${selectedPost.title}, image ${i + 1}`} className="w-full max-h-96 object-contain rounded-2xl" />
+              <img key={url + i} src={url} alt={`${selectedPost.title}, image ${i + 1}`} className="w-full max-h-96 object-contain rounded-lg" />
             ))}
             {selectedPost.videoUrl && (
-              <video controls playsInline preload="metadata" src={selectedPost.videoUrl} className="w-full rounded-2xl" />
+              <video controls playsInline preload="metadata" src={selectedPost.videoUrl} className="w-full rounded-lg" />
             )}
 
-            <h2 className="font-heading font-bold text-xl text-slate-900 leading-snug">
+            <h2 className="font-heading font-bold text-xl text-black leading-snug">
               {selectedPost.title}
             </h2>
 
-            <div className="text-xs text-slate-500 pb-2 border-b border-slate-100 flex items-center gap-2">
+            <div className="text-xs text-black/65 pb-2 border-b border-black/15 flex items-center gap-2">
               <span>By {selectedPost.authorName || "Scholar"}</span>
               <span>•</span>
               <span>{selectedPost.createdAt ? new Date(selectedPost.createdAt).toLocaleDateString() : ""}</span>
             </div>
 
-            <p className="text-xs text-slate-700 leading-relaxed font-primary whitespace-pre-wrap">
+            <p className="text-xs text-black leading-relaxed font-primary whitespace-pre-wrap">
               {selectedPost.content}
             </p>
 
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-black/15">
               <button
                 type="button"
                 onClick={() => setSelectedPost(null)}
-                className="px-4 py-2 text-xs font-heading font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer"
+                className="px-4 py-2 text-xs font-heading font-bold text-black hover:bg-black/5 rounded-md transition cursor-pointer"
               >
                 Close
               </button>

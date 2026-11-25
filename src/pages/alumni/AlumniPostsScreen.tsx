@@ -163,20 +163,20 @@ export default function AlumniPostsScreen() {
   }, [postsList, activeTab, searchTerm, selectedCategory]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-primary flex">
+    <div className="min-h-screen bg-white text-black font-primary flex">
       {/* 1. Dedicated Student / Alumni Sidebar */}
       <StudentSidebar activeTab="posts" sectionRole="alumni" />
 
       {/* 2. Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
-        <main className="w-full px-6 lg:px-10 py-8 space-y-6 flex-1">
+      <div className="flex-1 flex flex-col min-w-0 bg-white">
+        <main className="w-full px-4 sm:px-6 lg:px-10 py-8 space-y-6 flex-1">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+              <h1 className="font-heading font-bold text-2xl sm:text-3xl text-black tracking-tight">
                 Alumni Community & Job Referrals
               </h1>
-              <p className="font-primary text-xs sm:text-sm text-slate-600 mt-1">
+              <p className="font-primary text-xs sm:text-sm text-black mt-1">
                 Share corporate openings, employee referrals, mentorship sessions, and inspiring journeys.
               </p>
             </div>
@@ -184,7 +184,7 @@ export default function AlumniPostsScreen() {
             <button
               type="button"
               onClick={() => setIsNewPostModalOpen(true)}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#F7BC0F] hover:bg-[#e5ad0c] text-slate-950 font-heading font-bold text-xs rounded-xl shadow-xs transition cursor-pointer shrink-0"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand hover:brightness-95 text-black font-heading font-bold text-xs rounded-md transition cursor-pointer shrink-0"
             >
               <PlusIcon className="w-4 h-4 stroke-[2.2]" />
               <span>Share Alumni Post</span>
@@ -193,26 +193,26 @@ export default function AlumniPostsScreen() {
 
           {/* Success Toast */}
           {toastMessage && (
-            <div className="p-3 bg-amber-50 border border-amber-300 rounded-2xl text-xs text-amber-950 font-bold flex items-center gap-2 animate-in fade-in">
-              <CheckCircleIcon className="w-4 h-4 text-amber-600" />
+            <div className="p-3 bg-brand/15 border border-brand/60 rounded-lg text-xs text-black font-bold flex items-center gap-2 animate-in fade-in">
+              <CheckCircleIcon className="w-4 h-4 text-black" />
               <span>{toastMessage}</span>
             </div>
           )}
 
           {/* Segregation Tabs: All Posts (Common) vs My Posts */}
-          <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
+          <div className="flex items-center gap-2 border-b border-black/15 pb-3">
             <button
               type="button"
               onClick={() => setActiveTab("all")}
-              className={`px-4 py-2 rounded-xl text-xs font-heading font-bold transition flex items-center gap-2 cursor-pointer ${activeTab === "all"
-                  ? "bg-[#F7BC0F] text-slate-950 shadow-xs"
-                  : "bg-white hover:bg-slate-100 text-slate-600 border border-slate-200"
+              className={`px-4 py-2 rounded-md text-xs font-heading font-bold transition flex items-center gap-2 cursor-pointer ${activeTab === "all"
+                  ? "bg-brand text-black "
+                  : "bg-white hover:bg-black/5 text-black border border-black/15"
                 }`}
             >
               <ChatBubbleLeftRightIcon className="w-4 h-4" />
               <span>All Posts (Common)</span>
               <span
-                className={`px-1.5 py-0.5 rounded-md text-[10px] font-black ${activeTab === "all" ? "bg-black/10 text-slate-950" : "bg-slate-100 text-slate-600"
+                className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${activeTab === "all" ? "bg-black/10 text-black" : "bg-black/5 text-black"
                   }`}
               >
                 {allPostsCount}
@@ -222,15 +222,15 @@ export default function AlumniPostsScreen() {
             <button
               type="button"
               onClick={() => setActiveTab("my")}
-              className={`px-4 py-2 rounded-xl text-xs font-heading font-bold transition flex items-center gap-2 cursor-pointer ${activeTab === "my"
-                  ? "bg-[#F7BC0F] text-slate-950 shadow-xs"
-                  : "bg-white hover:bg-slate-100 text-slate-600 border border-slate-200"
+              className={`px-4 py-2 rounded-md text-xs font-heading font-bold transition flex items-center gap-2 cursor-pointer ${activeTab === "my"
+                  ? "bg-brand text-black "
+                  : "bg-white hover:bg-black/5 text-black border border-black/15"
                 }`}
             >
               <SparklesIcon className="w-4 h-4" />
               <span>My Posts</span>
               <span
-                className={`px-1.5 py-0.5 rounded-md text-[10px] font-black ${activeTab === "my" ? "bg-black/10 text-slate-950" : "bg-slate-100 text-slate-600"
+                className={`px-1.5 py-0.5 rounded-md text-[10px] font-bold ${activeTab === "my" ? "bg-black/10 text-black" : "bg-black/5 text-black"
                   }`}
               >
                 {myPostsCount}
@@ -239,10 +239,10 @@ export default function AlumniPostsScreen() {
           </div>
 
           {/* Search & Filter Bar */}
-          <section className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-3 sm:space-y-0 sm:flex sm:items-center sm:gap-4">
+          <section className="bg-white border border-black/15 rounded-lg p-4 space-y-3 sm:space-y-0 sm:flex sm:items-center sm:gap-4">
             <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <MagnifyingGlassIcon className="w-4 h-4 text-slate-400" />
+                <MagnifyingGlassIcon className="w-4 h-4 text-black/65" />
               </div>
               <input
                 type="text"
@@ -253,19 +253,19 @@ export default function AlumniPostsScreen() {
                     ? "Search your published posts..."
                     : "Search all posts by topic, company, role, or author..."
                 }
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#F7BC0F] focus:bg-white focus:ring-2 focus:ring-[#F7BC0F]/20 transition"
+                className="w-full bg-black/5 border border-black/15 rounded-md pl-10 pr-4 py-2.5 text-xs text-black placeholder-black/65 focus:outline-none focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition"
               />
             </div>
           </section>
 
           {/* Posts Feed / Empty States */}
           {filteredPosts.length === 0 ? (
-            <div className="py-20 text-center bg-white border border-slate-200 rounded-3xl p-8 space-y-3 max-w-3xl">
-              <ChatBubbleLeftRightIcon className="w-12 h-12 text-slate-300 mx-auto" />
-              <h3 className="font-heading font-bold text-base text-slate-800">
+            <div className="py-20 text-center bg-white border border-black/15 rounded-xl p-8 space-y-3 max-w-3xl">
+              <ChatBubbleLeftRightIcon className="w-12 h-12 text-black/65 mx-auto" />
+              <h3 className="font-heading font-bold text-base text-black">
                 {activeTab === "my" ? "No Posts in My Posts" : "No Posts Found"}
               </h3>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">
+              <p className="text-xs text-black/65 max-w-md mx-auto">
                 {activeTab === "my"
                   ? "You haven't published any posts yet. Share a job referral, opening at your company, or mentor reflection!"
                   : "No posts match your search or category filter. Try clearing your search."}
@@ -275,14 +275,14 @@ export default function AlumniPostsScreen() {
                   <button
                     type="button"
                     onClick={() => setActiveTab("all")}
-                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl cursor-pointer"
+                    className="px-4 py-2 bg-black/5 hover:bg-black/10 text-black text-xs font-bold rounded-md cursor-pointer"
                   >
                     Browse All Posts
                   </button>
                   <button
                     type="button"
                     onClick={() => setIsNewPostModalOpen(true)}
-                    className="px-4 py-2 bg-[#F7BC0F] hover:bg-[#e5ad0c] text-slate-950 text-xs font-bold rounded-xl cursor-pointer"
+                    className="px-4 py-2 bg-brand hover:brightness-95 text-black text-xs font-bold rounded-md cursor-pointer"
                   >
                     Create Post
                   </button>
@@ -306,16 +306,16 @@ export default function AlumniPostsScreen() {
 
       {/* DETAIL VIEW MODAL */}
       {selectedPost && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 backdrop-blur-xs p-4 overflow-y-auto">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl border border-black/15 shadow-sm max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-3 border-b border-black/15">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-heading font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                <span className="text-xs font-heading font-bold text-black bg-brand/15 px-2.5 py-1 rounded-md border border-brand/60">
                   {selectedPost.category || "Post"}
                 </span>
                 {selectedPost.location && (
-                  <span className="text-xs font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200 flex items-center gap-1">
-                    <MapPinIcon className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                  <span className="text-xs font-semibold text-black bg-black/5 px-2.5 py-1 rounded-md border border-black/15 flex items-center gap-1">
+                    <MapPinIcon className="w-3.5 h-3.5 text-black/65 shrink-0" />
                     <span>{selectedPost.location}</span>
                   </span>
                 )}
@@ -323,38 +323,38 @@ export default function AlumniPostsScreen() {
               <button
                 type="button"
                 onClick={() => setSelectedPost(null)}
-                className="text-slate-400 hover:text-slate-600 font-bold text-base p-1 rounded-lg hover:bg-slate-100 cursor-pointer"
+                className="text-black/65 hover:text-black font-bold text-base p-1 rounded-lg hover:bg-black/5 cursor-pointer"
               >
                 <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
 
             {(selectedPost.images?.length ? selectedPost.images : selectedPost.imageUrl ? [selectedPost.imageUrl] : []).map((url, i) => (
-              <img key={url + i} src={url} alt={`${selectedPost.title}, image ${i + 1}`} className="w-full max-h-96 object-contain rounded-2xl" />
+              <img key={url + i} src={url} alt={`${selectedPost.title}, image ${i + 1}`} className="w-full max-h-96 object-contain rounded-lg" />
             ))}
             {selectedPost.videoUrl && (
-              <video controls playsInline preload="metadata" src={selectedPost.videoUrl} className="w-full rounded-2xl" />
+              <video controls playsInline preload="metadata" src={selectedPost.videoUrl} className="w-full rounded-lg" />
             )}
 
-            <h2 className="font-heading font-bold text-xl text-slate-900 leading-snug">
+            <h2 className="font-heading font-bold text-xl text-black leading-snug">
               {selectedPost.title}
             </h2>
 
-            <div className="text-xs text-slate-500 pb-2 border-b border-slate-100 flex items-center gap-2">
+            <div className="text-xs text-black/65 pb-2 border-b border-black/15 flex items-center gap-2">
               <span>By {selectedPost.authorName || "Alumni"}</span>
               <span>•</span>
               <span>{selectedPost.createdAt ? new Date(selectedPost.createdAt).toLocaleDateString() : ""}</span>
             </div>
 
-            <p className="text-xs text-slate-700 leading-relaxed font-primary whitespace-pre-wrap">
+            <p className="text-xs text-black leading-relaxed font-primary whitespace-pre-wrap">
               {selectedPost.content}
             </p>
 
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-black/15">
               <button
                 type="button"
                 onClick={() => setSelectedPost(null)}
-                className="px-4 py-2 text-xs font-heading font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer"
+                className="px-4 py-2 text-xs font-heading font-bold text-black hover:bg-black/5 rounded-md transition cursor-pointer"
               >
                 Close
               </button>
@@ -365,21 +365,21 @@ export default function AlumniPostsScreen() {
 
       {/* Share Alumni Post Modal */}
       {isNewPostModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-lg bg-white rounded-3xl border border-slate-200 p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 animate-in fade-in">
+          <div className="w-full max-w-lg bg-white rounded-xl border border-black/15 p-6 shadow-sm space-y-4 animate-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between border-b border-black/15 pb-3">
               <div>
-                <h3 className="font-heading font-black text-base text-slate-900">
+                <h3 className="font-heading font-bold text-base text-black">
                   Share Alumni Post / Job Referral
                 </h3>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-black/65">
                   Post hiring alerts, corporate referrals, tech insights, or mentorship guidance.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsNewPostModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 font-bold cursor-pointer text-sm"
+                className="text-black/65 hover:text-black font-bold cursor-pointer text-sm"
               >
                 <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
@@ -387,24 +387,24 @@ export default function AlumniPostsScreen() {
 
             <form onSubmit={handleCreatePost} className="space-y-3.5 text-xs">
               <div>
-                <label className="block text-slate-700 font-bold mb-1">Post Title *</label>
+                <label className="block text-black font-bold mb-1">Post Title *</label>
                 <input
                   type="text"
                   required
                   value={postTitle}
                   onChange={(e) => setPostTitle(e.target.value)}
                   placeholder="e.g. Zoho Corporation Hiring 6 Frontend Developers (0-2 Yrs)"
-                  className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#F7BC0F] focus:bg-white text-slate-900"
+                  className="w-full p-2.5 bg-black/5 border border-black/15 rounded-md focus:outline-none focus:border-brand focus:bg-white text-black"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Category</label>
+                  <label className="block text-black font-bold mb-1">Category</label>
                   <select
                     value={postCategory}
                     onChange={(e) => setPostCategory(e.target.value)}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#F7BC0F] focus:bg-white text-slate-900"
+                    className="w-full p-2.5 bg-black/5 border border-black/15 rounded-md focus:outline-none focus:border-brand focus:bg-white text-black"
                   >
                     <option value="Job Opportunity">Job Opportunity</option>
                     <option value="Alumni Story">Alumni Story</option>
@@ -415,40 +415,40 @@ export default function AlumniPostsScreen() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1">Location / Work Mode</label>
+                  <label className="block text-black font-bold mb-1">Location / Work Mode</label>
                   <input
                     type="text"
                     value={postLocation}
                     onChange={(e) => setPostLocation(e.target.value)}
                     placeholder="e.g. Chennai / Hybrid"
-                    className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#F7BC0F] focus:bg-white text-slate-900"
+                    className="w-full p-2.5 bg-black/5 border border-black/15 rounded-md focus:outline-none focus:border-brand focus:bg-white text-black"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-700 font-bold mb-1">Content / Message Details *</label>
+                <label className="block text-black font-bold mb-1">Content / Message Details *</label>
                 <textarea
                   required
                   rows={5}
                   value={postContent}
                   onChange={(e) => setPostContent(e.target.value)}
                   placeholder="Describe the role requirements, team details, how scholars can apply, or share your inspiring journey..."
-                  className="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-[#F7BC0F] focus:bg-white text-slate-900 font-medium"
+                  className="w-full p-2.5 bg-black/5 border border-black/15 rounded-md focus:outline-none focus:border-brand focus:bg-white text-black font-medium"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-black/15">
                 <button
                   type="button"
                   onClick={() => setIsNewPostModalOpen(false)}
-                  className="px-4 py-2 border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-100 cursor-pointer"
+                  className="px-4 py-2 border border-black/15 text-black font-bold rounded-md hover:bg-black/5 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-[#F7BC0F] hover:bg-[#e5ad0c] text-slate-950 font-bold rounded-xl shadow-xs cursor-pointer"
+                  className="px-5 py-2 bg-brand hover:brightness-95 text-black font-bold rounded-md cursor-pointer"
                 >
                   Publish Post
                 </button>

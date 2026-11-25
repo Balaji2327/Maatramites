@@ -1,11 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   XMarkIcon,
-  StarIcon,
   CheckIcon,
   Squares2X2Icon,
   CalendarDaysIcon,
@@ -83,142 +81,140 @@ export default function StudentDashboardScreen() {
   const pendingCount = assignedApplicants.length - verifiedCount;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-primary flex">
+    <div className="min-h-screen bg-white text-black font-primary flex">
       {/* 1. Dedicated Student Sidebar */}
       <StudentSidebar activeTab="dashboard" sectionRole="student" studentName={studentName} />
 
       {/* 2. Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
-        <main className="w-full px-6 lg:px-10 py-8 space-y-7 flex-1">
+      <div className="flex-1 flex flex-col min-w-0 bg-white">
+        <main className="w-full px-4 sm:px-6 lg:px-10 py-8 space-y-7 flex-1">
           {/* Header & Welcome Banner */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="border-b border-black/20 pb-6 relative flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2 relative z-10">
               <div className="flex items-center gap-2">
-                <span className="px-3 py-1 bg-amber-100 text-amber-950 font-heading font-black text-xs rounded-full border border-amber-300">
-                  <StarIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> Active Scholar
+                <span className="px-3 py-1 bg-brand/15 text-black font-heading font-bold text-xs rounded-md border border-brand/60">
+                  Active Scholar
                 </span>
-                <span className="text-xs font-mono font-bold text-slate-500">
+                <span className="text-xs font-mono font-bold text-black/65">
                   {rollNumber}
                 </span>
               </div>
-              <h1 className="font-heading font-black text-2xl sm:text-3xl text-slate-900 tracking-tight">
-                Welcome back, {studentName}!
+              <h1 className="font-heading font-bold text-2xl sm:text-3xl text-black tracking-tight">
+                {studentName}
               </h1>
-              <p className="text-xs sm:text-sm text-slate-600 font-medium">
+              <p className="text-xs sm:text-sm text-black font-medium">
                 {[degree, collegeName].filter(Boolean).join(" / ")}
               </p>
             </div>
 
             <div className="flex flex-wrap items-center gap-2.5 shrink-0 relative z-10">
-              <Link href="/student/settings" className="rounded-xl bg-white border px-4 py-2 font-bold text-sm">Student Profile</Link>
+              <Link href="/student/settings" className="rounded-md bg-white border px-4 py-2 font-bold text-sm">Student Profile</Link>
               <Link
                 href="/student/posts"
-                className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-heading font-bold text-slate-800 transition cursor-pointer flex items-center gap-1.5"
+                className="px-3.5 py-2.5 bg-black/5 hover:bg-black/10 border border-black/15 rounded-md text-xs font-heading font-bold text-black transition cursor-pointer flex items-center gap-1.5"
               >
-                <ChatBubbleLeftRightIcon className="w-4 h-4 text-slate-600" />
+                <ChatBubbleLeftRightIcon className="w-4 h-4 text-black" />
                 <span>Community Posts</span>
               </Link>
               <Link
                 href="/student/academic"
-                className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-heading font-bold text-slate-800 transition cursor-pointer flex items-center gap-1.5"
+                className="px-3.5 py-2.5 bg-black/5 hover:bg-black/10 border border-black/15 rounded-md text-xs font-heading font-bold text-black transition cursor-pointer flex items-center gap-1.5"
               >
-                <AcademicCapIcon className="w-4 h-4 text-slate-600" />
+                <AcademicCapIcon className="w-4 h-4 text-black" />
                 <span>Academic Record</span>
               </Link>
               <Link
                 href="/student/events"
-                className="px-3.5 py-2.5 bg-[#F7BC0F] hover:bg-[#e5ad0c] text-slate-950 rounded-xl text-xs font-heading font-bold transition shadow-xs cursor-pointer flex items-center gap-1.5"
+                className="px-3.5 py-2.5 bg-brand hover:brightness-95 text-black rounded-md text-xs font-heading font-bold transition cursor-pointer flex items-center gap-1.5"
               >
                 <CalendarDaysIcon className="w-4 h-4 stroke-[2.2]" />
                 <span>Upcoming Events</span>
               </Link>
             </div>
 
-            <div className="absolute right-0 bottom-0 opacity-5 pointer-events-none translate-x-10 translate-y-10">
-              <Image src="/assets/images/logo.png" alt="Maatram" width={300} height={300} />
-            </div>
+
           </div>
 
           {/* Key Metrics / Snapshot */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
-              <span className="text-[10px] font-heading font-black uppercase text-slate-400 tracking-wider">
+          <div className="summary-strip grid grid-cols-2 lg:grid-cols-4">
+            <div className="bg-white border border-black/15 rounded-lg p-5">
+              <span className="text-[10px] font-heading font-bold uppercase text-black/65 tracking-wider">
                 Current Semester CGPA
               </span>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="font-heading font-black text-2xl text-slate-900">{user?.cgpa || "-"}</span>
-                <span className="text-xs font-bold text-slate-500">/ 10.0</span>
+                <span className="font-heading font-bold text-2xl text-black">{user?.cgpa || "-"}</span>
+                <span className="text-xs font-bold text-black/65">/ 10.0</span>
               </div>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
-              <span className="text-[10px] font-heading font-black uppercase text-slate-400 tracking-wider">
+            <div className="bg-white border border-black/15 rounded-lg p-5">
+              <span className="text-[10px] font-heading font-bold uppercase text-black/65 tracking-wider">
                 Overall Attendance
               </span>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="font-heading font-black text-2xl text-slate-900">{user?.attendance || "-"}</span>
+                <span className="font-heading font-bold text-2xl text-black">{user?.attendance || "-"}</span>
               </div>
-              <p className="text-[11px] text-slate-500 mt-1">Mandatory minimum: 75%</p>
+              <p className="text-[11px] text-black/65 mt-1">Mandatory minimum: 75%</p>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
-              <span className="text-[10px] font-heading font-black uppercase text-slate-400 tracking-wider">
+            <div className="bg-white border border-black/15 rounded-lg p-5">
+              <span className="text-[10px] font-heading font-bold uppercase text-black/65 tracking-wider">
                 Volunteer Verifications
               </span>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="font-heading font-black text-2xl text-slate-900">{verifiedCount}</span>
-                <span className="text-xs font-bold text-slate-500">/ {assignedApplicants.length} completed</span>
+                <span className="font-heading font-bold text-2xl text-black">{verifiedCount}</span>
+                <span className="text-xs font-bold text-black/65">/ {assignedApplicants.length} completed</span>
               </div>
-              <p className="text-[11px] text-slate-600 font-medium mt-1">
+              <p className="text-[11px] text-black font-medium mt-1">
                 {pendingCount} phone calls pending
               </p>
             </div>
 
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
-              <span className="text-[10px] font-heading font-black uppercase text-slate-400 tracking-wider">
+            <div className="bg-white border border-black/15 rounded-lg p-5">
+              <span className="text-[10px] font-heading font-bold uppercase text-black/65 tracking-wider">
                 Admission Status
               </span>
               <div className="flex items-baseline gap-2 mt-1">
-                <span className="font-heading font-black text-lg text-slate-900">Admitted</span>
+                <span className="font-heading font-bold text-lg text-black">Admitted</span>
               </div>
             </div>
           </div>
 
           {/* Success toast */}
           {saveSuccessMessage && (
-            <div className="p-3 bg-amber-50 border border-amber-300 rounded-2xl text-xs text-amber-950 font-bold flex items-center gap-2 animate-in fade-in">
-              <CheckCircleIcon className="w-4 h-4 text-amber-600" />
+            <div className="p-3 bg-brand/15 border border-brand/60 rounded-lg text-xs text-black font-bold flex items-center gap-2 animate-in fade-in">
+              <CheckCircleIcon className="w-4 h-4 text-black" />
               <span>{saveSuccessMessage}</span>
             </div>
           )}
 
           {/* Volunteer Verification Hub (Students as Volunteers) */}
-          <section className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+          <section className="bg-white border border-black/15 rounded-xl p-6 sm:p-8 space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-black/15">
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="font-heading font-black text-lg text-slate-900 uppercase tracking-tight">
+                  <h2 className="font-heading font-bold text-lg text-black uppercase tracking-tight">
                     Volunteer Verification Queue
                   </h2>
-                  <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-800 border border-slate-200 font-mono font-bold text-[10px]">
+                  <span className="px-2.5 py-0.5 rounded-md bg-black/5 text-black border border-black/15 font-mono font-bold text-[10px]">
                     {assignedApplicants.length} Assigned
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-black/65 mt-1">
                   You are a student volunteer! Conduct telephonic verification for applicants, record feedback, and help Maatram select genuine candidates.
                 </p>
               </div>
 
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-500">
-                  Completed: <strong className="text-slate-900">{verifiedCount}</strong> | Pending: <strong className="text-slate-900">{pendingCount}</strong>
+                <span className="text-xs font-bold text-black/65">
+                  Completed: <strong className="text-black">{verifiedCount}</strong> | Pending: <strong className="text-black">{pendingCount}</strong>
                 </span>
               </div>
             </div>
 
             {/* Verification Items List */}
             {assignedApplicants.length === 0 ? (
-              <div className="py-12 text-center text-xs text-slate-400">
+              <div className="py-12 text-center text-xs text-black/65">
                 No applicants assigned for verification at the moment.
               </div>
             ) : (
@@ -226,46 +222,46 @@ export default function StudentDashboardScreen() {
                 {assignedApplicants.slice(0, 6).map((app) => (
                   <div
                     key={app.id}
-                    className="p-5 rounded-2xl border border-slate-200 hover:border-amber-400 transition-all bg-slate-50/50 space-y-3"
+                    className="p-5 rounded-lg border border-black/15 hover:border-brand transition-all bg-black/5 space-y-3"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <span className="font-mono text-[10px] font-bold text-slate-400 uppercase">
+                        <span className="font-mono text-[10px] font-bold text-black/65 uppercase">
                           {app.application_number || "MF-2025-APP"}
                         </span>
-                        <h4 className="font-heading font-bold text-sm text-slate-900">
+                        <h4 className="font-heading font-bold text-sm text-black">
                           {app.full_name || "Applicant"}
                         </h4>
-                        <p className="text-[11px] text-slate-500">
-                          {app.district || "Tamil Nadu"} • Cutoff: <strong className="text-slate-800">{app.twelfth_cutoff || app.twelfthCutoff || "—"}</strong>
+                        <p className="text-[11px] text-black/65">
+                          {app.district || "Tamil Nadu"} • Cutoff: <strong className="text-black">{app.twelfth_cutoff || app.twelfthCutoff || "—"}</strong>
                         </p>
                       </div>
 
                       {app.volunteer_suggestion ? (
-                        <span className="px-2 py-0.5 bg-slate-100 text-slate-800 border border-slate-200 rounded-md text-[10px] font-bold shrink-0">
+                        <span className="px-2 py-0.5 bg-black/5 text-black border border-black/15 rounded-md text-[10px] font-bold shrink-0">
                           <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> Verified
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-md text-[10px] font-bold shrink-0">
+                        <span className="px-2 py-0.5 bg-brand/15 text-black border border-brand/60 rounded-md text-[10px] font-bold shrink-0">
                           Call Pending
                         </span>
                       )}
                     </div>
 
-                    <div className="text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-200/80 space-y-1">
+                    <div className="text-xs text-black bg-white p-3 rounded-md border border-black/15 space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-500">Father / Mother:</span>
-                        <span className="font-medium text-slate-800">{app.father_occupation || app.mother_occupation || "Daily Wage / Farmer"}</span>
+                        <span className="text-black/65">Father / Mother:</span>
+                        <span className="font-medium text-black">{app.father_occupation || app.mother_occupation || "Daily Wage / Farmer"}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-500">Annual Family Income:</span>
-                        <span className="font-bold text-slate-900">{app.family_annual_income || "₹48,000"}</span>
+                        <span className="text-black/65">Annual Family Income:</span>
+                        <span className="font-bold text-black">{app.family_annual_income || "₹48,000"}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-slate-500">Phone:</span>
+                        <span className="text-black/65">Phone:</span>
                         <a
                           href={`tel:${app.mobile_number || ""}`}
-                          className="font-bold text-slate-800 hover:text-amber-800 flex items-center gap-1"
+                          className="font-bold text-black hover:text-black flex items-center gap-1"
                         >
                           <PhoneIcon className="w-3.5 h-3.5" />
                           <span>{app.mobile_number || "—"}</span>
@@ -274,9 +270,9 @@ export default function StudentDashboardScreen() {
                     </div>
 
                     {app.volunteer_suggestion ? (
-                      <div className="p-2.5 bg-amber-50 rounded-xl border border-amber-200 text-xs">
-                        <span className="text-[10px] text-slate-500 uppercase font-bold block">Your Recorded Feedback:</span>
-                        <p className="text-slate-800 italic font-medium mt-0.5">"{app.volunteer_suggestion}"</p>
+                      <div className="p-2.5 bg-brand/15 rounded-md border border-brand/60 text-xs">
+                        <span className="text-[10px] text-black/65 uppercase font-bold block">Your Recorded Feedback:</span>
+                        <p className="text-black italic font-medium mt-0.5">"{app.volunteer_suggestion}"</p>
                       </div>
                     ) : (
                       <button
@@ -285,7 +281,7 @@ export default function StudentDashboardScreen() {
                           setSelectedApplicant(app);
                           setVolunteerNote(app.volunteer_suggestion || "");
                         }}
-                        className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-heading font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                        className="w-full py-2 bg-black hover:bg-black text-white rounded-md text-xs font-heading font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <PencilSquareIcon className="w-4 h-4" />
                         <span>Conduct Verification & Enter Remarks</span>
@@ -300,17 +296,17 @@ export default function StudentDashboardScreen() {
           {/* Quick Links / Two Columns: Events & Academic Tracker */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Academic Snapshot Card */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div className="bg-white border border-black/15 rounded-xl p-6 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-black/15">
                 <div className="flex items-center gap-2">
-                  <AcademicCapIcon className="w-5 h-5 text-amber-600 stroke-[2]" />
-                  <h3 className="font-heading font-bold text-base text-slate-900">
+                  <AcademicCapIcon className="w-5 h-5 text-black stroke-[2]" />
+                  <h3 className="font-heading font-bold text-base text-black">
                     Academic Progress
                   </h3>
                 </div>
                 <Link
                   href="/student/academic"
-                  className="text-xs font-bold text-slate-800 hover:text-amber-800 flex items-center gap-1"
+                  className="text-xs font-bold text-black hover:text-black flex items-center gap-1"
                 >
                   <span>Full Gradesheet</span>
                   <ArrowRightIcon className="w-3 h-3" />
@@ -318,33 +314,33 @@ export default function StudentDashboardScreen() {
               </div>
 
               <div className="space-y-3 text-xs">
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
-                  <span className="font-medium text-slate-700">Semester 1 SGPA</span>
-                  <strong className="font-bold text-slate-900">8.92 (All Clear)</strong>
+                <div className="p-3 bg-black/5 rounded-md border border-black/15 flex items-center justify-between">
+                  <span className="font-medium text-black">Semester 1 SGPA</span>
+                  <strong className="font-bold text-black">8.92 (All Clear)</strong>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
-                  <span className="font-medium text-slate-700">Semester 2 SGPA</span>
-                  <strong className="font-bold text-slate-900">8.78 (All Clear)</strong>
+                <div className="p-3 bg-black/5 rounded-md border border-black/15 flex items-center justify-between">
+                  <span className="font-medium text-black">Semester 2 SGPA</span>
+                  <strong className="font-bold text-black">8.78 (All Clear)</strong>
                 </div>
-                <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 flex items-center justify-between">
-                  <span className="font-bold text-amber-950">Semester 3 (Current)</span>
-                  <strong className="font-bold text-amber-900">In Progress</strong>
+                <div className="p-3 bg-brand/15 rounded-md border border-brand/60 flex items-center justify-between">
+                  <span className="font-bold text-black">Semester 3 (Current)</span>
+                  <strong className="font-bold text-black">In Progress</strong>
                 </div>
               </div>
             </div>
 
             {/* Upcoming Foundation Events Card */}
-            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-xs space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div className="bg-white border border-black/15 rounded-xl p-6 space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-black/15">
                 <div className="flex items-center gap-2">
-                  <CalendarDaysIcon className="w-5 h-5 text-amber-600 stroke-[2]" />
-                  <h3 className="font-heading font-bold text-base text-slate-900">
+                  <CalendarDaysIcon className="w-5 h-5 text-black stroke-[2]" />
+                  <h3 className="font-heading font-bold text-base text-black">
                     Upcoming Events
                   </h3>
                 </div>
                 <Link
                   href="/student/events"
-                  className="text-xs font-bold text-slate-800 hover:text-amber-800 flex items-center gap-1"
+                  className="text-xs font-bold text-black hover:text-black flex items-center gap-1"
                 >
                   <span>View All</span>
                   <ArrowRightIcon className="w-3 h-3" />
@@ -352,20 +348,20 @@ export default function StudentDashboardScreen() {
               </div>
 
               <div className="space-y-3 text-xs">
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                <div className="p-3 bg-black/5 rounded-md border border-black/15 space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900">Maatram Annual Scholars Meet 2026</span>
-                    <span className="text-[10px] px-2 py-0.5 bg-amber-100 text-amber-900 rounded font-bold">Upcoming</span>
+                    <span className="font-bold text-black">Maatram Annual Scholars Meet 2026</span>
+                    <span className="text-[10px] px-2 py-0.5 bg-brand/15 text-black rounded font-bold">Upcoming</span>
                   </div>
-                  <p className="text-slate-500 text-[11px]">Chennai Trade Centre • 15th Nov 2026</p>
+                  <p className="text-black/65 text-[11px]">Chennai Trade Centre • 15th Nov 2026</p>
                 </div>
 
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                <div className="p-3 bg-black/5 rounded-md border border-black/15 space-y-1">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900">Full-Stack Career & Tech Workshop</span>
-                    <span className="text-[10px] px-2 py-0.5 bg-slate-200 text-slate-800 rounded font-bold">Virtual</span>
+                    <span className="font-bold text-black">Full-Stack Career & Tech Workshop</span>
+                    <span className="text-[10px] px-2 py-0.5 bg-black/10 text-black rounded font-bold">Virtual</span>
                   </div>
-                  <p className="text-slate-500 text-[11px]">Online Webinar with Zoho Engineers • 22nd Nov 2026</p>
+                  <p className="text-black/65 text-[11px]">Online Webinar with Zoho Engineers • 22nd Nov 2026</p>
                 </div>
               </div>
             </div>
@@ -375,35 +371,35 @@ export default function StudentDashboardScreen() {
 
       {/* Volunteer Remark Entry Modal */}
       {selectedApplicant && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/40 backdrop-blur-xs animate-in fade-in">
-          <div className="w-full max-w-lg bg-white rounded-3xl border border-slate-200 p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 animate-in fade-in">
+          <div className="w-full max-w-lg bg-white rounded-xl border border-black/15 p-6 shadow-sm space-y-4">
+            <div className="flex items-center justify-between border-b border-black/15 pb-3">
               <div>
-                <h3 className="font-heading font-black text-base text-slate-900">
+                <h3 className="font-heading font-bold text-base text-black">
                   Record Volunteer Feedback
                 </h3>
-                <p className="text-xs text-slate-500">
-                  Applicant: <span className="font-bold text-slate-800">{selectedApplicant.full_name}</span> ({selectedApplicant.application_number})
+                <p className="text-xs text-black/65">
+                  Applicant: <span className="font-bold text-black">{selectedApplicant.full_name}</span> ({selectedApplicant.application_number})
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedApplicant(null)}
-                className="text-slate-400 hover:text-slate-600 font-bold text-sm"
+                className="text-black/65 hover:text-black font-bold text-sm"
               >
                 <XMarkIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Close" />
               </button>
             </div>
 
             <div className="space-y-3 text-xs">
-              <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-1">
+              <div className="bg-black/5 p-3 rounded-md border border-black/15 space-y-1">
                 <p><strong>Mobile:</strong> {selectedApplicant.mobile_number || "—"}</p>
                 <p><strong>Family Income:</strong> {selectedApplicant.family_annual_income || "—"}</p>
                 <p><strong>Parents Occupation:</strong> {selectedApplicant.father_occupation || selectedApplicant.mother_occupation || "—"}</p>
               </div>
 
               <div>
-                <label className="block text-slate-700 font-bold mb-1">
+                <label className="block text-black font-bold mb-1">
                   Telephonic Verification Notes & Recommendation:
                 </label>
                 <textarea
@@ -411,7 +407,7 @@ export default function StudentDashboardScreen() {
                   onChange={(e) => setVolunteerNote(e.target.value)}
                   placeholder="Enter details from phone call: family genuine condition, need for financial support, parent background, recommended branch..."
                   rows={4}
-                  className="w-full p-3 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F7BC0F] text-slate-900 font-medium"
+                  className="w-full p-3 bg-white border border-black/15 rounded-md focus:outline-none focus:ring-2 focus:ring-brand text-black font-medium"
                 />
               </div>
             </div>
@@ -420,7 +416,7 @@ export default function StudentDashboardScreen() {
               <button
                 type="button"
                 onClick={() => setSelectedApplicant(null)}
-                className="px-4 py-2 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl hover:bg-slate-100"
+                className="px-4 py-2 border border-black/15 text-black text-xs font-bold rounded-md hover:bg-black/5"
               >
                 Cancel
               </button>
@@ -428,7 +424,7 @@ export default function StudentDashboardScreen() {
                 type="button"
                 disabled={isSavingNote || !volunteerNote.trim()}
                 onClick={() => handleSaveVolunteerSuggestion(selectedApplicant.id)}
-                className="px-5 py-2 bg-[#F7BC0F] hover:bg-[#e5ad0c] disabled:opacity-50 text-slate-950 text-xs font-bold rounded-xl shadow-xs"
+                className="px-5 py-2 bg-brand hover:brightness-95 disabled:opacity-50 text-black text-xs font-bold rounded-md"
               >
                 {isSavingNote ? "Saving..." : "Save Volunteer Suggestion"}
               </button>

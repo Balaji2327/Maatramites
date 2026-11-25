@@ -383,35 +383,35 @@ export default function StudentAcademicScreen() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-primary flex">
+    <div className="min-h-screen bg-white text-black font-primary flex">
       {/* 1. Student Sidebar */}
       <StudentSidebar activeTab="academic" sectionRole="student" />
 
       {/* 2. Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
-        <main className="w-full px-6 lg:px-10 py-8 space-y-7 flex-1">
+      <div className="flex-1 flex flex-col min-w-0 bg-white">
+        <main className="w-full px-4 sm:px-6 lg:px-10 py-8 space-y-7 flex-1">
           {/* Header Banner */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+              <h1 className="font-heading font-bold text-2xl sm:text-3xl text-black tracking-tight">
                 Academic Performance & Marksheet Portal
               </h1>
 
               {/* College & Degree Badge directly after the heading */}
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-50 border border-amber-300 text-amber-950 font-heading font-bold text-xs shadow-2xs">
-                  <BuildingLibraryIcon className="w-4 h-4 text-amber-700 shrink-0 stroke-[2.2]" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-brand/15 border border-brand/60 text-black font-heading font-bold text-xs">
+                  <BuildingLibraryIcon className="w-4 h-4 text-black shrink-0 stroke-[2.2]" />
                   <span>{collegeName}</span>
                 </div>
                 {degreeName && (
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white border border-slate-200 text-slate-700 font-primary font-semibold text-xs shadow-2xs">
-                    <AcademicCapIcon className="w-4 h-4 text-slate-500 shrink-0 stroke-[2]" />
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-white border border-black/15 text-black font-primary font-semibold text-xs">
+                    <AcademicCapIcon className="w-4 h-4 text-black/65 shrink-0 stroke-[2]" />
                     <span>{degreeName}</span>
                   </div>
                 )}
               </div>
 
-              <p className="font-primary text-xs sm:text-sm text-slate-600 mt-2">
+              <p className="font-primary text-xs sm:text-sm text-black mt-2">
                 Track internal assessment scores, semester grades, cumulative CGPA, and standing arrear history.
               </p>
             </div>
@@ -419,20 +419,20 @@ export default function StudentAcademicScreen() {
 
           {/* Toast Message */}
           {toastMessage && (
-            <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-900 font-bold flex items-center gap-2 animate-in fade-in">
-              <CheckCircleIcon className="w-4 h-4 text-emerald-600 shrink-0" />
+            <div className="p-3.5 bg-brand/15 border border-brand/60 rounded-lg text-xs text-black font-bold flex items-center gap-2 animate-in fade-in">
+              <CheckCircleIcon className="w-4 h-4 text-black shrink-0" />
               <span>{toastMessage}</span>
             </div>
           )}
 
           {/* ================= 4 WATER-FILLED LIQUID BALLS KPI SECTION ================= */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-xs">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-6 border-b border-slate-100 gap-2 mb-6">
+          <div className="bg-white border border-black/15 rounded-xl p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-6 border-b border-black/15 gap-2 mb-6">
               <div>
-                <h2 className="font-heading font-black text-lg text-slate-900 tracking-tight">
+                <h2 className="font-heading font-bold text-lg text-black tracking-tight">
                   Academic Health & Performance Indicators
                 </h2>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-black/65 mt-0.5">
                   Liquid level gauges reflecting your CGPA, semester completion, and arrear status.
                 </p>
               </div>
@@ -441,17 +441,17 @@ export default function StudentAcademicScreen() {
             <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 md:gap-14 py-3">
               {/* 1. Cumulative CGPA Liquid Circle */}
               <div className="flex flex-col items-center text-center">
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#FFFDF5] overflow-hidden flex items-center justify-center shadow-inner border border-amber-200/70">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white overflow-hidden flex items-center justify-center shadow-inner border border-brand/60">
                   {/* Single Unified Seamless Water Body */}
                   <div
-                    className="absolute bottom-0 left-0 right-0 bg-[#F7BC0F] transition-all duration-1000 ease-out z-10"
+                    className="absolute bottom-0 left-0 right-0 bg-brand transition-all duration-1000 ease-out z-10"
                     style={{ height: `${Math.min(92, Math.max(14, (Number(overallCgpa) || 0) * 10))}%` }}
                   >
                     {/* Top Animated Waves - with overlapping top edge to completely prevent any separation line */}
                     <div className="absolute -top-[18px] left-0 right-0 h-[20px] overflow-hidden pointer-events-none">
                       {/* Back wave */}
                       <svg
-                        className="absolute bottom-0 left-0 w-[200%] h-full text-[#FFE082] fill-current animate-wave-back opacity-100"
+                        className="absolute bottom-0 left-0 w-[200%] h-full text-brand fill-current animate-wave-back opacity-100"
                         viewBox="0 0 1000 100"
                         preserveAspectRatio="none"
                       >
@@ -459,7 +459,7 @@ export default function StudentAcademicScreen() {
                       </svg>
                       {/* Front wave identical color to body */}
                       <svg
-                        className="absolute bottom-0 left-0 w-[200%] h-full text-[#F7BC0F] fill-current animate-wave-front opacity-95"
+                        className="absolute bottom-0 left-0 w-[200%] h-full text-brand fill-current animate-wave-front opacity-95"
                         viewBox="0 0 1000 100"
                         preserveAspectRatio="none"
                       >
@@ -469,38 +469,38 @@ export default function StudentAcademicScreen() {
                   </div>
 
                   {/* Inner Center Text */}
-                  <div className="relative z-20 flex flex-col items-center justify-center text-slate-950 pointer-events-none drop-shadow-xs">
-                    <span className="font-heading font-black text-lg sm:text-xl tracking-tight text-slate-950 leading-none">
+                  <div className="relative z-20 flex flex-col items-center justify-center text-black pointer-events-none drop-shadow-xs">
+                    <span className="font-heading font-bold text-lg sm:text-xl tracking-tight text-black leading-none">
                       {overallCgpa || "-"}
                     </span>
-                    <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 mt-0.5">
+                    <span className="text-[10px] sm:text-[11px] font-bold text-black mt-0.5">
                       {totalEarnedCredits > 0 ? `${totalEarnedCredits} hrs` : "0 hrs"}
                     </span>
                   </div>
                 </div>
 
-                <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-slate-900 mt-2.5">
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-black mt-2.5">
                   CGPA / OVERALL
                 </span>
               </div>
 
               {/* 2. Progress / Completion Liquid Circle */}
               <div className="flex flex-col items-center text-center">
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#FFFDF5] overflow-hidden flex items-center justify-center shadow-inner border border-amber-200/70">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white overflow-hidden flex items-center justify-center shadow-inner border border-brand/60">
                   <div
-                    className="absolute bottom-0 left-0 right-0 bg-[#F7BC0F] transition-all duration-1000 ease-out z-10"
+                    className="absolute bottom-0 left-0 right-0 bg-brand transition-all duration-1000 ease-out z-10"
                     style={{ height: `${Math.min(92, Math.max(14, (selectedSemester / 8) * 100))}%` }}
                   >
                     <div className="absolute -top-[18px] left-0 right-0 h-[20px] overflow-hidden pointer-events-none">
                       <svg
-                        className="absolute bottom-0 left-0 w-[200%] h-full text-[#FFE082] fill-current animate-wave-back opacity-100"
+                        className="absolute bottom-0 left-0 w-[200%] h-full text-brand fill-current animate-wave-back opacity-100"
                         viewBox="0 0 1000 100"
                         preserveAspectRatio="none"
                       >
                         <path d="M0,58 C140,100 310,0 500,58 C690,100 860,0 1000,58 L1000,100 L0,100 Z" />
                       </svg>
                       <svg
-                        className="absolute bottom-0 left-0 w-[200%] h-full text-[#F7BC0F] fill-current animate-wave-front opacity-95"
+                        className="absolute bottom-0 left-0 w-[200%] h-full text-brand fill-current animate-wave-front opacity-95"
                         viewBox="0 0 1000 100"
                         preserveAspectRatio="none"
                       >
@@ -509,39 +509,39 @@ export default function StudentAcademicScreen() {
                     </div>
                   </div>
 
-                  <div className="relative z-20 flex flex-col items-center justify-center text-slate-950 pointer-events-none drop-shadow-xs">
-                    <span className="font-heading font-black text-lg sm:text-xl tracking-tight text-slate-950 leading-none">
+                  <div className="relative z-20 flex flex-col items-center justify-center text-black pointer-events-none drop-shadow-xs">
+                    <span className="font-heading font-bold text-lg sm:text-xl tracking-tight text-black leading-none">
                       {((selectedSemester / 8) * 100).toFixed(1)}%
                     </span>
-                    <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 mt-0.5">
+                    <span className="text-[10px] sm:text-[11px] font-bold text-black mt-0.5">
                       Sem {selectedSemester} / 8
                     </span>
                   </div>
                 </div>
 
-                <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-slate-900 mt-2.5">
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-black mt-2.5">
                   PROGRESS
                 </span>
               </div>
 
               {/* 3. Standing Arrears Liquid Circle */}
               <div className="flex flex-col items-center text-center">
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#FFFDF5] overflow-hidden flex items-center justify-center shadow-inner border border-amber-200/70">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white overflow-hidden flex items-center justify-center shadow-inner border border-brand/60">
                   <div
-                    className="absolute bottom-0 left-0 right-0 bg-[#F7BC0F] transition-all duration-1000 ease-out z-10"
+                    className="absolute bottom-0 left-0 right-0 bg-brand transition-all duration-1000 ease-out z-10"
                     style={{ height: standingArrearsCount === 0 ? "100%" : `${Math.max(15, 100 - standingArrearsCount * 25)}%` }}
                   >
                     {standingArrearsCount > 0 && (
                       <div className="absolute -top-[18px] left-0 right-0 h-[20px] overflow-hidden pointer-events-none">
                         <svg
-                          className="absolute bottom-0 left-0 w-[200%] h-full text-[#FFE082] fill-current animate-wave-back opacity-100"
+                          className="absolute bottom-0 left-0 w-[200%] h-full text-brand fill-current animate-wave-back opacity-100"
                           viewBox="0 0 1000 100"
                           preserveAspectRatio="none"
                         >
                           <path d="M0,58 C140,100 310,0 500,58 C690,100 860,0 1000,58 L1000,100 L0,100 Z" />
                         </svg>
                         <svg
-                          className="absolute bottom-0 left-0 w-[200%] h-full text-[#F7BC0F] fill-current animate-wave-front opacity-95"
+                          className="absolute bottom-0 left-0 w-[200%] h-full text-brand fill-current animate-wave-front opacity-95"
                           viewBox="0 0 1000 100"
                           preserveAspectRatio="none"
                         >
@@ -551,39 +551,39 @@ export default function StudentAcademicScreen() {
                     )}
                   </div>
 
-                  <div className="relative z-20 flex flex-col items-center justify-center text-slate-950 pointer-events-none drop-shadow-xs">
-                    <span className="font-heading font-black text-lg sm:text-xl tracking-tight text-slate-950 leading-none">
+                  <div className="relative z-20 flex flex-col items-center justify-center text-black pointer-events-none drop-shadow-xs">
+                    <span className="font-heading font-bold text-lg sm:text-xl tracking-tight text-black leading-none">
                       {standingArrearsCount === 0 ? "100%" : `${standingArrearsCount} Arr`}
                     </span>
-                    <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 mt-0.5">
+                    <span className="text-[10px] sm:text-[11px] font-bold text-black mt-0.5">
                       {standingArrearsCount === 0 ? "0 standing" : `${standingArrearsCount} subjects`}
                     </span>
                   </div>
                 </div>
 
-                <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-slate-900 mt-2.5">
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-black mt-2.5">
                   STANDING ARREARS
                 </span>
               </div>
 
               {/* 4. History of Arrears Liquid Circle */}
               <div className="flex flex-col items-center text-center">
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-[#FFFDF5] overflow-hidden flex items-center justify-center shadow-inner border border-amber-200/70">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white overflow-hidden flex items-center justify-center shadow-inner border border-brand/60">
                   <div
-                    className="absolute bottom-0 left-0 right-0 bg-[#F7BC0F] transition-all duration-1000 ease-out z-10"
+                    className="absolute bottom-0 left-0 right-0 bg-brand transition-all duration-1000 ease-out z-10"
                     style={{ height: historyOfArrearsCount === 0 ? "100%" : `${Math.max(15, 100 - historyOfArrearsCount * 20)}%` }}
                   >
                     {historyOfArrearsCount > 0 && (
                       <div className="absolute -top-[18px] left-0 right-0 h-[20px] overflow-hidden pointer-events-none">
                         <svg
-                          className="absolute bottom-0 left-0 w-[200%] h-full text-[#FFE082] fill-current animate-wave-back opacity-100"
+                          className="absolute bottom-0 left-0 w-[200%] h-full text-brand fill-current animate-wave-back opacity-100"
                           viewBox="0 0 1000 100"
                           preserveAspectRatio="none"
                         >
                           <path d="M0,58 C140,100 310,0 500,58 C690,100 860,0 1000,58 L1000,100 L0,100 Z" />
                         </svg>
                         <svg
-                          className="absolute bottom-0 left-0 w-[200%] h-full text-[#F7BC0F] fill-current animate-wave-front opacity-95"
+                          className="absolute bottom-0 left-0 w-[200%] h-full text-brand fill-current animate-wave-front opacity-95"
                           viewBox="0 0 1000 100"
                           preserveAspectRatio="none"
                         >
@@ -593,17 +593,17 @@ export default function StudentAcademicScreen() {
                     )}
                   </div>
 
-                  <div className="relative z-20 flex flex-col items-center justify-center text-slate-950 pointer-events-none drop-shadow-xs">
-                    <span className="font-heading font-black text-lg sm:text-xl tracking-tight text-slate-950 leading-none">
+                  <div className="relative z-20 flex flex-col items-center justify-center text-black pointer-events-none drop-shadow-xs">
+                    <span className="font-heading font-bold text-lg sm:text-xl tracking-tight text-black leading-none">
                       {historyOfArrearsCount === 0 ? "0.0%" : `${historyOfArrearsCount}`}
                     </span>
-                    <span className="text-[10px] sm:text-[11px] font-bold text-slate-800 mt-0.5">
+                    <span className="text-[10px] sm:text-[11px] font-bold text-black mt-0.5">
                       {historyOfArrearsCount === 0 ? "0 arrear history" : `${historyOfArrearsCount} cleared`}
                     </span>
                   </div>
                 </div>
 
-                <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-slate-900 mt-2.5">
+                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-black mt-2.5">
                   HISTORY
                 </span>
               </div>
@@ -612,17 +612,17 @@ export default function StudentAcademicScreen() {
 
 
           {/* ================= SEMESTER ROADMAP STRIP ================= */}
-          <div className="bg-white border border-slate-200 rounded-3xl p-6 lg:p-7 shadow-xs space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-slate-100 gap-2">
+          <div className="bg-white border border-black/15 rounded-xl p-6 lg:p-7 space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3 border-b border-black/15 gap-2">
               <div>
-                <h3 className="font-heading font-bold text-sm text-slate-900">
+                <h3 className="font-heading font-bold text-sm text-black">
                   Semester Roadmap & Marksheets
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-black/65 mt-0.5">
                   Select a semester to inspect internal marks, model exams, and semester results.
                 </p>
               </div>
-              <span className="text-xs font-bold font-mono text-slate-500 bg-slate-50 px-3 py-1 rounded-lg border border-slate-200">
+              <span className="text-xs font-bold font-mono text-black/65 bg-black/5 px-3 py-1 rounded-lg border border-black/15">
                 Viewing: Semester {selectedSemester}
               </span>
             </div>
@@ -633,11 +633,11 @@ export default function StudentAcademicScreen() {
                 {/* Continuous Connecting Pipe Line */}
                 <div className="relative flex items-center justify-between">
                   {/* Background pipe rail */}
-                  <div className="absolute top-[28px] left-[32px] right-[32px] h-[6px] bg-slate-100 rounded-full z-0 border border-slate-200/60" />
+                  <div className="absolute top-[28px] left-[32px] right-[32px] h-[6px] bg-black/5 rounded-full z-0 border border-black/15" />
 
                   {/* Filled Liquid Water Pipeline connecting cleared/active semesters */}
                   <div
-                    className="absolute top-[28px] left-[32px] h-[6px] bg-gradient-to-r from-amber-400 via-[#F7BC0F] to-emerald-400 rounded-full z-0 transition-all duration-700 ease-out shadow-xs"
+                    className="absolute top-[28px] left-[32px] h-[6px] bg-brand rounded-full z-0 transition-all duration-700 ease-out"
                     style={{
                       width: `${Math.max(
                         0,
@@ -672,23 +672,23 @@ export default function StudentAcademicScreen() {
                         key={s.sem}
                         type="button"
                         onClick={() => setSelectedSemester(s.sem)}
-                        className="group flex flex-col items-center text-center cursor-pointer relative z-10 transition-transform hover:scale-105 focus:outline-none"
+                        className="group flex flex-col items-center text-center cursor-pointer relative z-10 transition-transform focus:outline-none"
                       >
                         {/* Circular Liquid Wave Water Sphere */}
                         <div
                           className={`relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden flex items-center justify-center transition-all duration-300 ${isSelected
-                            ? "ring-4 ring-[#F7BC0F]/40 shadow-md scale-105 border-2 border-[#F7BC0F] bg-white"
-                            : "border-2 border-slate-200/90 shadow-2xs bg-[#FFFDF7] hover:border-amber-300"
+                            ? "ring-4 ring-brand/40 shadow-sm scale-105 border-2 border-brand bg-white"
+                            : "border-2 border-black/15 bg-white hover:border-brand/60"
                             }`}
                         >
                           {/* Inner Animated Water Body */}
                           {waterHeightPercent > 0 && (
                             <div
                               className={`absolute bottom-0 left-0 right-0 transition-all duration-1000 ease-out z-10 ${isArrear
-                                ? "bg-gradient-to-t from-rose-600 via-rose-500 to-rose-400"
+                                ? "bg-black"
                                 : isCleared
-                                  ? "bg-gradient-to-t from-emerald-600 via-emerald-500 to-emerald-400"
-                                  : "bg-gradient-to-t from-[#E5A807] via-[#F7BC0F] to-[#FCD34D]"
+                                  ? "bg-black"
+                                  : "bg-brand"
                                 }`}
                               style={{ height: `${waterHeightPercent}%` }}
                             >
@@ -703,7 +703,7 @@ export default function StudentAcademicScreen() {
 
                               {/* Undulating front wave */}
                               <svg
-                                className={`absolute -top-2 left-0 w-[200%] h-2.5 fill-current animate-wave-front ${isArrear ? "text-rose-500" : isCleared ? "text-emerald-500" : "text-[#F7BC0F]"
+                                className={`absolute -top-2 left-0 w-[200%] h-2.5 fill-current animate-wave-front ${isArrear ? "text-black/65" : isCleared ? "text-black/65" : "text-brand"
                                   }`}
                                 viewBox="0 0 1000 100"
                                 preserveAspectRatio="none"
@@ -717,22 +717,22 @@ export default function StudentAcademicScreen() {
                           <div className="relative z-20 flex flex-col items-center justify-center pointer-events-none drop-shadow-xs">
                             {isCleared ? (
                               <>
-                                <span className="font-heading font-black text-xs text-white leading-none">
+                                <span className="font-heading font-bold text-xs text-white leading-none">
                                   {s.gpa ? `${s.gpa}` : <CheckIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Verified" />}
                                 </span>
-                                <span className="text-[9px] font-bold text-white/90 mt-0.5">GPA</span>
+                                <span className="text-[10px] font-bold text-white/90 mt-0.5">GPA</span>
                               </>
                             ) : isInProgress ? (
                               <>
-                                <span className="font-heading font-black text-xs text-slate-900 leading-none">
+                                <span className="font-heading font-bold text-xs text-black leading-none">
                                   {s.sem}
                                 </span>
-                                <span className="text-[9px] font-bold text-slate-800 mt-0.5">Live</span>
+                                <span className="text-[10px] font-bold text-black mt-0.5">Live</span>
                               </>
                             ) : isArrear ? (
-                              <span className="font-heading font-black text-[11px] text-white">Arr</span>
+                              <span className="font-heading font-bold text-[11px] text-white">Arr</span>
                             ) : (
-                              <span className="font-mono font-bold text-xs text-slate-400">
+                              <span className="font-mono font-bold text-xs text-black/65">
                                 {s.sem}
                               </span>
                             )}
@@ -742,7 +742,7 @@ export default function StudentAcademicScreen() {
                         {/* Node Label Below Circle */}
                         <div className="mt-2.5 flex flex-col items-center">
                           <span
-                            className={`text-xs font-heading font-extrabold tracking-tight ${isSelected ? "text-slate-950" : "text-slate-700 group-hover:text-slate-900"
+                            className={`text-xs font-heading font-bold tracking-tight ${isSelected ? "text-black" : "text-black group-hover:text-black"
                               }`}
                           >
                             Sem {s.sem}
@@ -750,12 +750,12 @@ export default function StudentAcademicScreen() {
 
                           <span
                             className={`text-[10px] font-bold mt-0.5 ${isCleared
-                              ? "text-emerald-600"
+                              ? "text-black"
                               : isArrear
-                                ? "text-rose-600"
+                                ? "text-black"
                                 : isInProgress
-                                  ? "text-amber-800"
-                                  : "text-slate-400"
+                                  ? "text-black"
+                                  : "text-black/65"
                               }`}
                           >
                             {isCleared ? "Completed" : isInProgress ? "Active" : isArrear ? "Arrear" : "Upcoming"}
@@ -772,10 +772,10 @@ export default function StudentAcademicScreen() {
             <div className="pt-2 space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <h4 className="font-heading font-bold text-sm text-slate-900">
+                  <h4 className="font-heading font-bold text-sm text-black">
                     Semester {selectedSemester} Subjects & Marks Details
                   </h4>
-                  <span className="text-[11px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-bold">
+                  <span className="text-[11px] bg-black/5 text-black px-2 py-0.5 rounded-md font-bold">
                     {currentRecord.subjects.length} Courses
                   </span>
                 </div>
@@ -784,7 +784,7 @@ export default function StudentAcademicScreen() {
                   <button
                     type="button"
                     onClick={() => openAddSubjectModal(selectedSemester)}
-                    className="inline-flex items-center gap-1 text-slate-700 hover:text-slate-950 font-bold hover:underline cursor-pointer"
+                    className="inline-flex items-center gap-1 text-black hover:text-black font-bold hover:underline cursor-pointer"
                   >
                     <PlusIcon className="w-3.5 h-3.5" />
                     <span>Add New Subject</span>
@@ -793,24 +793,24 @@ export default function StudentAcademicScreen() {
               </div>
 
               {currentRecord.subjects.length === 0 ? (
-                <div className="p-12 text-center bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
-                  <AcademicCapIcon className="w-10 h-10 text-slate-300 mx-auto stroke-1" />
-                  <p className="text-xs text-slate-600 font-bold">No course records added for Semester {selectedSemester} yet.</p>
-                  <p className="text-[11px] text-slate-400">
+                <div className="p-12 text-center bg-black/5 border border-black/15 rounded-lg space-y-3">
+                  <AcademicCapIcon className="w-10 h-10 text-black/65 mx-auto stroke-1" />
+                  <p className="text-xs text-black font-bold">No course records added for Semester {selectedSemester} yet.</p>
+                  <p className="text-[11px] text-black/65">
                     Click "Add Marks / Subject" above to input your internal test marks and semester marks.
                   </p>
                   <button
                     type="button"
                     onClick={() => openAddSubjectModal(selectedSemester)}
-                    className="px-4 py-2 bg-[#F7BC0F] hover:bg-[#e5ad0c] text-slate-950 text-xs font-bold rounded-xl shadow-xs transition cursor-pointer"
+                    className="px-4 py-2 bg-brand hover:brightness-95 text-black text-xs font-bold rounded-md transition cursor-pointer"
                   >
                     Add Semester {selectedSemester} Subject
                   </button>
                 </div>
               ) : (
-                <div className="overflow-x-auto border border-slate-200 rounded-2xl bg-white shadow-2xs">
+                <div className="overflow-x-auto border border-black/15 rounded-lg bg-white">
                   <table className="w-full text-left text-xs border-collapse">
-                    <thead className="bg-slate-50 text-slate-600 font-heading text-[10px] uppercase tracking-wider border-b border-slate-200">
+                    <thead className="bg-black/5 text-black font-heading text-[10px] uppercase tracking-wider border-b border-black/15">
                       <tr>
                         <th className="py-3 px-4 font-bold">Subject Code</th>
                         <th className="py-3 px-4 font-bold">Course Title</th>
@@ -824,42 +824,42 @@ export default function StudentAcademicScreen() {
                         <th className="py-3 px-4 font-bold text-right">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 font-medium">
+                    <tbody className="divide-y divide-black/15 font-medium">
                       {currentRecord.subjects.map((sub) => (
-                        <tr key={sub.id} className="hover:bg-amber-50/20 transition-colors">
-                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
+                        <tr key={sub.id} className="hover:bg-brand/15 transition-colors">
+                          <td className="py-3.5 px-4 font-mono font-bold text-black">
                             {sub.code}
                           </td>
-                          <td className="py-3.5 px-4 font-bold text-slate-800">
+                          <td className="py-3.5 px-4 font-bold text-black">
                             {sub.name}
                           </td>
-                          <td className="py-3.5 px-4 text-center font-mono text-slate-600">
+                          <td className="py-3.5 px-4 text-center font-mono text-black">
                             {sub.credits}
                           </td>
-                          <td className="py-3.5 px-4 text-center font-mono font-bold text-slate-900">
+                          <td className="py-3.5 px-4 text-center font-mono font-bold text-black">
                             {sub.internal1}
                           </td>
-                          <td className="py-3.5 px-4 text-center font-mono font-bold text-slate-900">
+                          <td className="py-3.5 px-4 text-center font-mono font-bold text-black">
                             {sub.internal2}
                           </td>
-                          <td className="py-3.5 px-4 text-center font-mono font-bold text-slate-900">
+                          <td className="py-3.5 px-4 text-center font-mono font-bold text-black">
                             {sub.modelExam}
                           </td>
-                          <td className="py-3.5 px-4 text-center font-mono text-slate-700">
+                          <td className="py-3.5 px-4 text-center font-mono text-black">
                             {sub.attendance}
                           </td>
-                          <td className="py-3.5 px-4 text-center font-bold text-slate-900">
-                            <span className="bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200">
+                          <td className="py-3.5 px-4 text-center font-bold text-black">
+                            <span className="bg-black/5 px-2 py-0.5 rounded-md border border-black/15">
                               {sub.semesterExam}
                             </span>
                           </td>
                           <td className="py-3.5 px-4 text-center">
                             <span
-                              className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${sub.status === "Cleared"
-                                ? "bg-emerald-50 text-emerald-800 border border-emerald-200"
+                              className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${sub.status === "Cleared"
+                                ? "bg-brand/15 text-black border border-brand/60"
                                 : sub.status === "Arrear"
-                                  ? "bg-red-50 text-red-700 border border-red-200"
-                                  : "bg-amber-50 text-amber-900 border border-amber-200"
+                                  ? "bg-brand/15 text-black border border-brand/60"
+                                  : "bg-brand/15 text-black border border-brand/60"
                                 }`}
                             >
                               {sub.status}
@@ -870,7 +870,7 @@ export default function StudentAcademicScreen() {
                               <button
                                 type="button"
                                 onClick={() => openEditSubjectModal(sub, selectedSemester)}
-                                className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition cursor-pointer"
+                                className="p-1.5 text-black/65 hover:text-black hover:bg-black/5 rounded-lg transition cursor-pointer"
                                 title="Edit Marks"
                               >
                                 <PencilSquareIcon className="w-4 h-4" />
@@ -878,7 +878,7 @@ export default function StudentAcademicScreen() {
                               <button
                                 type="button"
                                 onClick={() => handleDeleteSubject(sub.id, sub.code)}
-                                className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition cursor-pointer"
+                                className="p-1.5 text-black/65 hover:text-black hover:bg-brand/15 rounded-lg transition cursor-pointer"
                                 title="Delete Subject"
                               >
                                 <TrashIcon className="w-4 h-4" />
@@ -898,16 +898,16 @@ export default function StudentAcademicScreen() {
 
       {/* ================= MULTI-STEP ADD / EDIT MARKS MODAL ================= */}
       {showMarkModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/50 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 sm:p-7 space-y-5 animate-in fade-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-xl border border-black/15 shadow-sm max-w-xl w-full p-6 sm:p-7 space-y-5 animate-in fade-in zoom-in-95 duration-200 max-h-[92vh] overflow-y-auto">
             
             {/* Modal Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="flex items-center justify-between pb-3 border-b border-black/15">
               <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200">
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-black bg-brand/15 px-2.5 py-1 rounded-md border border-brand/60">
                   Semester {modalTargetSemester} • {modalStep === "select_exam" ? "Step 1 of 2: Select Exam" : "Step 2 of 2: Enter Marks"}
                 </span>
-                <h3 className="font-heading font-extrabold text-base sm:text-lg text-slate-900 mt-1.5">
+                <h3 className="font-heading font-bold text-base sm:text-lg text-black mt-1.5">
                   {modalMode === "add"
                     ? modalStep === "select_exam"
                       ? "Choose Assessment / Exam Type"
@@ -918,7 +918,7 @@ export default function StudentAcademicScreen() {
               <button
                 type="button"
                 onClick={() => setShowMarkModal(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition cursor-pointer"
+                className="p-1.5 text-black/65 hover:text-black rounded-md hover:bg-black/5 transition cursor-pointer"
               >
                 <XMarkIcon className="w-5 h-5" />
               </button>
@@ -929,13 +929,13 @@ export default function StudentAcademicScreen() {
               <div className="space-y-4 text-xs">
                 {/* Target Semester Quick Selector */}
                 <div>
-                  <label className="block text-slate-700 font-bold mb-1.5">
+                  <label className="block text-black font-bold mb-1.5">
                     Target Semester
                   </label>
                   <select
                     value={modalTargetSemester}
                     onChange={(e) => setModalTargetSemester(Number(e.target.value))}
-                    className="w-full p-2.5 bg-amber-50/60 border border-amber-300 rounded-xl font-heading font-bold text-slate-900 focus:outline-none focus:border-[#F7BC0F]"
+                    className="w-full p-2.5 bg-brand/15 border border-brand/60 rounded-md font-heading font-bold text-black focus:outline-none focus:border-brand"
                   >
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((semNum) => (
                       <option key={semNum} value={semNum}>
@@ -946,10 +946,10 @@ export default function StudentAcademicScreen() {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-bold mb-2">
-                    Select Examination Category <span className="text-red-500">*</span>
+                  <label className="block text-black font-bold mb-2">
+                    Select Examination Category <span className="text-black/65">*</span>
                   </label>
-                  <p className="text-[11px] text-slate-500 mb-3">
+                  <p className="text-[11px] text-black/65 mb-3">
                     Choose which test you want to record for this semester. You can upload an official marksheet document or enter scores manually on the next screen.
                   </p>
 
@@ -958,21 +958,21 @@ export default function StudentAcademicScreen() {
                     <button
                       type="button"
                       onClick={() => setSelectedExamType("CAT 1")}
-                      className={`p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between ${
+                      className={`p-4 rounded-lg border text-left transition cursor-pointer flex flex-col justify-between ${
                         selectedExamType === "CAT 1"
-                          ? "border-[#F7BC0F] bg-amber-50/70 ring-2 ring-[#F7BC0F]/40 shadow-xs"
-                          : "border-slate-200 bg-white hover:border-amber-300 hover:bg-slate-50/70"
+                          ? "border-brand bg-brand/15 ring-2 ring-brand/40 "
+                          : "border-black/15 bg-white hover:border-brand/60 hover:bg-black/5"
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-heading font-extrabold text-sm text-slate-900">
+                        <span className="font-heading font-bold text-sm text-black">
                           CAT 1
                         </span>
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-brand/15 text-black">
                           Max 25 Marks
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-500 mt-1">
+                      <p className="text-[11px] text-black/65 mt-1">
                         Continuous Assessment Test 1 (Internal Assessment 1).
                       </p>
                     </button>
@@ -981,21 +981,21 @@ export default function StudentAcademicScreen() {
                     <button
                       type="button"
                       onClick={() => setSelectedExamType("CAT 2")}
-                      className={`p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between ${
+                      className={`p-4 rounded-lg border text-left transition cursor-pointer flex flex-col justify-between ${
                         selectedExamType === "CAT 2"
-                          ? "border-[#F7BC0F] bg-amber-50/70 ring-2 ring-[#F7BC0F]/40 shadow-xs"
-                          : "border-slate-200 bg-white hover:border-amber-300 hover:bg-slate-50/70"
+                          ? "border-brand bg-brand/15 ring-2 ring-brand/40 "
+                          : "border-black/15 bg-white hover:border-brand/60 hover:bg-black/5"
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-heading font-extrabold text-sm text-slate-900">
+                        <span className="font-heading font-bold text-sm text-black">
                           CAT 2
                         </span>
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-brand/15 text-black">
                           Max 25 Marks
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-500 mt-1">
+                      <p className="text-[11px] text-black/65 mt-1">
                         Continuous Assessment Test 2 (Internal Assessment 2).
                       </p>
                     </button>
@@ -1004,21 +1004,21 @@ export default function StudentAcademicScreen() {
                     <button
                       type="button"
                       onClick={() => setSelectedExamType("CAT 3")}
-                      className={`p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between ${
+                      className={`p-4 rounded-lg border text-left transition cursor-pointer flex flex-col justify-between ${
                         selectedExamType === "CAT 3"
-                          ? "border-[#F7BC0F] bg-amber-50/70 ring-2 ring-[#F7BC0F]/40 shadow-xs"
-                          : "border-slate-200 bg-white hover:border-amber-300 hover:bg-slate-50/70"
+                          ? "border-brand bg-brand/15 ring-2 ring-brand/40 "
+                          : "border-black/15 bg-white hover:border-brand/60 hover:bg-black/5"
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-heading font-extrabold text-sm text-slate-900">
+                        <span className="font-heading font-bold text-sm text-black">
                           CAT 3 / Model Exam
                         </span>
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-brand/15 text-black">
                           Max 50 Marks
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-500 mt-1">
+                      <p className="text-[11px] text-black/65 mt-1">
                         Model Examination or third Internal Assessment before finals.
                       </p>
                     </button>
@@ -1027,21 +1027,21 @@ export default function StudentAcademicScreen() {
                     <button
                       type="button"
                       onClick={() => setSelectedExamType("Semester Exam")}
-                      className={`p-4 rounded-2xl border text-left transition cursor-pointer flex flex-col justify-between ${
+                      className={`p-4 rounded-lg border text-left transition cursor-pointer flex flex-col justify-between ${
                         selectedExamType === "Semester Exam"
-                          ? "border-[#F7BC0F] bg-amber-50/70 ring-2 ring-[#F7BC0F]/40 shadow-xs"
-                          : "border-slate-200 bg-white hover:border-amber-300 hover:bg-slate-50/70"
+                          ? "border-brand bg-brand/15 ring-2 ring-brand/40 "
+                          : "border-black/15 bg-white hover:border-brand/60 hover:bg-black/5"
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-heading font-extrabold text-sm text-slate-900">
+                        <span className="font-heading font-bold text-sm text-black">
                           Semester Exam
                         </span>
-                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-900">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-brand/15 text-black">
                           Grades / End-Sem
                         </span>
                       </div>
-                      <p className="text-[11px] text-slate-500 mt-1">
+                      <p className="text-[11px] text-black/65 mt-1">
                         Final University / College Semester Marksheet & Grade Points.
                       </p>
                     </button>
@@ -1049,18 +1049,18 @@ export default function StudentAcademicScreen() {
                 </div>
 
                 {/* Footer Controls for Step 1 */}
-                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                <div className="flex items-center justify-between pt-4 border-t border-black/15">
                   <button
                     type="button"
                     onClick={() => setShowMarkModal(false)}
-                    className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
+                    className="px-4 py-2 rounded-md text-xs font-bold text-black hover:bg-black/5 transition cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="button"
                     onClick={() => setModalStep("entry_method")}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-heading font-bold text-slate-950 bg-[#F7BC0F] hover:bg-[#e5ad0c] rounded-xl transition cursor-pointer shadow-xs border border-[#e5ad0c]"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-heading font-bold text-black bg-brand hover:brightness-95 rounded-md transition cursor-pointer border border-brand"
                   >
                     <span>Continue to Marks Entry ({selectedExamType})</span>
                     <ArrowTopRightOnSquareIcon className="w-3.5 h-3.5" />
@@ -1071,14 +1071,14 @@ export default function StudentAcademicScreen() {
               /* STEP 2: MARKSHEET UPLOAD FIELD & MANUAL ENTRY FIELDS */
               <div className="space-y-4 text-xs">
                 {/* Method Switcher Tabs */}
-                <div className="flex items-center p-1 bg-slate-100 rounded-2xl border border-slate-200">
+                <div className="flex items-center p-1 bg-black/5 rounded-lg border border-black/15">
                   <button
                     type="button"
                     onClick={() => setEntryModeTab("manual")}
-                    className={`flex-1 py-2 text-center rounded-xl font-heading font-bold text-xs transition cursor-pointer ${
+                    className={`flex-1 py-2 text-center rounded-md font-heading font-bold text-xs transition cursor-pointer ${
                       entryModeTab === "manual"
-                        ? "bg-white text-slate-950 shadow-xs border border-slate-200/80"
-                        : "text-slate-600 hover:text-slate-900"
+                        ? "bg-white text-black border border-black/15"
+                        : "text-black hover:text-black"
                     }`}
                   >
                     Enter Manually
@@ -1086,10 +1086,10 @@ export default function StudentAcademicScreen() {
                   <button
                     type="button"
                     onClick={() => setEntryModeTab("upload")}
-                    className={`flex-1 py-2 text-center rounded-xl font-heading font-bold text-xs transition cursor-pointer ${
+                    className={`flex-1 py-2 text-center rounded-md font-heading font-bold text-xs transition cursor-pointer ${
                       entryModeTab === "upload"
-                        ? "bg-white text-slate-950 shadow-xs border border-slate-200/80"
-                        : "text-slate-600 hover:text-slate-900"
+                        ? "bg-white text-black border border-black/15"
+                        : "text-black hover:text-black"
                     }`}
                   >
                     Upload Marksheet (PDF / Image)
@@ -1099,21 +1099,21 @@ export default function StudentAcademicScreen() {
                 {/* TAB 1: UPLOAD MARKSHEET ONLY */}
                 {entryModeTab === "upload" ? (
                   <div className="space-y-4">
-                    <div className="p-5 bg-amber-50/60 border border-amber-200 rounded-2xl space-y-3.5">
-                      <div className="flex items-center gap-2 text-amber-950 font-heading font-bold text-sm">
-                        <DocumentArrowUpIcon className="w-5 h-5 text-amber-600" />
+                    <div className="p-5 bg-brand/15 border border-brand/60 rounded-lg space-y-3.5">
+                      <div className="flex items-center gap-2 text-black font-heading font-bold text-sm">
+                        <DocumentArrowUpIcon className="w-5 h-5 text-black" />
                         <span>Upload Official {selectedExamType} Marksheet</span>
                       </div>
-                      <p className="text-[11px] text-amber-900/80 leading-relaxed">
+                      <p className="text-[11px] text-black/80 leading-relaxed">
                         Attach your scanned marksheet document or result screenshot for Semester {modalTargetSemester}. Supported formats: PDF, JPG, PNG (Max 5MB).
                       </p>
 
-                      <label className="border-2 border-dashed border-amber-300 hover:border-amber-400 bg-white rounded-2xl p-7 flex flex-col items-center justify-center cursor-pointer transition text-center group shadow-xs">
-                        <DocumentArrowUpIcon className="w-10 h-10 text-amber-500 group-hover:scale-110 transition-transform mb-2" />
-                        <span className="font-heading font-extrabold text-sm text-slate-900">
+                      <label className="border-2 border-dashed border-brand/60 hover:border-brand bg-white rounded-lg p-7 flex flex-col items-center justify-center cursor-pointer transition text-center group">
+                        <DocumentArrowUpIcon className="w-10 h-10 text-black/65 transition-transform mb-2" />
+                        <span className="font-heading font-bold text-sm text-black">
                           {uploadedFileName ? uploadedFileName : `Choose ${selectedExamType} Marksheet File`}
                         </span>
-                        <span className="text-[11px] text-slate-500 mt-1">
+                        <span className="text-[11px] text-black/65 mt-1">
                           {uploadedFileName ? "File attached successfully" : "Click to browse or drag & drop PDF / image"}
                         </span>
                         <input
@@ -1132,14 +1132,14 @@ export default function StudentAcademicScreen() {
                       </label>
 
                       {uploadedFileName && (
-                        <div className="flex items-center justify-between text-xs bg-white p-3 rounded-xl border border-amber-200 shadow-2xs">
-                          <span className="font-mono text-[11px] text-slate-800 truncate max-w-[320px]">
+                        <div className="flex items-center justify-between text-xs bg-white p-3 rounded-md border border-brand/60">
+                          <span className="font-mono text-[11px] text-black truncate max-w-[320px]">
                             <PaperClipIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden="true" /> {uploadedFileName}
                           </span>
                           <button
                             type="button"
                             onClick={() => setSelectedFile(null)}
-                            className="text-red-500 hover:text-red-700 font-bold text-[11px] cursor-pointer"
+                            className="text-black/65 hover:text-black font-bold text-[11px] cursor-pointer"
                           >
                             Remove
                           </button>
@@ -1148,11 +1148,11 @@ export default function StudentAcademicScreen() {
                     </div>
 
                     {/* Actions for Upload Marksheet Alone */}
-                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                    <div className="flex items-center justify-between pt-3 border-t border-black/15">
                       <button
                         type="button"
                         onClick={() => setModalStep("select_exam")}
-                        className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
+                        className="px-4 py-2 rounded-md text-xs font-bold text-black hover:bg-black/5 transition cursor-pointer"
                       >
                         ← Back to Exam Selection
                       </button>
@@ -1160,14 +1160,14 @@ export default function StudentAcademicScreen() {
                         <button
                           type="button"
                           onClick={() => setShowMarkModal(false)}
-                          className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition cursor-pointer"
+                          className="px-3.5 py-2 rounded-md text-xs font-bold text-black/65 hover:bg-black/5 transition cursor-pointer"
                         >
                           Cancel
                         </button>
                         <button
                           type="button"
                           disabled={isUploading || !selectedFile} onClick={uploadMarksheet}
-                          className="px-5 py-2.5 text-xs font-heading font-bold text-slate-950 bg-[#F7BC0F] hover:bg-[#e5ad0c] rounded-xl transition cursor-pointer shadow-xs border border-[#e5ad0c]"
+                          className="px-5 py-2.5 text-xs font-heading font-bold text-black bg-brand hover:brightness-95 rounded-md transition cursor-pointer border border-brand"
                         >
                           Upload {selectedExamType} Marksheet
                         </button>
@@ -1180,8 +1180,8 @@ export default function StudentAcademicScreen() {
                     {/* Subject Code & Name */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
-                        <label className="block text-slate-700 font-bold mb-1">
-                          Subject Code <span className="text-red-500">*</span>
+                        <label className="block text-black font-bold mb-1">
+                          Subject Code <span className="text-black/65">*</span>
                         </label>
                         <input
                           type="text"
@@ -1189,12 +1189,12 @@ export default function StudentAcademicScreen() {
                           value={subCode}
                           onChange={(e) => setSubCode(e.target.value)}
                           placeholder="e.g. CS3351"
-                          className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-mono uppercase text-slate-900 focus:outline-none focus:border-[#F7BC0F]"
+                          className="w-full p-2.5 bg-black/5 border border-black/15 rounded-md font-mono uppercase text-black focus:outline-none focus:border-brand"
                         />
                       </div>
                       <div className="sm:col-span-2">
-                        <label className="block text-slate-700 font-bold mb-1">
-                          Course Name <span className="text-red-500">*</span>
+                        <label className="block text-black font-bold mb-1">
+                          Course Name <span className="text-black/65">*</span>
                         </label>
                         <input
                           type="text"
@@ -1202,7 +1202,7 @@ export default function StudentAcademicScreen() {
                           value={subName}
                           onChange={(e) => setSubName(e.target.value)}
                           placeholder="e.g. Data Structures and Algorithms"
-                          className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#F7BC0F]"
+                          className="w-full p-2.5 bg-black/5 border border-black/15 rounded-md text-black focus:outline-none focus:border-brand"
                         />
                       </div>
                     </div>
@@ -1211,12 +1211,12 @@ export default function StudentAcademicScreen() {
                     {/* Credits & Attendance */}
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-slate-700 font-bold mb-1">Credits</label>
+                        <label className="block text-black font-bold mb-1">Credits</label>
                         <select
                           required
                           value={subCredits}
                           onChange={(e) => setSubCredits(e.target.value)}
-                          className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#F7BC0F]"
+                          className="w-full p-2.5 bg-black/5 border border-black/15 rounded-md text-black focus:outline-none focus:border-brand"
                         >
                           <option value="">Choose credits</option>
                           <option value="1">1 Credit</option>
@@ -1226,31 +1226,31 @@ export default function StudentAcademicScreen() {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-slate-700 font-bold mb-1">Attendance Percentage</label>
+                        <label className="block text-black font-bold mb-1">Attendance Percentage</label>
                         <input
                           type="text"
                           value={attendance}
                           onChange={(e) => setAttendance(e.target.value)}
                           placeholder="e.g. 96%"
-                          className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#F7BC0F]"
+                          className="w-full p-2.5 bg-black/5 border border-black/15 rounded-md text-black focus:outline-none focus:border-brand"
                         />
                       </div>
                     </div>
 
                     {/* Highlighted active exam score field + full continuous assessments */}
-                    <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                    <div className="p-3.5 bg-black/5 rounded-lg border border-black/15 space-y-3">
                       <div className="flex items-center justify-between">
-                        <span className="font-heading font-bold text-[11px] text-slate-800 uppercase tracking-wider block">
+                        <span className="font-heading font-bold text-[11px] text-black uppercase tracking-wider block">
                           Continuous Assessment Test (CAT) Marks
                         </span>
-                        <span className="text-[10px] text-amber-700 font-bold bg-amber-100/80 px-2 py-0.5 rounded">
+                        <span className="text-[10px] text-black font-bold bg-brand/15 px-2 py-0.5 rounded">
                           Active Exam: {selectedExamType}
                         </span>
                       </div>
 
                       <div className="grid grid-cols-3 gap-2.5">
-                        <div className={selectedExamType === "CAT 1" ? "p-1.5 bg-amber-100/50 rounded-xl border border-amber-300" : ""}>
-                          <label className="block text-slate-700 text-[11px] font-bold mb-1">
+                        <div className={selectedExamType === "CAT 1" ? "p-1.5 bg-brand/15 rounded-md border border-brand/60" : ""}>
+                          <label className="block text-black text-[11px] font-bold mb-1">
                             CAT 1 (/25) {selectedExamType === "CAT 1" && <StarIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Selected" />}
                           </label>
                           <input
@@ -1258,11 +1258,11 @@ export default function StudentAcademicScreen() {
                             value={internal1}
                             onChange={(e) => setInternal1(e.target.value)}
                             placeholder="e.g. 23/25"
-                            className="w-full p-2 bg-white border border-slate-200 rounded-lg text-slate-900 font-mono text-center focus:outline-none focus:border-[#F7BC0F]"
+                            className="w-full p-2 bg-white border border-black/15 rounded-lg text-black font-mono text-center focus:outline-none focus:border-brand"
                           />
                         </div>
-                        <div className={selectedExamType === "CAT 2" ? "p-1.5 bg-amber-100/50 rounded-xl border border-amber-300" : ""}>
-                          <label className="block text-slate-700 text-[11px] font-bold mb-1">
+                        <div className={selectedExamType === "CAT 2" ? "p-1.5 bg-brand/15 rounded-md border border-brand/60" : ""}>
+                          <label className="block text-black text-[11px] font-bold mb-1">
                             CAT 2 (/25) {selectedExamType === "CAT 2" && <StarIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Selected" />}
                           </label>
                           <input
@@ -1270,11 +1270,11 @@ export default function StudentAcademicScreen() {
                             value={internal2}
                             onChange={(e) => setInternal2(e.target.value)}
                             placeholder="e.g. 24/25"
-                            className="w-full p-2 bg-white border border-slate-200 rounded-lg text-slate-900 font-mono text-center focus:outline-none focus:border-[#F7BC0F]"
+                            className="w-full p-2 bg-white border border-black/15 rounded-lg text-black font-mono text-center focus:outline-none focus:border-brand"
                           />
                         </div>
-                        <div className={selectedExamType === "CAT 3" ? "p-1.5 bg-amber-100/50 rounded-xl border border-amber-300" : ""}>
-                          <label className="block text-slate-700 text-[11px] font-bold mb-1">
+                        <div className={selectedExamType === "CAT 3" ? "p-1.5 bg-brand/15 rounded-md border border-brand/60" : ""}>
+                          <label className="block text-black text-[11px] font-bold mb-1">
                             Model / CAT 3 (/50) {selectedExamType === "CAT 3" && <StarIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Selected" />}
                           </label>
                           <input
@@ -1282,7 +1282,7 @@ export default function StudentAcademicScreen() {
                             value={modelExam}
                             onChange={(e) => setModelExam(e.target.value)}
                             placeholder="e.g. 48/50"
-                            className="w-full p-2 bg-white border border-slate-200 rounded-lg text-slate-900 font-mono text-center focus:outline-none focus:border-[#F7BC0F]"
+                            className="w-full p-2 bg-white border border-black/15 rounded-lg text-black font-mono text-center focus:outline-none focus:border-brand"
                           />
                         </div>
                       </div>
@@ -1290,8 +1290,8 @@ export default function StudentAcademicScreen() {
 
                     {/* Semester Exam Result & Status */}
                     <div className="grid grid-cols-2 gap-3">
-                      <div className={selectedExamType === "Semester Exam" ? "p-1.5 bg-emerald-50 rounded-xl border border-emerald-300" : ""}>
-                        <label className="block text-slate-700 font-bold mb-1">
+                      <div className={selectedExamType === "Semester Exam" ? "p-1.5 bg-brand/15 rounded-md border border-brand/60" : ""}>
+                        <label className="block text-black font-bold mb-1">
                           Semester Exam (Grade / Marks) {selectedExamType === "Semester Exam" && <StarIcon className="inline-block h-[1em] w-[1em] align-[-0.125em]" aria-hidden={false} role="img" aria-label="Selected" />}
                         </label>
                         <input
@@ -1299,15 +1299,15 @@ export default function StudentAcademicScreen() {
                           value={semesterExam}
                           onChange={(e) => setSemesterExam(e.target.value)}
                           placeholder="e.g. O (94) or A+ (88) or Awaiting"
-                          className="w-full p-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#F7BC0F]"
+                          className="w-full p-2.5 bg-white border border-black/15 rounded-md text-black focus:outline-none focus:border-brand"
                         />
                       </div>
                       <div>
-                        <label className="block text-slate-700 font-bold mb-1">Course Status</label>
+                        <label className="block text-black font-bold mb-1">Course Status</label>
                         <select
                           value={subStatus}
                           onChange={(e) => setSubStatus(e.target.value as any)}
-                          className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-bold focus:outline-none focus:border-[#F7BC0F]"
+                          className="w-full p-2.5 bg-black/5 border border-black/15 rounded-md text-black font-bold focus:outline-none focus:border-brand"
                         >
                           <option value="Cleared">Cleared (Passed)</option>
                           <option value="In Progress">In Progress (Ongoing)</option>
@@ -1317,11 +1317,11 @@ export default function StudentAcademicScreen() {
                     </div>
 
                     {/* Modal Step 2 Actions for Manual Form */}
-                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                    <div className="flex items-center justify-between pt-3 border-t border-black/15">
                       <button
                         type="button"
                         onClick={() => setModalStep("select_exam")}
-                        className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer"
+                        className="px-4 py-2 rounded-md text-xs font-bold text-black hover:bg-black/5 transition cursor-pointer"
                       >
                         ← Back to Exam Selection
                       </button>
@@ -1329,13 +1329,13 @@ export default function StudentAcademicScreen() {
                         <button
                           type="button"
                           onClick={() => setShowMarkModal(false)}
-                          className="px-3.5 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition cursor-pointer"
+                          className="px-3.5 py-2 rounded-md text-xs font-bold text-black/65 hover:bg-black/5 transition cursor-pointer"
                         >
                           Cancel
                         </button>
                         <button
                           type="submit"
-                          className="px-5 py-2.5 text-xs font-heading font-bold text-slate-950 bg-[#F7BC0F] hover:bg-[#e5ad0c] rounded-xl transition cursor-pointer shadow-xs border border-[#e5ad0c]"
+                          className="px-5 py-2.5 text-xs font-heading font-bold text-black bg-brand hover:brightness-95 rounded-md transition cursor-pointer border border-brand"
                         >
                           {modalMode === "add" ? `Save ${selectedExamType} Marks` : "Update Marks"}
                         </button>

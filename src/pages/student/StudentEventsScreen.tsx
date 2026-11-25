@@ -309,20 +309,20 @@ export default function StudentEventsScreen() {
   }, [eventsList, searchTerm, selectedCategory]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 font-primary flex">
+    <div className="min-h-screen bg-white text-black font-primary flex">
       {/* 1. Dedicated Student Sidebar */}
       <StudentSidebar activeTab="events" sectionRole="student" />
 
       {/* 2. Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
-        <main className="w-full px-6 lg:px-10 py-8 space-y-6 flex-1">
+      <div className="flex-1 flex flex-col min-w-0 bg-white">
+        <main className="w-full px-4 sm:px-6 lg:px-10 py-8 space-y-6 flex-1">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="font-heading font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight">
+              <h1 className="font-heading font-bold text-2xl sm:text-3xl text-black tracking-tight">
                 Volunteer Events & Drives
               </h1>
-              <p className="font-primary text-xs sm:text-sm text-slate-600 mt-1">
+              <p className="font-primary text-xs sm:text-sm text-black mt-1">
                 Participate in Remote calling tasks and Offline drives. Registration is on a first-come, first-served basis.
               </p>
             </div>
@@ -330,14 +330,14 @@ export default function StudentEventsScreen() {
             {/* Volunteer Status Indicator */}
             <div>
               {isRegisteredVolunteer ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 text-xs font-bold">
-                  <CheckCircleIcon className="w-4 h-4 text-emerald-600 stroke-[2.2]" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-brand/15 text-black border border-brand/60 text-xs font-bold">
+                  <CheckCircleIcon className="w-4 h-4 text-black stroke-[2.2]" />
                   <span>Registered Volunteer</span>
                 </span>
               ) : (
                 <Link
                   href="/student/volunteer"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-amber-500 text-slate-950 font-heading font-bold text-xs hover:bg-amber-400 transition shadow-xs"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-brand text-black font-heading font-bold text-xs hover:bg-brand transition"
                 >
                   <IdentificationIcon className="w-4 h-4" />
                   <span>Register as Volunteer &rarr;</span>
@@ -349,24 +349,24 @@ export default function StudentEventsScreen() {
           {/* Toast Message */}
           {toastMessage && (
             <div
-              className={`p-4 rounded-2xl text-xs font-bold flex items-center gap-2.5 animate-in fade-in border ${toastType === "success"
-                ? "bg-emerald-50 border-emerald-300 text-emerald-950"
-                : "bg-red-50 border-red-300 text-red-950"
+              className={`p-4 rounded-lg text-xs font-bold flex items-center gap-2.5 animate-in fade-in border ${toastType === "success"
+                ? "bg-brand/15 border-brand/60 text-black"
+                : "bg-brand/15 border-brand/60 text-black"
                 }`}
             >
               {toastType === "success" ? (
-                <CheckCircleIcon className="w-5 h-5 text-emerald-600 shrink-0" />
+                <CheckCircleIcon className="w-5 h-5 text-black shrink-0" />
               ) : (
-                <XCircleIcon className="w-5 h-5 text-red-600 shrink-0" />
+                <XCircleIcon className="w-5 h-5 text-black shrink-0" />
               )}
               <span>{toastMessage}</span>
             </div>
           )}
 
           {/* First-Come Policy Notice */}
-          <div className="p-3.5 bg-amber-50/70 border border-amber-200 rounded-2xl text-xs text-amber-950 flex items-center justify-between gap-3">
+          <div className="p-3.5 bg-brand/15 border border-brand/60 rounded-lg text-xs text-black flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <SparklesIcon className="w-4 h-4 text-amber-600 shrink-0" />
+              <SparklesIcon className="w-4 h-4 text-black shrink-0" />
               <span>
                 <strong>First-Come, First-Served Policy:</strong> Only the first participants to click <strong>Accept</strong> will be enrolled up to the student quota limit.
               </span>
@@ -374,7 +374,7 @@ export default function StudentEventsScreen() {
             {!isRegisteredVolunteer && (
               <Link
                 href="/student/volunteer"
-                className="text-[11px] font-bold text-amber-900 underline whitespace-nowrap"
+                className="text-[11px] font-bold text-black underline whitespace-nowrap"
               >
                 Register in Volunteer Tab
               </Link>
@@ -382,29 +382,29 @@ export default function StudentEventsScreen() {
           </div>
 
           {/* Filter & Search Bar */}
-          <section className="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs space-y-3 sm:space-y-0 sm:flex sm:items-center sm:gap-4">
+          <section className="bg-white border border-black/15 rounded-lg p-4 space-y-3 sm:space-y-0 sm:flex sm:items-center sm:gap-4">
             <div className="relative flex-1">
               <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                <MagnifyingGlassIcon className="w-4 h-4 text-slate-400" />
+                <MagnifyingGlassIcon className="w-4 h-4 text-black/65" />
               </div>
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search events by title, task, or location..."
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#F7BC0F] focus:bg-white focus:ring-2 focus:ring-[#F7BC0F]/20 transition"
+                className="w-full bg-black/5 border border-black/15 rounded-md pl-10 pr-4 py-2.5 text-xs text-black placeholder-black/65 focus:outline-none focus:border-brand focus:bg-white focus:ring-2 focus:ring-brand/20 transition"
               />
             </div>
           </section>
 
           {/* Events Grid / Empty States */}
           {filteredEvents.length === 0 ? (
-            <div className="py-20 text-center bg-white border border-slate-200 rounded-3xl p-8 space-y-3">
-              <CalendarDaysIcon className="w-12 h-12 text-slate-300 mx-auto" />
-              <h3 className="font-heading font-bold text-base text-slate-800">
+            <div className="py-20 text-center bg-white border border-black/15 rounded-xl p-8 space-y-3">
+              <CalendarDaysIcon className="w-12 h-12 text-black/65 mx-auto" />
+              <h3 className="font-heading font-bold text-base text-black">
                 No Volunteer Events Available
               </h3>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">
+              <p className="text-xs text-black/65 max-w-md mx-auto">
                 No events match your current filter. When the Foundation Admin posts a new volunteer event, you will receive an email notification and it will appear here.
               </p>
             </div>
@@ -431,10 +431,10 @@ export default function StudentEventsScreen() {
 
       {/* DETAIL VIEW POPUP MODAL */}
       {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-3 sm:p-5">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-5">
+          <div className="bg-white rounded-lg border border-black/15 shadow-sm max-w-xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             {selectedEvent.imageUrl && (
-              <div className="relative w-full h-44 bg-slate-100 shrink-0">
+              <div className="relative w-full h-44 bg-black/5 shrink-0">
                 <img
                   src={selectedEvent.imageUrl}
                   alt={selectedEvent.title}
@@ -443,7 +443,7 @@ export default function StudentEventsScreen() {
                 <button
                   type="button"
                   onClick={() => setSelectedEvent(null)}
-                  className="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-900/60 text-white hover:bg-slate-900 flex items-center justify-center backdrop-blur-xs transition cursor-pointer"
+                  className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/60 text-white hover:bg-black flex items-center justify-center transition cursor-pointer"
                 >
                   <XMarkIcon className="w-4 h-4 text-white" />
                 </button>
@@ -452,76 +452,76 @@ export default function StudentEventsScreen() {
 
             <div className="p-6 space-y-4 overflow-y-auto flex-1">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 border border-slate-200">
+                <span className="text-[10px] font-heading font-bold uppercase tracking-wider px-2.5 py-1 rounded-md bg-black/5 text-black border border-black/15">
                   {selectedEvent.mode === "remote" ? "Remote Event" : "Offline Event"}
                 </span>
                 {(selectedEvent.acceptedStudents || []).some((s: any) => s.email?.toLowerCase() === userEmail.trim().toLowerCase()) ? (
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 flex items-center gap-1">
-                    <CheckCircleIcon className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-brand/15 text-black border border-brand/60 flex items-center gap-1">
+                    <CheckCircleIcon className="w-3.5 h-3.5 text-black stroke-[2.5]" />
                     <span>Successfully Accepted</span>
                   </span>
                 ) : selectedEvent.status === "completed" || selectedEvent.status === "cancelled" ? (
-                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                  <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-md bg-black/5 text-black border border-black/15">
                     {selectedEvent.status}
                   </span>
                 ) : null}
               </div>
 
-              <h2 className="font-heading font-bold text-xl text-slate-900">
+              <h2 className="font-heading font-bold text-xl text-black">
                 {selectedEvent.title}
               </h2>
 
-              <p className="text-xs text-slate-600 leading-relaxed font-primary">
+              <p className="text-xs text-black leading-relaxed font-primary">
                 {selectedEvent.description}
               </p>
 
               {/* Task Section */}
               {selectedEvent.taskToComplete && (
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700">
-                  <span className="font-bold text-slate-800">Task: </span>
+                <div className="p-3 bg-black/5 border border-black/15 rounded-md text-xs text-black">
+                  <span className="font-bold text-black">Task: </span>
                   <span>{selectedEvent.taskToComplete}</span>
                 </div>
               )}
 
               {/* Quota Details */}
               <div className="grid grid-cols-2 gap-3 pt-2">
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                  <span className="text-[10px] text-slate-500 font-bold uppercase block">
+                <div className="p-3 bg-black/5 border border-black/15 rounded-md">
+                  <span className="text-[10px] text-black/65 font-bold uppercase block">
                     Student Volunteers Needed
                   </span>
-                  <span className="text-lg font-heading font-black text-slate-900">
+                  <span className="text-lg font-heading font-bold text-black">
                     {selectedEvent.acceptedStudents?.length || 0} / {selectedEvent.studentVolunteersNeeded || 0}
                   </span>
-                  <span className="text-[10px] text-slate-500 font-medium block mt-0.5">
+                  <span className="text-[10px] text-black/65 font-medium block mt-0.5">
                     First-Come, First-Served
                   </span>
                 </div>
 
-                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
-                  <span className="text-[10px] text-slate-500 font-bold uppercase block">
+                <div className="p-3 bg-black/5 border border-black/15 rounded-md">
+                  <span className="text-[10px] text-black/65 font-bold uppercase block">
                     Alumni Volunteers Needed
                   </span>
-                  <span className="text-lg font-heading font-black text-slate-900">
+                  <span className="text-lg font-heading font-bold text-black">
                     {selectedEvent.acceptedAlumni?.length || 0} / {selectedEvent.alumniVolunteersNeeded || 0}
                   </span>
                 </div>
               </div>
 
               {/* Schedule / Venue */}
-              <div className="space-y-2 pt-3 border-t border-slate-100 text-xs text-slate-700">
+              <div className="space-y-2 pt-3 border-t border-black/15 text-xs text-black">
                 {selectedEvent.mode === "remote" ? (
                   <div className="flex items-center gap-2.5">
-                    <ClockIcon className="w-4 h-4 text-slate-500 stroke-[2]" />
+                    <ClockIcon className="w-4 h-4 text-black/65 stroke-[2]" />
                     <span>Duration: <strong>{selectedEvent.duration || "Self-paced"}</strong></span>
                   </div>
                 ) : (
                   <>
                     <div className="flex items-center gap-2.5">
-                      <CalendarDaysIcon className="w-4 h-4 text-slate-500 stroke-[2]" />
+                      <CalendarDaysIcon className="w-4 h-4 text-black/65 stroke-[2]" />
                       <span>Date & Time: <strong>{selectedEvent.date}</strong> ({selectedEvent.time})</span>
                     </div>
                     <div className="flex items-center gap-2.5">
-                      <MapPinIcon className="w-4 h-4 text-slate-500 stroke-[2]" />
+                      <MapPinIcon className="w-4 h-4 text-black/65 stroke-[2]" />
                       <span>Location: <strong>{selectedEvent.location}</strong></span>
                     </div>
                   </>
@@ -529,7 +529,7 @@ export default function StudentEventsScreen() {
 
                 {selectedEvent.eligibleYears && (
                   <div className="flex items-center gap-2.5">
-                    <UserGroupIcon className="w-4 h-4 text-slate-400 stroke-[2]" />
+                    <UserGroupIcon className="w-4 h-4 text-black/65 stroke-[2]" />
                     <span>Eligible Student Years: <strong>{selectedEvent.eligibleYears.map(y => `Year ${y}`).join(", ")}</strong></span>
                   </div>
                 )}
@@ -537,28 +537,28 @@ export default function StudentEventsScreen() {
 
               {/* Already Accepted Confirmation Banner */}
               {(selectedEvent.acceptedStudents || []).some((s: any) => s.email?.toLowerCase() === userEmail.trim().toLowerCase()) && (
-                <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2.5 text-xs text-emerald-950">
-                  <CheckCircleIcon className="w-5 h-5 text-emerald-600 shrink-0 stroke-[2.2]" />
+                <div className="p-3.5 bg-brand/15 border border-brand/60 rounded-md flex items-center gap-2.5 text-xs text-black">
+                  <CheckCircleIcon className="w-5 h-5 text-black shrink-0 stroke-[2.2]" />
                   <div>
                     <span className="font-bold block">You have successfully accepted this event!</span>
-                    <span className="text-emerald-800 text-[11px]">Your seat is confirmed as a student volunteer. The Foundation team has recorded your confirmation.</span>
+                    <span className="text-black text-[11px]">Your seat is confirmed as a student volunteer. The Foundation team has recorded your confirmation.</span>
                   </div>
                 </div>
               )}
 
-              <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-between pt-4 border-t border-black/15">
                 <button
                   type="button"
                   onClick={() => setSelectedEvent(null)}
-                  className="px-4 py-2 text-xs font-heading font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition cursor-pointer"
+                  className="px-4 py-2 text-xs font-heading font-bold text-black hover:bg-black/5 rounded-md transition cursor-pointer"
                 >
                   Close
                 </button>
 
                 {(selectedEvent.acceptedStudents || []).some((s: any) => s.email?.toLowerCase() === userEmail.trim().toLowerCase()) ? (
                   <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-100 text-emerald-900 font-heading font-bold text-xs border border-emerald-300">
-                      <CheckCircleIcon className="w-4 h-4 text-emerald-700 stroke-[2.5]" />
+                    <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-brand/15 text-black font-heading font-bold text-xs border border-brand/60">
+                      <CheckCircleIcon className="w-4 h-4 text-black stroke-[2.5]" />
                       <span>Successfully Accepted</span>
                     </span>
                     <button
@@ -568,7 +568,7 @@ export default function StudentEventsScreen() {
                         setSelectedEvent(null);
                         handleRejectEvent(ev);
                       }}
-                      className="px-3 py-2 text-xs text-slate-500 hover:text-red-600 transition underline cursor-pointer"
+                      className="px-3 py-2 text-xs text-black/65 hover:text-black transition underline cursor-pointer"
                     >
                       Withdraw
                     </button>
@@ -581,7 +581,7 @@ export default function StudentEventsScreen() {
                       setSelectedEvent(null);
                       handleAcceptEvent(ev);
                     }}
-                    className="px-5 py-2.5 rounded-xl text-xs font-heading font-bold text-slate-950 bg-[#F7BC0F] hover:bg-[#e5ad0c] transition cursor-pointer shadow-xs border border-[#e5ad0c]"
+                    className="px-5 py-2.5 rounded-md text-xs font-heading font-bold text-black bg-brand hover:brightness-95 transition cursor-pointer border border-brand"
                   >
                     Accept Event Now &rarr;
                   </button>
@@ -592,7 +592,7 @@ export default function StudentEventsScreen() {
                       setSelectedEvent(null);
                       setIsRegisterModalOpen(true);
                     }}
-                    className="px-5 py-2.5 rounded-xl text-xs font-heading font-bold text-slate-950 bg-[#F7BC0F] hover:bg-[#e5ad0c] transition cursor-pointer shadow-xs border border-[#e5ad0c] flex items-center gap-1.5"
+                    className="px-5 py-2.5 rounded-md text-xs font-heading font-bold text-black bg-brand hover:brightness-95 transition cursor-pointer border border-brand flex items-center gap-1.5"
                   >
                     <IdentificationIcon className="w-4 h-4" />
                     <span>Register as Volunteer to Participate &rarr;</span>
@@ -608,19 +608,19 @@ export default function StudentEventsScreen() {
       {/* VOLUNTEER REGISTRATION POPUP MODAL (ON CARD CLICK)       */}
       {/* ======================================================== */}
       {isRegisterModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-3 sm:p-5">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-5">
+          <div className="bg-white rounded-lg border border-black/15 shadow-sm max-w-lg w-full max-h-[92vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             {/* Modal Header */}
-            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white">
+            <div className="px-6 py-4 border-b border-black/15 flex items-center justify-between shrink-0 bg-white">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-800">
-                  <IdentificationIcon className="w-5 h-5 text-amber-700 stroke-[2]" />
+                <div className="w-9 h-9 rounded-md bg-brand/15 border border-brand/60 flex items-center justify-center text-black">
+                  <IdentificationIcon className="w-5 h-5 text-black stroke-[2]" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-bold text-base text-slate-900">
+                  <h3 className="font-heading font-bold text-base text-black">
                     Register as Volunteer
                   </h3>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-[11px] text-black/65">
                     Complete one-time registration to accept and participate in foundation events
                   </p>
                 </div>
@@ -629,7 +629,7 @@ export default function StudentEventsScreen() {
               <button
                 type="button"
                 onClick={() => setIsRegisterModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 font-bold text-sm w-7 h-7 rounded-lg hover:bg-slate-100 flex items-center justify-center transition cursor-pointer"
+                className="text-black/65 hover:text-black font-bold text-sm w-7 h-7 rounded-lg hover:bg-black/5 flex items-center justify-center transition cursor-pointer"
               >
                 <XMarkIcon className="w-4 h-4" />
               </button>
@@ -641,7 +641,7 @@ export default function StudentEventsScreen() {
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[11px] font-heading font-bold text-slate-700 mb-1">
+                      <label className="block text-[11px] font-heading font-bold text-black mb-1">
                         Full Name
                       </label>
                       <input
@@ -649,25 +649,25 @@ export default function StudentEventsScreen() {
                         required
                         value={volunteerFormData.name}
                         onChange={(e) => setVolunteerFormData({ ...volunteerFormData, name: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-900 focus:outline-none focus:bg-white focus:border-slate-800"
+                        className="w-full px-3 py-2 rounded-md border border-black/15 bg-black/5 text-xs font-semibold text-black focus:outline-none focus:bg-white focus:border-black"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-heading font-bold text-slate-700 mb-1">
+                      <label className="block text-[11px] font-heading font-bold text-black mb-1">
                         Role
                       </label>
                       <input
                         type="text"
                         disabled
                         value="Student Volunteer"
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-100 text-xs text-slate-600 font-bold"
+                        className="w-full px-3 py-2 rounded-md border border-black/15 bg-black/5 text-xs text-black font-bold"
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[11px] font-heading font-bold text-slate-700 mb-1">
+                      <label className="block text-[11px] font-heading font-bold text-black mb-1">
                         Email Address
                       </label>
                       <input
@@ -675,11 +675,11 @@ export default function StudentEventsScreen() {
                         required
                         value={volunteerFormData.email}
                         onChange={(e) => setVolunteerFormData({ ...volunteerFormData, email: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-900 focus:outline-none focus:bg-white focus:border-slate-800"
+                        className="w-full px-3 py-2 rounded-md border border-black/15 bg-black/5 text-xs font-semibold text-black focus:outline-none focus:bg-white focus:border-black"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-heading font-bold text-slate-700 mb-1">
+                      <label className="block text-[11px] font-heading font-bold text-black mb-1">
                         Phone / WhatsApp
                       </label>
                       <input
@@ -687,13 +687,13 @@ export default function StudentEventsScreen() {
                         required
                         value={volunteerFormData.phone}
                         onChange={(e) => setVolunteerFormData({ ...volunteerFormData, phone: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-900 focus:outline-none focus:bg-white focus:border-slate-800"
+                        className="w-full px-3 py-2 rounded-md border border-black/15 bg-black/5 text-xs font-semibold text-black focus:outline-none focus:bg-white focus:border-black"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-heading font-bold text-slate-700 mb-1">
+                    <label className="block text-[11px] font-heading font-bold text-black mb-1">
                       College / Institution
                     </label>
                     <input
@@ -701,30 +701,30 @@ export default function StudentEventsScreen() {
                       required
                       value={volunteerFormData.college}
                       onChange={(e) => setVolunteerFormData({ ...volunteerFormData, college: e.target.value })}
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-900 focus:outline-none focus:bg-white focus:border-slate-800"
+                      className="w-full px-3 py-2 rounded-md border border-black/15 bg-black/5 text-xs font-semibold text-black focus:outline-none focus:bg-white focus:border-black"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[11px] font-heading font-bold text-slate-700 mb-1">
+                      <label className="block text-[11px] font-heading font-bold text-black mb-1">
                         Department / Branch
                       </label>
                       <input
                         type="text"
                         value={volunteerFormData.department}
                         onChange={(e) => setVolunteerFormData({ ...volunteerFormData, department: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-900 focus:outline-none focus:bg-white focus:border-slate-800"
+                        className="w-full px-3 py-2 rounded-md border border-black/15 bg-black/5 text-xs font-semibold text-black focus:outline-none focus:bg-white focus:border-black"
                       />
                     </div>
                     <div>
-                      <label className="block text-[11px] font-heading font-bold text-slate-700 mb-1">
+                      <label className="block text-[11px] font-heading font-bold text-black mb-1">
                         Year of Study
                       </label>
                       <select
                         value={volunteerFormData.yearOfStudy}
                         onChange={(e) => setVolunteerFormData({ ...volunteerFormData, yearOfStudy: e.target.value })}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-900 focus:outline-none focus:bg-white focus:border-slate-800"
+                        className="w-full px-3 py-2 rounded-md border border-black/15 bg-black/5 text-xs font-semibold text-black focus:outline-none focus:bg-white focus:border-black"
                       >
                         <option value="1st Year">1st Year</option>
                         <option value="2nd Year">2nd Year</option>
@@ -735,7 +735,7 @@ export default function StudentEventsScreen() {
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-heading font-bold text-slate-700 mb-1">
+                    <label className="block text-[11px] font-heading font-bold text-black mb-1">
                       Volunteering Skills / Interest Areas
                     </label>
                     <input
@@ -743,14 +743,14 @@ export default function StudentEventsScreen() {
                       value={volunteerFormData.skills}
                       onChange={(e) => setVolunteerFormData({ ...volunteerFormData, skills: e.target.value })}
                       placeholder="e.g. Telephonic calling, applicant verification, event registration"
-                      className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-900 focus:outline-none focus:border-slate-800"
+                      className="w-full px-3 py-2 rounded-md border border-black/15 bg-white text-xs text-black focus:outline-none focus:border-black"
                     />
                   </div>
                 </div>
 
                 {/* Info Note */}
-                <div className="p-3 bg-amber-50/70 border border-amber-200/80 rounded-xl text-[11px] text-amber-950 flex items-start gap-2">
-                  <SparklesIcon className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <div className="p-3 bg-brand/15 border border-brand/60 rounded-md text-[11px] text-black flex items-start gap-2">
+                  <SparklesIcon className="w-4 h-4 text-black shrink-0 mt-0.5" />
                   <span>
                     Once registered, the <strong>Accept</strong> and <strong>Reject</strong> buttons will be enabled on all volunteer event cards.
                   </span>
@@ -758,18 +758,18 @@ export default function StudentEventsScreen() {
               </div>
 
               {/* Action Buttons */}
-              <div className="px-6 py-3 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0 bg-slate-50">
+              <div className="px-6 py-3 border-t border-black/15 flex items-center justify-end gap-3 shrink-0 bg-black/5">
                 <button
                   type="button"
                   onClick={() => setIsRegisterModalOpen(false)}
-                  className="px-4 py-2 text-xs font-heading font-bold text-slate-600 hover:bg-slate-200/60 rounded-xl transition cursor-pointer"
+                  className="px-4 py-2 text-xs font-heading font-bold text-black hover:bg-black/10 rounded-md transition cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmittingRegistration}
-                  className="px-5 py-2.5 text-xs font-heading font-bold text-slate-950 bg-[#F7BC0F] hover:bg-[#e5ad0c] rounded-xl transition cursor-pointer shadow-xs border border-[#e5ad0c] flex items-center gap-1.5"
+                  className="px-5 py-2.5 text-xs font-heading font-bold text-black bg-brand hover:brightness-95 rounded-md transition cursor-pointer border border-brand flex items-center gap-1.5"
                 >
                   {isSubmittingRegistration ? (
                     <span>Registering...</span>
@@ -788,18 +788,18 @@ export default function StudentEventsScreen() {
 
       {/* ASSIGNED APPLICANTS POPUP MODAL (ADMIN APPROVED) */}
       {assignedModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-xs p-4">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-amber-50/70">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-white rounded-xl border border-black/15 shadow-sm max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-5 border-b border-black/15 flex items-center justify-between bg-brand/15">
               <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-2xl bg-[#F7BC0F] flex items-center justify-center text-slate-950 shadow-xs">
+                <div className="w-10 h-10 rounded-lg bg-brand flex items-center justify-center text-black">
                   <ClipboardDocumentCheckIcon className="w-5 h-5 stroke-[2.2]" />
                 </div>
                 <div>
-                  <h3 className="font-heading font-black text-base text-slate-900">
+                  <h3 className="font-heading font-bold text-base text-black">
                     My Assigned Applicants ({assignedApplicants.length})
                   </h3>
-                  <p className="text-xs text-slate-600 line-clamp-1">
+                  <p className="text-xs text-black line-clamp-1">
                     Event: <strong>{assignedEventTitle}</strong>
                   </p>
                 </div>
@@ -807,68 +807,68 @@ export default function StudentEventsScreen() {
               <button
                 type="button"
                 onClick={() => setAssignedModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-100 transition cursor-pointer"
+                className="p-1.5 text-black/65 hover:text-black rounded-md hover:bg-black/5 transition cursor-pointer"
               >
                 <XMarkIcon className="w-5 h-5" />
               </button>
             </div>
 
             <div className="p-5 flex-1 overflow-y-auto space-y-3">
-              <div className="p-3 bg-blue-50/70 border border-blue-200 rounded-xl text-xs text-blue-950 flex items-center gap-2">
-                <SparklesIcon className="w-4 h-4 text-blue-600 shrink-0" />
+              <div className="p-3 bg-brand/15 border border-brand/60 rounded-md text-xs text-black flex items-center gap-2">
+                <SparklesIcon className="w-4 h-4 text-black shrink-0" />
                 <span>
                   Admin approved your assignment! These applicants were matched to you by AI for telephonic verification and mentoring.
                 </span>
               </div>
 
               {isLoadingAssignments ? (
-                <div className="p-8 text-center text-slate-500 text-xs">
+                <div className="p-8 text-center text-black/65 text-xs">
                   Loading your assigned applicants...
                 </div>
               ) : assignedApplicants.length === 0 ? (
-                <div className="p-8 text-center text-slate-500 text-xs bg-slate-50 rounded-2xl border border-slate-200">
+                <div className="p-8 text-center text-black/65 text-xs bg-black/5 rounded-lg border border-black/15">
                   No applicants assigned yet.
                 </div>
               ) : (
                 assignedApplicants.map((app: any, idx: number) => (
                   <div
                     key={app.id || app.application_number || idx}
-                    className="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs hover:border-[#F7BC0F] transition text-xs space-y-2"
+                    className="p-4 rounded-lg bg-white border border-black/15 hover:border-brand transition text-xs space-y-2"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-slate-900 text-sm">{app.name}</span>
-                          <span className="font-mono text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md font-semibold">
+                          <span className="font-bold text-black text-sm">{app.name}</span>
+                          <span className="font-mono text-[10px] bg-black/5 text-black px-2 py-0.5 rounded-md font-semibold">
                             {app.application_number || `#${idx + 1}`}
                           </span>
                         </div>
-                        <p className="text-[11px] text-slate-500 mt-0.5">
+                        <p className="text-[11px] text-black/65 mt-0.5">
                           {app.district || "Tamil Nadu"} • {app.stream || app.degree || "Higher Secondary"}
                         </p>
                       </div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 uppercase">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-brand/15 text-black border border-brand/60 uppercase">
                         {app.status || "Assigned"}
                       </span>
                     </div>
 
-                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs text-slate-600">
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-black/15 text-xs text-black">
                       {app.phone ? (
                         <div className="flex items-center gap-1.5">
-                          <span className="text-slate-500">Contact:</span>
+                          <span className="text-black/65">Contact:</span>
                           <a
                             href={`tel:${app.phone}`}
-                            className="font-mono font-bold text-slate-900 hover:text-amber-600 transition"
+                            className="font-mono font-bold text-black hover:text-black transition"
                           >
                             {app.phone}
                           </a>
                         </div>
                       ) : (
-                        <span className="text-slate-400">Phone not provided</span>
+                        <span className="text-black/65">Phone not provided</span>
                       )}
 
                       {app.match_reason && (
-                        <span className="text-[11px] text-amber-800 font-medium italic">
+                        <span className="text-[11px] text-black font-medium italic">
                           Match: {app.match_reason}
                         </span>
                       )}
@@ -878,11 +878,11 @@ export default function StudentEventsScreen() {
               )}
             </div>
 
-            <div className="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+            <div className="p-4 border-t border-black/15 bg-black/5 flex justify-end">
               <button
                 type="button"
                 onClick={() => setAssignedModalOpen(false)}
-                className="px-5 py-2 rounded-xl text-xs font-heading font-bold text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 transition cursor-pointer"
+                className="px-5 py-2 rounded-md text-xs font-heading font-bold text-black bg-white hover:bg-black/5 border border-black/15 transition cursor-pointer"
               >
                 Close
               </button>

@@ -33,7 +33,7 @@ export default function AskMarkBot() {
     {
       id: "welcome-1",
       sender: "bot",
-      text: "Hello! I'm Mark, your Maatram Scholar & Alumni AI Assistant. How can I assist you today?",
+      text: "Hello! I'm Mark, your Maatram Student & Alumni AI Assistant. How can I assist you today?",
       timestamp: "Just now",
       options: [
         "Volunteer verification tips",
@@ -109,36 +109,36 @@ export default function AskMarkBot() {
             setIsOpen(true);
             setIsMinimized(false);
           }}
-          className="fixed bottom-5 right-5 z-40 flex items-center gap-2.5 px-4 py-2.5 bg-linear-to-r from-amber-500 to-[#F7BC0F] hover:from-amber-600 hover:to-[#e5ad0c] text-slate-950 font-heading font-black text-xs rounded-full shadow-lg shadow-amber-500/30 transition-all duration-300 hover:scale-105 cursor-pointer border border-amber-300 select-none"
-          title="Ask Mark AI Scholar Assistant"
+          className="fixed bottom-5 right-5 z-40 flex items-center gap-2.5 px-4 py-2.5 bg-brand text-black font-heading font-bold text-xs rounded-md shadow-sm transition-all duration-300 cursor-pointer border border-brand/60 select-none"
+          title="Ask Mark AI Assistant"
         >
-          <SparklesIcon className="w-4 h-4 animate-spin-slow text-slate-950" />
+          <SparklesIcon className="w-4 h-4 animate-spin-slow text-black" />
           <span>Ask Mark AI</span>
-          <span className="w-2 h-2 rounded-full bg-amber-900 animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-brand animate-pulse" />
         </button>
       )}
 
       {/* Chat Window Container */}
       {isOpen && (
         <div
-          className={`fixed bottom-5 right-5 z-50 w-[360px] sm:w-[400px] bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden flex flex-col transition-all duration-300 ${
+          className={`fixed bottom-5 right-5 z-50 w-[360px] sm:w-[400px] bg-white border border-black/15 rounded-xl shadow-sm overflow-hidden flex flex-col transition-all duration-300 ${
             isMinimized ? "h-14" : "h-[540px]"
           }`}
         >
           {/* Header */}
-          <div className="bg-slate-900 text-white px-4 py-3 flex items-center justify-between border-b border-slate-800">
+          <div className="bg-black text-white px-4 py-3 flex items-center justify-between border-b border-black">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-[#F7BC0F] flex items-center justify-center text-slate-950 font-heading font-black text-xs shadow-xs">
+              <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-black font-heading font-bold text-xs">
                 M
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
                   <h4 className="font-heading font-bold text-xs text-white">Ask Mark</h4>
-                  <span className="text-[10px] bg-amber-400 text-slate-950 font-black px-1.5 py-0.2 rounded-md">
+                  <span className="text-[10px] bg-brand text-black font-bold px-1.5 py-0.2 rounded-md">
                     AI
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-400">Scholar & Volunteer Assistant</p>
+                <p className="text-[10px] text-black/65">Student & Volunteer Assistant</p>
               </div>
             </div>
 
@@ -146,7 +146,7 @@ export default function AskMarkBot() {
               <button
                 type="button"
                 onClick={() => setIsMinimized(!isMinimized)}
-                className="p-1 text-slate-400 hover:text-white rounded-lg transition"
+                className="p-1 text-black/65 hover:text-white rounded-lg transition"
                 title={isMinimized ? "Expand" : "Minimize"}
               >
                 <MinusIcon className="w-4 h-4" />
@@ -154,7 +154,7 @@ export default function AskMarkBot() {
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="p-1 text-slate-400 hover:text-red-400 rounded-lg transition"
+                className="p-1 text-black/65 hover:text-black/65 rounded-lg transition"
                 title="Close"
               >
                 <XMarkIcon className="w-4 h-4" />
@@ -165,7 +165,7 @@ export default function AskMarkBot() {
           {!isMinimized && (
             <>
               {/* Message List */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-slate-50/60 text-xs">
+              <div className="flex-1 overflow-y-auto p-4 space-y-3.5 bg-black/5 text-xs">
                 {messages.map((msg) => (
                   <div
                     key={msg.id}
@@ -174,10 +174,10 @@ export default function AskMarkBot() {
                     }`}
                   >
                     <div
-                      className={`max-w-[85%] p-3 rounded-2xl ${
+                      className={`max-w-[85%] p-3 rounded-lg ${
                         msg.sender === "user"
-                          ? "bg-slate-900 text-white rounded-tr-xs shadow-xs"
-                          : "bg-white text-slate-800 border border-slate-200 rounded-tl-xs shadow-2xs"
+                          ? "bg-black text-white rounded-tr-xs "
+                          : "bg-white text-black border border-black/15 rounded-tl-xs "
                       }`}
                     >
                       <p className="leading-relaxed whitespace-pre-wrap">{msg.text}</p>
@@ -190,7 +190,7 @@ export default function AskMarkBot() {
                             key={i}
                             type="button"
                             onClick={() => handleSend(opt)}
-                            className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 border border-amber-300 text-slate-900 rounded-xl text-[11px] font-bold transition cursor-pointer"
+                            className="px-2.5 py-1 bg-brand/15 hover:bg-brand/15 border border-brand/60 text-black rounded-md text-[11px] font-bold transition cursor-pointer"
                           >
                             {opt}
                           </button>
@@ -201,7 +201,7 @@ export default function AskMarkBot() {
                 ))}
 
                 {isTyping && (
-                  <div className="flex items-center gap-1.5 text-slate-400 text-[11px] italic p-1">
+                  <div className="flex items-center gap-1.5 text-black/65 text-[11px] italic p-1">
                     <ArrowPathIcon className="w-3.5 h-3.5 animate-spin" />
                     <span>Mark is typing...</span>
                   </div>
@@ -210,7 +210,7 @@ export default function AskMarkBot() {
               </div>
 
               {/* Chat Input Bar */}
-              <div className="p-3 bg-white border-t border-slate-200">
+              <div className="p-3 bg-white border-t border-black/15">
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -223,12 +223,12 @@ export default function AskMarkBot() {
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     placeholder="Ask Mark anything..."
-                    className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#F7BC0F] focus:bg-white"
+                    className="flex-1 bg-black/5 border border-black/15 rounded-md px-3.5 py-2 text-xs text-black placeholder-black/65 focus:outline-none focus:border-brand focus:bg-white"
                   />
                   <button
                     type="submit"
                     disabled={!inputText.trim()}
-                    className="p-2 bg-[#F7BC0F] hover:bg-[#e5ad0c] disabled:opacity-50 text-slate-950 rounded-xl transition cursor-pointer"
+                    className="p-2 bg-brand hover:brightness-95 disabled:opacity-50 text-black rounded-md transition cursor-pointer"
                   >
                     <PaperAirplaneIcon className="w-4 h-4 stroke-[2]" />
                   </button>
