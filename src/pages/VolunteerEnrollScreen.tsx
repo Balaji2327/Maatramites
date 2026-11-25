@@ -621,13 +621,6 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
   const hasAssignments = assignedApplications.length > 0;
   const showTableView = isRegisteredVolunteer && hasAssignments && activeViewMode === "table";
 
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
   const handleOpenApplicantPage = (app: any) => {
     setSelectedAssignedApplication(app);
     const isPhysical =
@@ -1222,65 +1215,6 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                   );
                 })()}
 
-                {/* Horizontal Quick-Jump Navigation Tabs */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-black/15 text-xs font-bold text-black no-scrollbar sticky top-0 bg-white/95 z-10 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => scrollToSection("sec-personal")}
-                    className="py-1.5 px-3 rounded-md bg-black/5 hover:bg-brand/20 hover:text-black transition cursor-pointer whitespace-nowrap"
-                  >
-                    1. Personal
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => scrollToSection("sec-family")}
-                    className="py-1.5 px-3 rounded-md bg-black/5 hover:bg-brand/20 hover:text-black transition cursor-pointer whitespace-nowrap"
-                  >
-                    2. Family
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => scrollToSection("sec-siblings")}
-                    className="py-1.5 px-3 rounded-md bg-black/5 hover:bg-brand/20 hover:text-black transition cursor-pointer whitespace-nowrap"
-                  >
-                    3. Siblings
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => scrollToSection("sec-address")}
-                    className="py-1.5 px-3 rounded-md bg-black/5 hover:bg-brand/20 hover:text-black transition cursor-pointer whitespace-nowrap"
-                  >
-                    4. Address
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => scrollToSection("sec-academic")}
-                    className="py-1.5 px-3 rounded-md bg-black/5 hover:bg-brand/20 hover:text-black transition cursor-pointer whitespace-nowrap"
-                  >
-                    5. Educational
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => scrollToSection("sec-financial")}
-                    className="py-1.5 px-3 rounded-md bg-black/5 hover:bg-brand/20 hover:text-black transition cursor-pointer whitespace-nowrap"
-                  >
-                    6. Financial
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => scrollToSection("sec-background")}
-                    className="py-1.5 px-3 rounded-md bg-black/5 hover:bg-brand/20 hover:text-black transition cursor-pointer whitespace-nowrap"
-                  >
-                    7. Background & Goals
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => scrollToSection("sec-documents")}
-                    className="py-1.5 px-3 rounded-md bg-black/5 hover:bg-brand/20 hover:text-black transition cursor-pointer whitespace-nowrap"
-                  >
-                    8. Documents
-                  </button>
-                </div>
 
                 {/* Single Scroll Sections Container matching Screenshot */}
                 <div className="space-y-8 text-xs text-black">
