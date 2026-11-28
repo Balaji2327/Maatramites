@@ -343,12 +343,7 @@ export default function EventCard({
                     View Applicants
                   </button>
                 </div>
-              ) : (
-                <div className="pt-1 text-[11px] text-black/65 flex items-center gap-1.5 bg-black/5 px-2.5 py-1.5 rounded-md">
-                  <ClockIcon className="w-3.5 h-3.5 text-black/65 stroke-[2]" />
-                  <span>Pending Admin Assignment Approval (AI will assign 10 applicants upon approval)</span>
-                </div>
-              )}
+              ) : null}
             </div>
           ) : isRejectedByUser ? (
             /* User has REJECTED */

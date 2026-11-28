@@ -243,6 +243,18 @@ export const studentApi = {
   // Volunteer Management
   registerVolunteer: (payload: any) => callApi(() => apiClient.post("/admin/volunteers/register", payload)),
 
+  updateVolunteerAvailability: (payload: {
+    email: string;
+    name?: string;
+    role?: string;
+    available_for_physical: boolean;
+    base_district: string;
+    covered_locations: string;
+    pincode?: string;
+    available_days: string;
+    available_time_slot: string;
+  }) => callApi(() => apiClient.patch("/admin/volunteers/availability", payload)),
+
   checkVolunteerStatus: (email: string) =>
     callApi(() => apiClient.get(`/admin/volunteers/status/${encodeURIComponent(email)}`)),
 

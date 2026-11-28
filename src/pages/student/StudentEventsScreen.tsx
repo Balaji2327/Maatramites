@@ -48,6 +48,8 @@ export default function StudentEventsScreen() {
   const [userName, setUserName] = useState("");
   const [isRegisteredVolunteer, setIsRegisteredVolunteer] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<EventCardData | null>(null);
+  const [eventToConfirmAccept, setEventToConfirmAccept] = useState<EventCardData | null>(null);
+  const [isAcceptingEvent, setIsAcceptingEvent] = useState(false);
 
   // Volunteer Registration Popup state
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
@@ -236,13 +238,19 @@ export default function StudentEventsScreen() {
     }
   };
 
-  // Handle Volunteer Accept
-  const handleAcceptEvent = async (event: EventCardData) => {
+  // Handle Volunteer Accept (opens confirmation popup first)
+  const handleAcceptEvent = (event: EventCardData) => {
     if (!isRegisteredVolunteer) {
       setIsRegisterModalOpen(true);
       return;
     }
+    setEventToConfirmAccept(event);
+  };
 
+  const confirmAcceptEvent = async () => {
+    if (!eventToConfirmAccept) return;
+    const event = eventToConfirmAccept;
+    setIsAcceptingEvent(true);
     try {
       const res = await studentApi.respondToEvent(event.id, {
         email: userEmail,
@@ -265,6 +273,9 @@ export default function StudentEventsScreen() {
       setToastType("error");
       setToastMessage(err.message || "Failed to accept event");
       setTimeout(() => setToastMessage(""), 5000);
+    } finally {
+      setIsAcceptingEvent(false);
+      setEventToConfirmAccept(null);
     }
   };
 
@@ -599,6 +610,46 @@ export default function StudentEventsScreen() {
                   </button>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {eventToConfirmAccept && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-white rounded-lg border border-black/15 shadow-sm max-w-md w-full p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-brand/15 border border-brand/60 flex items-center justify-center shrink-0">
+                <CheckCircleIcon className="w-5 h-5 text-black" />
+              </div>
+              <div className="space-y-1">
+                <h3 className="font-heading font-bold text-base text-black">
+                  Confirm Event Acceptance
+                </h3>
+                <p className="text-xs text-black/75 leading-relaxed">
+                  Are you sure you want to accept <strong>{eventToConfirmAccept.title}</strong>?
+                  {eventToConfirmAccept.date ? ` (${eventToConfirmAccept.date}${eventToConfirmAccept.location ? ` • ${eventToConfirmAccept.location}` : ""})` : ""}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-black/15">
+              <button
+                type="button"
+                disabled={isAcceptingEvent}
+                onClick={() => setEventToConfirmAccept(null)}
+                className="px-4 py-2 text-xs font-heading font-bold text-black border border-black/15 hover:bg-black/5 rounded-md transition cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isAcceptingEvent}
+                onClick={() => void confirmAcceptEvent()}
+                className="px-5 py-2 text-xs font-heading font-bold text-black bg-brand hover:brightness-95 rounded-md border border-brand transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {isAcceptingEvent ? "Accepting..." : "Confirm & Accept"}
+              </button>
             </div>
           </div>
         </div>

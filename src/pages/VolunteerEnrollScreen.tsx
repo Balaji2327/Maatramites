@@ -251,8 +251,13 @@ function AdmissionDetails({ sections }: { sections?: ReviewSection[] }) {
 export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
   const isAlumni = role === "alumni";
   const [isRegisteredVolunteer, setIsRegisteredVolunteer] = useState(false);
+  const [isLoadingVolunteerState, setIsLoadingVolunteerState] = useState(true);
+  const [isLoadingAssignments, setIsLoadingAssignments] = useState(false);
   const [volunteerData, setVolunteerData] = useState<any>(null);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [isAvailabilityModalOpen, setIsAvailabilityModalOpen] = useState(false);
+  const [isSavingAvailability, setIsSavingAvailability] = useState(false);
+  const [isOfflineEventVolunteer, setIsOfflineEventVolunteer] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [assignedApplications, setAssignedApplications] = useState<any[]>([]);
@@ -305,9 +310,16 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
     skills: isAlumni
       ? "Technical Mock Interviews, Socio-economic verification, Career Mentorship"
       : "Applicant Calling Duty, Document verification, Event desk, Peer Tutoring",
+    availableForPhysical: true,
+    baseDistrict: "",
+    coveredLocations: "",
+    pincode: "",
+    availableDays: "Weekends (Sat-Sun)",
+    availableTimeSlot: "Flexible",
   });
 
   const loadAssignedApplications = async (userEmail: string, userName: string) => {
+    setIsLoadingAssignments(true);
     try {
       const res = await studentApi.getAssignedApplicants();
       if (!res.success || !Array.isArray(res.data)) return;
@@ -358,11 +370,15 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
       setAssignedApplications(matching);
       if (cleanEmail && typeof window !== "undefined") {
         try {
-          sessionStorage.setItem(`maatram_assigned_apps_${cleanEmail}`, JSON.stringify(matching));
+          const serialized = JSON.stringify(matching);
+          localStorage.setItem(`maatram_assigned_apps_${cleanEmail}`, serialized);
+          sessionStorage.setItem(`maatram_assigned_apps_${cleanEmail}`, serialized);
         } catch {}
       }
     } catch {
       setAssignedApplications([]);
+    } finally {
+      setIsLoadingAssignments(false);
     }
   };
 
@@ -376,7 +392,8 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
     const storedName = storedUser?.name || storedUser?.full_name || "";
 
     if (storedUser) {
-      setFormData({
+      setFormData((prev) => ({
+        ...prev,
         name: storedName,
         email: cleanEmail,
         phone: storedUser.phone || storedUser.mobile_number || storedUser.whatsapp || "+91 98765 43210",
@@ -389,12 +406,13 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
         skills: isAlumni
           ? "Technical Mock Interviews, Socio-economic verification, Career Mentorship"
           : "Applicant Calling Duty, Document verification, Event desk, Peer Tutoring",
-      });
+      }));
     }
 
     if (!cleanEmail) {
       setIsRegisteredVolunteer(false);
       setVolunteerData(null);
+      setIsLoadingVolunteerState(false);
       return;
     }
 
@@ -407,6 +425,16 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
         const parsed = JSON.parse(localVol);
         setIsRegisteredVolunteer(true);
         setVolunteerData(parsed);
+        setIsLoadingVolunteerState(false);
+        setFormData((prev) => ({
+          ...prev,
+          availableForPhysical: parsed.available_for_physical ?? prev.availableForPhysical,
+          baseDistrict: parsed.base_district || prev.baseDistrict,
+          coveredLocations: parsed.covered_locations || prev.coveredLocations,
+          pincode: parsed.pincode || prev.pincode,
+          availableDays: parsed.available_days || prev.availableDays,
+          availableTimeSlot: parsed.available_time_slot || prev.availableTimeSlot,
+        }));
       } catch {
         // ignore
       }
@@ -417,10 +445,10 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
 
     // Instantly hydrate cached assignments if available
     try {
-      const cachedApps = sessionStorage.getItem(userAppsKey) || localStorage.getItem(userAppsKey);
+      const cachedApps = localStorage.getItem(userAppsKey) || sessionStorage.getItem(userAppsKey);
       if (cachedApps) {
         const parsedApps = JSON.parse(cachedApps);
-        if (Array.isArray(parsedApps) && parsedApps.length > 0) {
+        if (Array.isArray(parsedApps)) {
           setAssignedApplications(parsedApps);
         }
       }
@@ -433,6 +461,15 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
         if (res.success && res.isRegistered && res.data) {
           setIsRegisteredVolunteer(true);
           setVolunteerData(res.data);
+          setFormData((prev) => ({
+            ...prev,
+            availableForPhysical: res.data.available_for_physical ?? prev.availableForPhysical,
+            baseDistrict: res.data.base_district || prev.baseDistrict,
+            coveredLocations: res.data.covered_locations || prev.coveredLocations,
+            pincode: res.data.pincode || prev.pincode,
+            availableDays: res.data.available_days || prev.availableDays,
+            availableTimeSlot: res.data.available_time_slot || prev.availableTimeSlot,
+          }));
           localStorage.setItem(userVolKey, JSON.stringify(res.data));
           loadAssignedApplications(cleanEmail, res.data.name || storedName);
         } else {
@@ -443,7 +480,48 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
       })
       .catch(() => {
         loadAssignedApplications(cleanEmail, storedName);
+      })
+      .finally(() => {
+        setIsLoadingVolunteerState(false);
       });
+
+    // Check if this volunteer is registered/accepted for any offline (physical verification) event
+    studentApi
+      .getEvents()
+      .then((evRes) => {
+        if (!evRes.success || !Array.isArray(evRes.data)) return;
+        const cleanNameLower = (storedName || "").trim().toLowerCase();
+        const enrolledInOffline = evRes.data.some((ev: any) => {
+          if (String(ev.mode || "").trim().toLowerCase() !== "offline") return false;
+          const lists = [
+            ev.accepted_students,
+            ev.acceptedStudents,
+            ev.accepted_alumni,
+            ev.acceptedAlumni,
+            ev.accepted_volunteers,
+            ev.acceptedVolunteers,
+            ev.registered_volunteers,
+            ev.registeredVolunteers,
+            ev.participants,
+            ev.volunteers,
+          ];
+          return lists.some((arr) => {
+            if (!Array.isArray(arr)) return false;
+            return arr.some((entry: any) => {
+              if (!entry) return false;
+              if (typeof entry === "string") {
+                const v = entry.trim().toLowerCase();
+                return v === cleanEmail || (cleanNameLower && v === cleanNameLower);
+              }
+              const eMail = String(entry.email || entry.volunteer_email || "").trim().toLowerCase();
+              const eName = String(entry.name || "").trim().toLowerCase();
+              return (eMail && eMail === cleanEmail) || (cleanNameLower && eName === cleanNameLower);
+            });
+          });
+        });
+        setIsOfflineEventVolunteer(enrolledInOffline);
+      })
+      .catch(() => {});
 
     loadAssignedApplications(cleanEmail, storedName);
   }, [role, isAlumni]);
@@ -469,6 +547,12 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
       designation: formData.designation,
       skills: formData.skills,
       role: isAlumni ? "alumni" : "student",
+      available_for_physical: formData.availableForPhysical,
+      base_district: formData.baseDistrict.trim(),
+      covered_locations: formData.coveredLocations.trim(),
+      pincode: formData.pincode.trim(),
+      available_days: formData.availableDays,
+      available_time_slot: formData.availableTimeSlot,
     };
 
     try {
@@ -498,6 +582,38 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
       setTimeout(() => setToastMessage(""), 6000);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleSaveAvailability = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanEmail = (volunteerData?.email || formData.email || "").trim().toLowerCase();
+    if (!cleanEmail) return;
+    setIsSavingAvailability(true);
+    try {
+      const payload = {
+        email: cleanEmail,
+        name: volunteerData?.name || formData.name,
+        role: isAlumni ? "alumni" : "student",
+        available_for_physical: formData.availableForPhysical,
+        base_district: formData.baseDistrict.trim(),
+        covered_locations: formData.coveredLocations.trim(),
+        pincode: formData.pincode.trim(),
+        available_days: formData.availableDays,
+        available_time_slot: formData.availableTimeSlot,
+      };
+      const res = await studentApi.updateVolunteerAvailability(payload);
+      const updated = res.success && res.data ? res.data : { ...(volunteerData || {}), ...payload };
+      setVolunteerData(updated);
+      localStorage.setItem(`maatram_volunteer_${cleanEmail}`, JSON.stringify(updated));
+      setIsAvailabilityModalOpen(false);
+      setToastMessage("Physical verification location & availability saved!");
+      setTimeout(() => setToastMessage(""), 5000);
+    } catch {
+      setToastMessage("Failed to update availability. Please try again.");
+      setTimeout(() => setToastMessage(""), 5000);
+    } finally {
+      setIsSavingAvailability(false);
     }
   };
 
@@ -815,7 +931,11 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
   };
 
   const hasAssignments = assignedApplications.length > 0;
-  const showTableView = isRegisteredVolunteer && hasAssignments && activeViewMode === "table";
+  const hasPhysicalAssignment = assignedApplications.some(
+    (app) => app._matchedRole === "physical" || app.status === "physical_verification_in_progress"
+  );
+  const isPhysicalVerificationVolunteer = isOfflineEventVolunteer || hasPhysicalAssignment;
+  const showTableView = isRegisteredVolunteer && activeViewMode === "table";
 
   const handleOpenApplicantPage = (app: any) => {
     setSelectedAssignedApplication(app);
@@ -882,7 +1002,16 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
           {/* ========================================================================= */}
           {/* CASE A: FULL PAGE APPLICATION DOCUMENT VIEW (MATCHING ADMIN SIDE UI EXACTLY) */}
           {/* ========================================================================= */}
-          {selectedAssignedApplication ? (
+          {isLoadingVolunteerState ? (
+            <div className="flex-1 flex items-center justify-center py-20">
+              <div className="flex flex-col items-center gap-3 text-center">
+                <div className="w-8 h-8 border-2 border-brand border-t-transparent rounded-full animate-spin" />
+                <p className="text-xs font-heading font-bold text-black/65">
+                  Loading volunteer workspace...
+                </p>
+              </div>
+            </div>
+          ) : selectedAssignedApplication ? (
             <div className="w-full space-y-6 animate-in fade-in duration-200">
               {/* Official Trust Application Sheet matching screenshot */}
               <div className="bg-white border border-black/15 rounded-xl p-6 sm:p-10 space-y-7">
@@ -1551,7 +1680,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
 
               {/* Applicant Records Table matching Image 2 */}
               <div className="bg-white border border-black/15 rounded-xl overflow-hidden">
-                <div className="p-4 sm:p-6 border-b border-black/15 flex items-center justify-between">
+                <div className="p-4 sm:p-6 border-b border-black/15 flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <h2 className="font-heading font-bold text-base text-black">
                       Applicant Records
@@ -1560,6 +1689,18 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                       Showing {filteredApplications.length} of {assignedApplications.length} students
                     </p>
                   </div>
+                  {isPhysicalVerificationVolunteer && (
+                    <button
+                      type="button"
+                      onClick={() => setIsAvailabilityModalOpen(true)}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-md bg-brand/15 hover:bg-brand/30 border border-brand/60 text-xs font-heading font-bold text-black transition cursor-pointer"
+                    >
+                      <MapPinIcon className="w-4 h-4 text-black" />
+                      <span>
+                        Visit Availability{formData.baseDistrict ? `: ${formData.baseDistrict}` : " & Location"}
+                      </span>
+                    </button>
+                  )}
                 </div>
 
                 <div className="overflow-x-auto">
@@ -1579,7 +1720,20 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-black/15">
-                      {filteredApplications.map((app) => (
+                      {isLoadingAssignments && filteredApplications.length === 0 ? (
+                        <tr>
+                          <td colSpan={10} className="py-10 px-4 text-center text-xs font-medium text-black/65">
+                            Loading your assigned applications...
+                          </td>
+                        </tr>
+                      ) : filteredApplications.length === 0 ? (
+                        <tr>
+                          <td colSpan={10} className="py-10 px-4 text-center text-xs font-medium text-black/65">
+                            No student applications assigned yet. Wait for foundation admin to allocate verification tasks.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredApplications.map((app) => (
                         <tr
                           key={app.id || app.application_number}
                           className="hover:bg-brand/15 transition cursor-pointer"
@@ -1715,7 +1869,8 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                             </button>
                           </td>
                         </tr>
-                      ))}
+                      ))
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -1811,7 +1966,7 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                               </span>
                             </div>
                             <p className="text-xs sm:text-sm text-black mt-1 font-medium max-w-xl">
-                              You?ll receive a notification when new drives and activities are posted.
+                              You&apos;ll receive a notification when new drives and activities are posted.
                             </p>
                           </div>
                         </div>
@@ -1864,6 +2019,48 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                           </span>
                         </div>
                       </div>
+
+                      {/* Physical Visit Availability & Location Summary (Offline / Physical Volunteers Only) */}
+                      {isPhysicalVerificationVolunteer && (
+                        <div className="p-4 rounded-xl bg-black/5 border border-black/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-left">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="text-[11px] font-heading font-bold uppercase tracking-wider text-black flex items-center gap-1.5">
+                                <MapPinIcon className="w-4 h-4 text-black" />
+                                Physical Visit Availability & Location
+                              </span>
+                              <span
+                                className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${
+                                  formData.availableForPhysical
+                                    ? "bg-emerald-50 text-emerald-800 border-emerald-300"
+                                    : "bg-black/5 text-black/65 border-black/15"
+                                }`}
+                              >
+                                {formData.availableForPhysical ? "Available for Home Visits" : "Currently Unavailable"}
+                              </span>
+                            </div>
+                            <p className="text-xs text-black/75">
+                              {formData.baseDistrict || formData.coveredLocations ? (
+                                <>
+                                  <strong>{formData.baseDistrict || "District not set"}</strong>
+                                  {formData.coveredLocations ? ` — ${formData.coveredLocations}` : ""}
+                                  {formData.pincode ? ` (${formData.pincode})` : ""}
+                                  {` • ${formData.availableDays} (${formData.availableTimeSlot})`}
+                                </>
+                              ) : (
+                                "Set your base district and cities/villages so Admin can match nearby applicants to you."
+                              )}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setIsAvailabilityModalOpen(true)}
+                            className="px-4 py-2 rounded-md bg-white hover:bg-brand/15 border border-black/15 text-xs font-heading font-bold text-black transition cursor-pointer shrink-0"
+                          >
+                            Edit Availability
+                          </button>
+                        </div>
+                      )}
 
                       {/* Assigned Student Applications preview card */}
                       <div className="border-t border-black/15 pt-5 text-left">
@@ -2108,6 +2305,139 @@ export default function VolunteerEnrollScreen({ role }: VolunteerScreenProps) {
                       <span>Confirm & Register</span>
                     </>
                   )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isPhysicalVerificationVolunteer && isAvailabilityModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-5">
+          <div className="bg-white rounded-lg border border-black/15 shadow-sm max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-4 border-b border-black/15 flex items-center justify-between bg-white">
+              <div className="flex items-center gap-2">
+                <MapPinIcon className="w-5 h-5 text-black" />
+                <div>
+                  <h3 className="font-heading font-bold text-sm text-black">
+                    Physical Visit Availability & Location
+                  </h3>
+                  <p className="text-[11px] text-black/65">
+                    Helps Admin match applicants near your city or village
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAvailabilityModalOpen(false)}
+                className="text-black/65 hover:text-black font-bold text-sm w-7 h-7 rounded-lg hover:bg-black/5 flex items-center justify-center cursor-pointer"
+              >
+                <XMarkIcon className="w-4 h-4" />
+              </button>
+            </div>
+            <form onSubmit={handleSaveAvailability} className="p-6 space-y-4">
+              <label className="flex items-center justify-between p-3 rounded-lg bg-black/5 border border-black/15 cursor-pointer">
+                <span className="text-xs font-heading font-bold text-black">
+                  Available for Physical Home Visits
+                </span>
+                <input
+                  type="checkbox"
+                  checked={formData.availableForPhysical}
+                  onChange={(e) => setFormData({ ...formData, availableForPhysical: e.target.checked })}
+                  className="w-4 h-4"
+                />
+              </label>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-heading font-bold text-black mb-1">
+                    Base District
+                  </label>
+                  <input
+                    type="text"
+                    required={formData.availableForPhysical}
+                    value={formData.baseDistrict}
+                    onChange={(e) => setFormData({ ...formData, baseDistrict: e.target.value })}
+                    placeholder="e.g. Sivagangai"
+                    className="w-full px-3 py-2 rounded-md border border-black/15 bg-white text-xs text-black focus:outline-none focus:border-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-heading font-bold text-black mb-1">
+                    PIN Code
+                  </label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    value={formData.pincode}
+                    onChange={(e) => setFormData({ ...formData, pincode: e.target.value.replace(/\D/g, "") })}
+                    placeholder="e.g. 630561"
+                    className="w-full px-3 py-2 rounded-md border border-black/15 bg-white text-xs text-black focus:outline-none focus:border-black"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-heading font-bold text-black mb-1">
+                  Cities / Towns / Villages Covered (comma-separated)
+                </label>
+                <input
+                  type="text"
+                  required={formData.availableForPhysical}
+                  value={formData.coveredLocations}
+                  onChange={(e) => setFormData({ ...formData, coveredLocations: e.target.value })}
+                  placeholder="e.g. Karaikudi, Devakottai, Kallal"
+                  className="w-full px-3 py-2 rounded-md border border-black/15 bg-white text-xs text-black focus:outline-none focus:border-black"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-heading font-bold text-black mb-1">
+                    Available Days
+                  </label>
+                  <select
+                    value={formData.availableDays}
+                    onChange={(e) => setFormData({ ...formData, availableDays: e.target.value })}
+                    className="w-full px-3 py-2 rounded-md border border-black/15 bg-white text-xs text-black focus:outline-none focus:border-black"
+                  >
+                    <option value="Weekends (Sat-Sun)">Weekends (Sat-Sun)</option>
+                    <option value="Weekdays (Mon-Fri)">Weekdays (Mon-Fri)</option>
+                    <option value="All Days">All Days</option>
+                    <option value="Flexible / By Appointment">Flexible / By Appointment</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[11px] font-heading font-bold text-black mb-1">
+                    Preferred Time
+                  </label>
+                  <select
+                    value={formData.availableTimeSlot}
+                    onChange={(e) => setFormData({ ...formData, availableTimeSlot: e.target.value })}
+                    className="w-full px-3 py-2 rounded-md border border-black/15 bg-white text-xs text-black focus:outline-none focus:border-black"
+                  >
+                    <option value="Flexible">Flexible / Anytime</option>
+                    <option value="Morning (9 AM - 12 PM)">Morning (9 AM - 12 PM)</option>
+                    <option value="Afternoon (12 PM - 4 PM)">Afternoon (12 PM - 4 PM)</option>
+                    <option value="Evening (4 PM - 7 PM)">Evening (4 PM - 7 PM)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-black/15">
+                <button
+                  type="button"
+                  onClick={() => setIsAvailabilityModalOpen(false)}
+                  className="px-4 py-2 text-xs font-heading font-bold text-black hover:bg-black/5 rounded-md cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSavingAvailability}
+                  className="px-5 py-2 text-xs font-heading font-bold text-black bg-brand hover:brightness-95 rounded-md border border-brand cursor-pointer disabled:opacity-50"
+                >
+                  {isSavingAvailability ? "Saving..." : "Save Availability"}
                 </button>
               </div>
             </form>
